@@ -1,12 +1,10 @@
 #pragma once
 
-int TILE_DIM = 3;
+#include <string>
 
-class Tile{
-    public:
-        char tile_chars[3][3];
-        int type_up;
-        int type_left;
-        int type_right;
-        int type_down;
+struct Tile {
+    bool isObstacle = false;
+    std::string charVisible = "*";
+    std::string charDiscovered = " ";
+    std::string charUndiscovered = ".";
 };
