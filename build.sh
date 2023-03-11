@@ -14,4 +14,4 @@ g++ -std=c++20 -o $BUILD_DIR/build $SRC_DIR/*.cpp
 # add data
 cp -a $DATA_DIR $BUILD_DIR/data
 
-# ./build
+$BUILD_DIR/build
