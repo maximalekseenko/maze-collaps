@@ -1,7 +1,17 @@
-mkdir ./build
+#!/bin/bash/env bash
+BUILD_DIR=./build/
+SRC_DIR=./src/
+DATA_DIR=./src/data/
 
-cd ./build
+# make build directory
+if [ ! -d $BUILD_DIR ]; then
+    mkdir $BUILD_DIR
+fi
 
-g++ -std=c++20 ../src/*.cpp -o build.out
+# compile c++
+g++ -std=c++20 -o $BUILD_DIR/build $SRC_DIR/*.cpp
 
-./build.out
+# add data
+cp -a $DATA_DIR $BUILD_DIR/data
+
+# ./build
