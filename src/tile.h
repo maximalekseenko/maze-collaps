@@ -1,10 +1,12 @@
 #pragma once
 
+
 #include <string>
+
 
 struct Tile {
     bool isObstacle = false;
-    std::string charVisible = "*";
-    std::string charDiscovered = " ";
+    std::string charVisible = "A";
+    std::string charDiscovered = "A";
     std::string charUndiscovered = ".";
 };
