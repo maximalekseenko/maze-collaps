@@ -6,6 +6,13 @@
 #endif //RANDOM_H
 
 
+#ifndef _LIBCPP_VECTOR
+    #include "vector"
+#endif //_LIBCPP_VECTOR
+
+
+
+
 
 class WaveNode{
     private:
@@ -18,19 +25,14 @@ class WaveNode{
 
 
         WaveNode(){}
-        WaveNode(int __tileAmount){
-
-            entropyCollapse = new bool[__tileAmount];
-            for (int _i = 0; _i < __tileAmount; _i ++) entropyCollapse[_i] = true;
-
-            entropySize = __tileAmount;
-
+        WaveNode(int tileAmount) {
+            entropyCollapse = new bool[tileAmount];
+            for (int _i = 0; _i < tileAmount; _i ++) entropyCollapse[_i] = true;
+            entropySize = tileAmount;
             value = -1;
         }
 
-        ~WaveNode(){
-            delete entropyCollapse;
-        }
+        ~WaveNode() { delete[] entropyCollapse; }
 
         void Collapse(){
             if (isCollapsed) throw;
@@ -51,68 +53,58 @@ class WaveNode{
 };
 
 class Wave{
+    private:
+        int* pattern;
+        int pattern_dim[2];
+        int result_dim[2];
+        int tile_n;
+
+        WaveNode **wave;
+
+        std::vector<int*> tilePatterns;
+
+        void Init(){
+            int tile_w_amount = pattern_dim[0] - tile_n + 1;
+            int tile_h_amount = pattern_dim[1] - tile_n + 1;
+
+            wave = new WaveNode*[result_dim[0] * result_dim[1]];
+            for (int _i = 0; _i < result_dim[0] * result_dim[1]; _i ++)
+                wave[_i] = new WaveNode(tile_w_amount * tile_h_amount);
+
+
+            tilePatterns.clear();
+
+            // add tile patterns
+            for (int _px = 0; _px < tile_w_amount; _px ++) {
+                for (int _py = 0; _py < tile_h_amount; _py ++) {
+                    int new_pattern[tile_n * tile_n];
+                    for (int _xx = 0; _xx < tile_n; _xx ++) for (int _yy = 0; _yy < tile_n; _yy ++)
+                        new_pattern[_xx + _yy * tile_n] = pattern[(_xx + _px) + (_yy + _py) * pattern_dim[0]];
+                    tilePatterns.push_back(new_pattern);
+                }
+            }
+        }
+
 
     public:
         Wave(int result_w, int result_h, int N, int pattern_w, int patern_h, int* pattern){
+            pattern_dim[0] = pattern_w;
+            pattern_dim[1] = patern_h;
 
-            /* Length of result (result_w * result_h) */
-            int result_len = result_w * result_h;
-            // (optional) Augment pattern data with rotations and reflections. TODO
-            int tile_w_amount = pattern_w - N + 1;
-            int tile_h_amount = patern_h - N + 1;
-            int tile_amount = (tile_w_amount * tile_h_amount);
+            result_dim[0] = result_w;
+            result_dim[1] = result_h;
 
+            tile_n = N;
 
-            int** tilePatterns = new int*[tile_amount];
+            Init();
+            Run();
+        }
 
-
-            // add tile patterns
-            for (int _px = 0; _px < pattern_w - N + 1; _px ++) for (int _py = 0; _py < tile_h_amount; _py ++){
-                tilePatterns[_px + _py * tile_w_amount] = new int[N * N];
-
-                for (int _xx = 0; _xx < N; _xx ++) for (int _yy = 0; _yy < N; _yy ++)
-                    tilePatterns[_px + _py * tile_w_amount][_xx + _yy * N] = pattern[(_xx + _px) + (_yy + _py) * pattern_w];
-            }
-
-            // ---------- Wave Init ---------- //
-
-            WaveNode *wave = new WaveNode[result_len];
-            for (int _i = 0; _i < result_len; _i ++)
-                wave[_i] = WaveNode(tile_amount);
-
-            
-            // ---------- Wave Main Loop ---------- //
-            int observe_i = -1;
+        void Run(){
             while (true){
-
+                
+                if (!Observe()) break;
                 // ----- Observation ----- //
-                observe_i = -1;
-
-                // Find a wave element with the minimal nonzero entropy.
-                double min = 1E+4;
-                for (int _i = 0; _i < result_len; _i ++){
-
-                    // Out of bounds
-                    if (_i % result_w + N > result_w || _i / result_w + N > result_h) continue;
-
-                    // Entropy Zero
-                    if (wave[_i].entropySize == 1) continue;
-
-                    // Select node by rolling doube dice for each node and sum with entropy size,
-                    // resulting value where integer part is entropy size and fraction part is roll result
-                    double _value = wave[_i].entropySize + 1E-6 * Random::Double();
-                    if (_value < min) {
-                        min = _value;
-                        observe_i = _i;
-                    }
-                }
-
-                // No nodes to collapse due to ether program finish or error
-                if (observe_i == -1) break;
-
-                // Collapse this element into a definite state according to its coefficients and the distribution of NxN patterns in the input.
-                wave[observe_i].Collapse();
-            
                 // Propagation: 
                     // propagate information gained on the previous observation step.
                 // break;
@@ -121,9 +113,9 @@ class Wave{
             // or in the contradictory state (all the coefficients being zero). In the first case return the output. 
             // In the second case finish the work without returning anything.
 
-            for (int _x = 0; _x < result_w; _x ++){
-                for (int _y = 0; _y < result_h; _y ++)
-                    std::cout << wave[_x + _y * result_w].value;
+            for (int _x = 0; _x < result_dim[0]; _x ++){
+                for (int _y = 0; _y < result_dim[1]; _y ++)
+                    std::cout << wave[_x + _y * result_dim[0]]->value << " ";
                 std::cout << std::endl;
             }
 
@@ -131,6 +123,37 @@ class Wave{
             // delete[] wave;
         }
 
+        bool Observe(){
+                int observe_i = -1;
+
+                // Find a wave element with the minimal nonzero entropy.
+                double min = 1E+4;
+                for (int _i = 0; _i < result_dim[0] * result_dim[1]; _i ++){
+
+                    // Out of bounds
+                    if (_i % result_dim[0] + tile_n > result_dim[0] || _i / result_dim[0] + tile_n > result_dim[1]) continue;
+
+                    // Entropy Zero
+                    if (wave[_i]->entropySize == 1) continue;
+
+                    // Select node by rolling doube dice for each node and sum with entropy size,
+                    // resulting value where integer part is entropy size and fraction part is roll result
+                    double _value = wave[_i]->entropySize + 1E-6 * Random::Double();
+                    if (_value < min) {
+                        min = _value;
+                        observe_i = _i;
+                    }
+                }
+
+                // No nodes to collapse due to ether program finish or error
+                if (observe_i == -1) return false;
+
+                // Collapse this element into a definite state according to its coefficients and the distribution of NxN patterns in the input.
+                wave[observe_i]->Collapse();
+
+                return true;
+            
+        }
 };
 
 
