@@ -1,1 +1,5 @@
+# mac folder data
+.DS_Store
+
+# build directory
 build
