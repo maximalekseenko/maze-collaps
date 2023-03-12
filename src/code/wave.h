@@ -53,17 +53,17 @@ class WaveNode{
 class Wave{
 
     public:
-        Wave(int tile_w, int tile_h, int N, int pattern_w, int patern_h, int* pattern){
+        Wave(int result_w, int result_h, int N, int pattern_w, int patern_h, int* pattern){
 
-            /* Length of result (tile_w * tile_h) */
-            int RES_LEN = tile_w * tile_h;
+            /* Length of result (result_w * result_h) */
+            int result_len = result_w * result_h;
             // (optional) Augment pattern data with rotations and reflections. TODO
             int tile_w_amount = pattern_w - N + 1;
             int tile_h_amount = patern_h - N + 1;
-            int TILES = (tile_w_amount * tile_h_amount);
+            int tile_amount = (tile_w_amount * tile_h_amount);
 
 
-            int** tilePatterns = new int*[TILES];
+            int** tilePatterns = new int*[tile_amount];
 
 
             // add tile patterns
@@ -76,9 +76,9 @@ class Wave{
 
             // ---------- Wave Init ---------- //
 
-            WaveNode *wave = new WaveNode[RES_LEN];
-            for (int _i = 0; _i < RES_LEN; _i ++)
-                wave[_i] = WaveNode(TILES);
+            WaveNode *wave = new WaveNode[result_len];
+            for (int _i = 0; _i < result_len; _i ++)
+                wave[_i] = WaveNode(tile_amount);
 
             
             // ---------- Wave Main Loop ---------- //
@@ -90,10 +90,10 @@ class Wave{
 
                 // Find a wave element with the minimal nonzero entropy.
                 double min = 1E+4;
-                for (int _i = 0; _i < RES_LEN; _i ++){
+                for (int _i = 0; _i < result_len; _i ++){
 
                     // Out of bounds
-                    if (_i % tile_w + N > tile_w || _i / tile_w + N > tile_h) continue;
+                    if (_i % result_w + N > result_w || _i / result_w + N > result_h) continue;
 
                     // Entropy Zero
                     if (wave[_i].entropySize == 1) continue;
@@ -121,9 +121,9 @@ class Wave{
             // or in the contradictory state (all the coefficients being zero). In the first case return the output. 
             // In the second case finish the work without returning anything.
 
-            for (int _x = 0; _x < tile_w; _x ++){
-                for (int _y = 0; _y < tile_h; _y ++)
-                    std::cout << wave[_x + _y * tile_w].value;
+            for (int _x = 0; _x < result_w; _x ++){
+                for (int _y = 0; _y < result_h; _y ++)
+                    std::cout << wave[_x + _y * result_w].value;
                 std::cout << std::endl;
             }
 
