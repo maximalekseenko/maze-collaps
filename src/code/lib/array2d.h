@@ -63,11 +63,12 @@ class Array2D {
     private: // ----- private Members -----
         T *__values;
 
+        int a;
+
 
     public: // ----- Constructors and Destructors -----
-        Array2D(const Array2D<char> &obj) : X(obj.X), Y(obj.Y), len(obj.len) {
-            int a;// obj.clone(*this);
-            this->__values[0] = 0;
+        Array2D(const Array2D<char> &obj) : Array2D(obj.X, obj.Y) {
+            obj.clone(*this);
         }
         
         /**
