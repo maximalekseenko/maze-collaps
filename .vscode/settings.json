@@ -79,6 +79,7 @@
         "iomanip": "cpp",
         "stack": "cpp",
         "__functional_03": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "filesystem": "cpp"
     }
 }

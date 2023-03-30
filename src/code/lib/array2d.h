@@ -51,13 +51,13 @@ template <typename T>
 class Array2D {
     public: // ----- public Members -----
         /// @brief Amount of all elements in array2d.
-        int len;
+        const int len;
 
         /// @brief Amount of cols in array2d.
-        int X;
+        const int X;
 
         /// @brief Amount of rows in array2d.
-        int Y;
+        const int Y;
 
 
     private: // ----- private Members -----
@@ -65,6 +65,11 @@ class Array2D {
 
 
     public: // ----- Constructors and Destructors -----
+        Array2D(const Array2D<char> &obj) : X(obj.X), Y(obj.Y), len(obj.len) {
+            int a;// obj.clone(*this);
+            this->__values[0] = 0;
+        }
+        
         /**
          * @brief Constructs Array2D filled with default values for type T.
          */
@@ -111,7 +116,7 @@ class Array2D {
          * 
          * @see Array2D::set
          */
-        T& get(int i) { return __values[i]; }
+        T& get(int i) const { return __values[i]; }
 
         /** 
          * @brief Gets an element at [x, y].
@@ -125,7 +130,7 @@ class Array2D {
          * 
          * @see Array2D::set
          */
-        T& get(int x, int y) { return __values[x + y * X]; }
+        T& get(int x, int y) const { return __values[x + y * X]; }
 
         /** 
          * @brief Sets an element at i to v.
@@ -294,8 +299,8 @@ class Array2D {
          * 
          * @warning If array values are pointers, function will clone pointers, not data where they point.s
          */
-        Array2D clone(){
-            Array2D<T> newArray;
+        Array2D clone() const {
+            Array2D<T> newArray(X, Y);
             for (int i = 0; i < len; i ++) newArray.set(i, get(i)); 
             return newArray;
         };
@@ -309,7 +314,7 @@ class Array2D {
          * 
          * @warning If array values are pointers, function will clone pointers, not data where they point.s
          */
-        void clone(Array2D<T> &cloneto){
+        void clone(Array2D<T> &cloneto) const {
             for (int i = 0; i < len; i ++) cloneto.set(i, get(i)); 
         };
 
