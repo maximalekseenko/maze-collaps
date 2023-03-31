@@ -57,7 +57,7 @@ int main() {
     // }
 
     Array2D<char> B(25, 25);
-    auto result = Wave::Gen(A, 4, &B);
-    // B.out()
+    Wave::Gen(A, 4, B);
+    B.out();
 }
 
