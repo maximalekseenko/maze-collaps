@@ -20,8 +20,17 @@ class Random{
         static double Double(){
             return distrib(gen);
         }
+
+        /**
+         * @brief Get random number in range [a, b]
+         * 
+         * @param a 
+         * @param b 
+         * @return int 
+         */
         static int FromRange(int a, int b){
-            return round(distrib(gen) * (b - a) + a);
+            if (a > b) std::swap(a, b);
+            return round(distrib(gen) * (b - a + 1) + a - 0.5);
         }
 };
 
