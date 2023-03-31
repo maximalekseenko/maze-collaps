@@ -44,7 +44,7 @@ class Wave {
     public:
 
         template<typename T>
-        static Array2D<T> Gen(Array2D<T> pattern, Array2D<T>* outArray, int N) {
+        static Array2D<T> Gen(Array2D<T> pattern, int N, Array2D<T>* outArray) {
             std::vector<Array2D<T>> patterns = MakePatterns(pattern, N);
 
         }
