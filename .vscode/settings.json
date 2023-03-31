@@ -80,6 +80,7 @@
         "stack": "cpp",
         "__functional_03": "cpp",
         "map": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "set": "cpp"
     }
 }
