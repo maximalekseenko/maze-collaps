@@ -67,7 +67,11 @@ class Array2D {
 
 
     public: // ----- Constructors and Destructors -----
-        Array2D(const Array2D<char> &obj) : Array2D(obj.X, obj.Y) {
+        Array2D(const Array2D<T>&obj) : Array2D(obj.X, obj.Y) {
+            obj.clone(*this);
+        }
+
+        Array2D(Array2D<T>&& obj) : Array2D(obj.X, obj.Y) {
             obj.clone(*this);
         }
         
@@ -94,15 +98,35 @@ class Array2D {
         ~Array2D(){ delete[] __values; }
 
     public:  // ----- operator Overloads -----
-        Array2D<T> &operator=(Array2D<T> obj){
+        Array2D<T> &operator=(const Array2D<T> obj) const {
             obj.clone(*this);
             return *this;
         }
 
-        bool operator==(Array2D<T> &obj){
+        const bool operator==(const Array2D<T> &obj) const {
             for (int i = 0; i < len; i ++)
                 if (__values[i] != obj.get(i)) return false;
             return true;
+        }
+
+        const bool operator<(const Array2D<T> &obj) const {
+            int counter = 0;
+            for (int i = 0; i < len; i ++){
+                if (__values[i] == obj.get(i)) continue;
+                if (__values[i] > obj.get(i)) counter ++;
+                else counter --;
+            }
+            return counter < 0;
+        }
+
+        const bool operator>(Array2D<T> &obj){
+            int counter = 0;
+            for (int i = 0; i < len; i ++){
+                if (__values[i] == obj.get(i)) continue;
+                if (__values[i] > obj.get(i)) counter ++;
+                else counter --;
+            }
+            return counter > 0;
         }
 
 
