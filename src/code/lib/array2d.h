@@ -63,8 +63,6 @@ class Array2D {
     private: // ----- private Members -----
         T *__values;
 
-        int a;
-
 
     public: // ----- Constructors and Destructors -----
         Array2D(const Array2D<T>&obj) : Array2D(obj.X, obj.Y) {
