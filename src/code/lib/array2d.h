@@ -109,24 +109,31 @@ class Array2D {
             return true;
         }
 
+        const bool operator!=(const Array2D<T> &obj) const {
+            return !(*this == obj);
+        }
+
         const bool operator<(const Array2D<T> &obj) const {
-            int counter = 0;
-            for (int i = 0; i < len; i ++){
-                if (__values[i] == obj.get(i)) continue;
-                if (__values[i] > obj.get(i)) counter ++;
-                else counter --;
-            }
-            return counter < 0;
+            // int counter = 0;
+            // for (int i = 0; i < len; i ++){
+            //     if (__values[i] == obj.get(i)) continue;
+            //     if (__values[i] > obj.get(i)) counter ++;
+            //     else counter --;
+            // }
+            // return counter < 0;
+
+            return *this != obj;
         }
 
         const bool operator>(Array2D<T> &obj){
-            int counter = 0;
-            for (int i = 0; i < len; i ++){
-                if (__values[i] == obj.get(i)) continue;
-                if (__values[i] > obj.get(i)) counter ++;
-                else counter --;
-            }
-            return counter > 0;
+            // int counter = 0;
+            // for (int i = 0; i < len; i ++){
+            //     if (__values[i] == obj.get(i)) continue;
+            //     if (__values[i] > obj.get(i)) counter ++;
+            //     else counter --;
+            // }
+            // return counter > 0;
+            return *this != obj;
         }
 
 
@@ -245,7 +252,8 @@ class Array2D {
          * @note For diagonal axis array's X MUST be equal to Y.
          */
         Array2D mirrorred(int axis){
-            Array2D newArray = clone();
+            Array2D<T> newArray(X, Y);
+            clone(newArray);
             newArray.mirror(axis);
             return newArray;
         };
@@ -315,6 +323,14 @@ class Array2D {
             default:
                 break;
             }
+        };
+
+
+        Array2D rotated(int amount){
+            Array2D<T> newArray(X, Y);
+            clone(newArray);
+            newArray.rotate(amount);
+            return newArray;
         };
 
         /**
