@@ -48,9 +48,7 @@ class Wave {
 
 
                 int Collapse(){
-                    int collapeIn = Random::FromRange(1, entropySize -1);
-                    if (collapeIn == 0 || collapeIn == entropySize)
-                        int a = 0;
+                    int collapeIn = Random::FromRange(1, entropySize);
                     int collapsedAt = -1;
 
                     // find final tile and ban all other
@@ -59,9 +57,8 @@ class Wave {
                             collapeIn -= 1;
                             if (collapeIn == 0) {
                                 collapsedAt = _i;
-                                break;
                             }
-                            else BanTile(_i);
+                            BanTile(_i);
                         }
                     }
 
@@ -69,7 +66,6 @@ class Wave {
                     if (collapsedAt == -1) throw;
 
                     // save result
-                    entropySize = 0;
                     return collapsedAt;
                 }
 
@@ -95,26 +91,23 @@ class Wave {
                 for (int xx = 0; xx < N; xx ++) for (int yy = 0; yy < N; yy ++)
                     new_pattern.set(xx, yy, pattern.get(xx + x, yy + y));
                 
-
-                // TODO uncommet and remove one line bellow
-                return_patterns.insert(new_pattern);
-                // // add
-                // //  90*
-                // new_pattern.rotate(1);
-                // return_patterns.insert(new_pattern); // normal
-                // return_patterns.insert(new_pattern.mirrorred(1)); // mirror
-                // //  180*
-                // new_pattern.rotate(1);
-                // return_patterns.insert(new_pattern); // normal
-                // return_patterns.insert(new_pattern.mirrorred(1)); // mirror
-                // //  270*
-                // new_pattern.rotate(1);
-                // return_patterns.insert(new_pattern); // normal
-                // return_patterns.insert(new_pattern.mirrorred(1)); // mirror
-                // //  0*
-                // new_pattern.rotate(1);
-                // return_patterns.insert(new_pattern); // normal
-                // return_patterns.insert(new_pattern.mirrorred(1)); // mirror
+                // add
+                //  90*
+                new_pattern.rotate(1);
+                return_patterns.insert(new_pattern); // normal
+                return_patterns.insert(new_pattern.mirrorred(1)); // mirror
+                //  180*
+                new_pattern.rotate(1);
+                return_patterns.insert(new_pattern); // normal
+                return_patterns.insert(new_pattern.mirrorred(1)); // mirror
+                //  270*
+                new_pattern.rotate(1);
+                return_patterns.insert(new_pattern); // normal
+                return_patterns.insert(new_pattern.mirrorred(1)); // mirror
+                //  0*
+                new_pattern.rotate(1);
+                return_patterns.insert(new_pattern); // normal
+                return_patterns.insert(new_pattern.mirrorred(1)); // mirror
             }
             return return_patterns;
         }
@@ -142,36 +135,53 @@ class Wave {
                     observed[1] = y;
                 }
             }
-            if (observed[0] != -1 && wave.get(observed[0], observed[1]).entropySize == 0){
-                int a = observed[0];
-                int b = observed[1];
-                return observed;
-            }
             // No nodes to collapse due to ether program finish or error
             return observed;
         }
 
         template<typename T>   
-        static void Propagate(Array2D<T>& outArray, Array2D<WaveNode>& wave, int* observed, std::set<Array2D<T>> patterns, int N) {
+        static void Propagate(Array2D<T>& outArray, Array2D<WaveNode>& wave, int* observed, std::set<Array2D<T>> patterns, int N, Array2D<bool>& outArrayChanged) {
             // collapse
             int collapsed_tile = wave.get(observed[0], observed[1]).Collapse();
             Array2D<T> pattern = *next(patterns.begin(), collapsed_tile);
 
-            for (int x = 0; x < N; x ++) for (int y = 0; y < N; y ++){
-                T value = pattern.get(x, y);
+            // apply patern to outArray
+            for (int tile_x = 0; tile_x < N; tile_x ++) for (int tile_y = 0; tile_y < N; tile_y ++){
+                T value = pattern.get(tile_x, tile_y);
 
-                // add to out
-                outArray.set(observed[0] + x, observed[1] + y, value);
+                // apply to out
+                outArray.set(observed[0] + tile_x, observed[1] + tile_y, value);
+                outArrayChanged.set(observed[0] + tile_x, observed[1] + tile_y, true);
+            }
 
-                // ban failed tiles
-                // for (int xx = 0; xx < N; xx ++) for (int yy = 0; yy < N; yy ++) {
-                //     // moain one
-                //     if (xx == 0 && yy == 0) continue;
-                //     // out of bounds top/left
-                //     if (x - xx < 0 || y - yy < 0 ) continue;
-                //     // out of bounds bottom/right
-                //     if (x - xx < 0 || y - yy < 0 ) continue;
-                // }
+            // ban failed tiles (fannot fit with current change)
+            int pattern_i = -1;
+            for (auto pattern_to_check : patterns){
+                pattern_i ++;
+                // check all possible tile positions
+                for (int tile_dis_x = -N + 1; tile_dis_x < N; tile_dis_x ++) for (int tile_dis_y = -N + 1; tile_dis_y < N; tile_dis_y ++) {
+                    // if out of bounds
+                    if (       observed[0] + tile_dis_x < 0 
+                            || observed[1] + tile_dis_y < 0 
+                            || observed[0] + tile_dis_x >= wave.X 
+                            || observed[1] + tile_dis_y >= wave.Y
+                            ) continue;
+
+                    // check if pattern is ok with the changes
+                    for (int tile_x = 0; tile_x < N; tile_x ++) for (int tile_y = 0; tile_y < N; tile_y ++){
+                        // if tile with such disposition is uneffected by current tile[x,y]
+                        if (       -tile_dis_x + tile_x < 0 
+                                || -tile_dis_y + tile_y < 0 
+                                || -tile_dis_x + tile_x >= N 
+                                || -tile_dis_y + tile_y >= N
+                                ) continue;
+
+                        if (pattern_to_check.get(-tile_dis_x + tile_x, -tile_dis_y + tile_y) != pattern.get(tile_x, tile_y)){
+                            wave.get(observed[0] + tile_dis_x, observed[1] + tile_dis_y).BanTile(pattern_i);
+                            break;
+                        }
+                    }
+                }
 
 
             }
@@ -179,20 +189,38 @@ class Wave {
     public:
 
         template<typename T>
-        static void Gen(Array2D<T> pattern, int N, Array2D<T>& outArray) {
+        static bool Gen(Array2D<T> pattern, int N, Array2D<T>& outArray) {
             std::set<Array2D<T>> patterns = MakePatterns(pattern, N);
 
-            // make wave
-            Array2D<WaveNode> wave(outArray.X - N + 1, outArray.Y - N + 1);
-            for (int i = 0; i < wave.len; i ++) wave.get(i).Clear(patterns.size());
+            int gen_trys_left = 10;
+            while (gen_trys_left > 0) {
+                gen_trys_left --;
 
-            // observe-propagate loop untill error or entropy zero
-            while (true) {
-                int* observed = Observe(outArray, wave);
-                if (observed[0] == -1) break;
-                Propagate(outArray, wave, observed, patterns, N);
+                Array2D<bool> outArrayChanged(outArray.X, outArray.Y);
+
+                // make wave
+                Array2D<WaveNode> wave(outArray.X - N + 1, outArray.Y - N + 1);
+                for (int i = 0; i < wave.len; i ++) wave.get(i).Clear(patterns.size());
+
+                // observe-propagate loop untill error or entropy zero
+                while (true) {
+                    int* observed = Observe(outArray, wave);
+                    if (observed[0] == -1) break;
+                    Propagate(outArray, wave, observed, patterns, N, outArrayChanged);
+                }
+
+                bool is_final = true;
+                for (int i = 0; i < outArrayChanged.len; i ++)
+                    if (!outArrayChanged.get(i)){
+                        is_final = false;
+                        break;
+                    }
+
+                // success
+                if (is_final) return true;
             }
-
+            // fail
+            return false;
         }
 };
 

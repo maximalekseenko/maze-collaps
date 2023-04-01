@@ -57,7 +57,7 @@ int main() {
     // }
 
     Array2D<char> B(25, 25);
-    Wave::Gen(A, 4, B);
+    Wave::Gen(A, 5, B);
     B.out();
 }
 
