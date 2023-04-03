@@ -19,9 +19,9 @@ class Image {
 
             for (int x = 0; x < width; x ++) {
                 for (int y = 0; y < height; y ++) {
-                    int r = static_cast<int>(image[channels * (x + y * width)] + 0);
-                    int g = static_cast<int>(image[channels * (x + y * width)] + 1);
-                    int b = static_cast<int>(image[channels * (x + y * width)] + 2);
+                    int r = static_cast<int>(image[channels * (x + y * width) + 0]);
+                    int g = static_cast<int>(image[channels * (x + y * width) + 1]);
+                    int b = static_cast<int>(image[channels * (x + y * width) + 2]);
                     
                     return_array.set(x, y, GetPixelValue(r, g, b));
                 }
