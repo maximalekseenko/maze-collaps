@@ -76,7 +76,7 @@ void GetNextNode(int* observedNodePosition, Array2D<WaveNode>& wave, GENTYPE& ge
     for (int x = 0; x < wave.X; x ++) for (int y = 0; y < wave.Y; y ++) {
 
         // Entropy One
-        if (wave.get(x, y).entropySize == 1) throw;
+        if (wave.get(x, y).entropySize == 1) continue;
 
         // Select node by rolling doube dice for each node and sum with entropy size,
         // resulting value where integer part is entropy size and fraction part is roll result
@@ -91,7 +91,7 @@ void GetNextNode(int* observedNodePosition, Array2D<WaveNode>& wave, GENTYPE& ge
 
 
 
-void Observe(int* observedNodePosition, bool* possiblePatterns, int pattensAmount, std::vector<std::tuple<int, int, int>>& hashedBannedPatterns, GENTYPE& gen)
+void Observe(int* observedNodePosition, WaveNode& observedNode, int pattensAmount, std::vector<std::tuple<int, int, int>>& hashedBannedPatterns, GENTYPE& gen)
 {
     // select pattern to collape on
     int collapePattern = distrib(gen) * pattensAmount;
@@ -99,10 +99,11 @@ void Observe(int* observedNodePosition, bool* possiblePatterns, int pattensAmoun
     // hash and ban ther patterns and node
     for (int iPattern = 0; iPattern < pattensAmount; iPattern ++) 
     {
-        if (possiblePatterns[iPattern] != (iPattern == collapePattern))
+        if (observedNode.possiblePatterns[iPattern] != (iPattern == collapePattern))
         {
-            // possiblePatterns[iPattern] = false;
-            // hashedBannedPatterns.push_back({observedNodePosition[0], observedNodePosition[1], iPattern});
+            observedNode.possiblePatterns[iPattern] = false;
+            observedNode.entropySize --;
+            hashedBannedPatterns.push_back({observedNodePosition[0], observedNodePosition[1], iPattern});
         }
     }
 }
@@ -121,8 +122,10 @@ void Generate(Array2D<int>& result, std::vector<Array2D<int>>& patterns, int see
     // hased as [X, Y, Index]
     std::vector<std::tuple<int, int, int>> hashedBannedPatterns;
 
+    int A = 0;
     Array2D<WaveNode> wave(result.X, result.Y);
-    for (auto node : wave) node.Init(patterns.size());
+    for (int iNode = 0; iNode < wave.len; iNode ++) 
+        wave.get(iNode).Init(patterns.size());
 
     // random variables
     GENTYPE gen(seed == -1 ? std::random_device()() : seed);
@@ -139,7 +142,7 @@ void Generate(Array2D<int>& result, std::vector<Array2D<int>>& patterns, int see
         if (observedNodePosition[0] == -1) break;
 
         // observe
-        Observe(observedNodePosition, wave.get(observedNodePosition[0], observedNodePosition[1]).possiblePatterns, patterns.size(), hashedBannedPatterns, gen);
+        Observe(observedNodePosition, wave.get(observedNodePosition[0], observedNodePosition[1]), patterns.size(), hashedBannedPatterns, gen);
 
         // propagate
             // for each banned pattern
