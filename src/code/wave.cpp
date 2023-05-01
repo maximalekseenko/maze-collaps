@@ -58,6 +58,7 @@ struct WaveNode
     {
         entropySize = T;
         possiblePatterns = new bool[T];
+        for (int i = 0; i < T; i ++) possiblePatterns[i] = true;
     }
     ~WaveNode() { delete[] possiblePatterns; }
 };
@@ -90,9 +91,20 @@ void GetNextNode(int* observedNodePosition, Array2D<WaveNode>& wave, GENTYPE& ge
 
 
 
-void Observe()
+void Observe(int* observedNodePosition, bool* possiblePatterns, int pattensAmount, std::vector<std::tuple<int, int, int>>& hashedBannedPatterns, GENTYPE& gen)
 {
+    // select pattern to collape on
+    int collapePattern = distrib(gen) * pattensAmount;
 
+    // hash and ban ther patterns and node
+    for (int iPattern = 0; iPattern < pattensAmount; iPattern ++) 
+    {
+        if (possiblePatterns[iPattern] != (iPattern == collapePattern))
+        {
+            // possiblePatterns[iPattern] = false;
+            // hashedBannedPatterns.push_back({observedNodePosition[0], observedNodePosition[1], iPattern});
+        }
+    }
 }
 
 
@@ -122,15 +134,23 @@ void Generate(Array2D<int>& result, std::vector<Array2D<int>>& patterns, int see
     {
         // get new node
         GetNextNode(observedNodePosition, wave, gen);
+
         // finish if not found
+        if (observedNodePosition[0] == -1) break;
+
         // observe
-            // collapse node
-            // hash banned patterns and node
+        Observe(observedNodePosition, wave.get(observedNodePosition[0], observedNodePosition[1]).possiblePatterns, patterns.size(), hashedBannedPatterns, gen);
+
         // propagate
             // for each banned pattern
                 // for each direction form node
                     // ban incompatable pattern
     }
+
+    for (int iWave = 0; iWave < wave.len; iWave ++)
+        for (int iPattern = 0; iPattern < patterns.size(); iPattern ++)
+            if (wave.get(iWave).possiblePatterns[iPattern])
+                result.set(iWave, patterns[iPattern].get(0, 0));
 }
 
 
