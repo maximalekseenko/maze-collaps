@@ -34,6 +34,10 @@ SOFTWARE.
 #include <algorithm>
 #endif // _LIBCPP_ALGORITHM
 
+// #ifndef _LIBCPP_ITERATOR
+// #include <iterator>
+// #endif // _LIBCPP_ITERATOR
+
 
 /** Two-dimentional array.
  * @author @maximalekseenko 
@@ -76,7 +80,7 @@ class Array2D {
         /**
          * @brief Constructs Array2D filled with default values for type T.
          */
-        Array2D(int x, int y) : X(x), Y(y), len(x * y), __values(new T[x * y]) {}
+        Array2D(int x, int y, bool _recursial = false) : X(x), Y(y), len(x * y), __values(new T[x * y]) {}
 
         /** 
          * @brief Constructs Array2D and fills it with provided values in init.
@@ -85,7 +89,7 @@ class Array2D {
          * 
          * @overload
          */
-        Array2D(int x, int y, std::initializer_list<T> init) : X(x), Y(y), len(x * y), __values(new T[x * y]) {
+        Array2D(int x, int y, std::initializer_list<T> init, bool _recursial = false) : X(x), Y(y), len(x * y), __values(new T[x * y]) {
             int i = 0;
             for (T v : init) __values[i++] = v;
         }
@@ -95,7 +99,18 @@ class Array2D {
          */
         ~Array2D(){ delete[] __values; }
 
+
+    public:  // ----- iterator Overloads -----
+        typedef T* iterator;
+        typedef const T* const_iterator;
+        iterator begin() { return &get(0); }
+        const_iterator begin() const { return &get(0); }
+        iterator end() { return &get(len - 1); }
+        const_iterator end() const { return &get(len - 1); }
+
+
     public:  // ----- operator Overloads -----
+        
         Array2D<T> &operator=(const Array2D<T> obj) const {
             obj.clone(*this);
             return *this;
@@ -112,26 +127,29 @@ class Array2D {
         }
 
         const bool operator<(const Array2D<T> &obj) const {
-            // int counter = 0;
-            // for (int i = 0; i < len; i ++){
-            //     if (__values[i] == obj.get(i)) continue;
-            //     if (__values[i] > obj.get(i)) counter ++;
-            //     else counter --;
-            // }
-            // return counter < 0;
-
             return *this != obj;
         }
 
-        const bool operator>(Array2D<T> &obj){
-            // int counter = 0;
-            // for (int i = 0; i < len; i ++){
-            //     if (__values[i] == obj.get(i)) continue;
-            //     if (__values[i] > obj.get(i)) counter ++;
-            //     else counter --;
-            // }
-            // return counter > 0;
+        const bool operator>(Array2D<T> &obj) const {
             return *this != obj;
+        }
+
+        const bool operator==(const Array2D<T> *obj) const {
+            for (int i = 0; i < len; i ++)
+                if (__values[i] != obj->get(i)) return false;
+            return true;
+        }
+
+        const bool operator!=(const Array2D<T> *obj) const {
+            return !(*this == *obj);
+        }
+
+        const bool operator<(const Array2D<T> *obj) const {
+            return *this != *obj;
+        }
+
+        const bool operator>(Array2D<T> *obj) const {
+            return *this != *obj;
         }
 
 
@@ -146,7 +164,10 @@ class Array2D {
          * 
          * @see Array2D::set
          */
-        T& get(int i) const { return __values[i]; }
+        T& get(int i) const { 
+            i = (len + (i % len)) % len;
+            return __values[i];
+        }
 
         /** 
          * @brief Gets an element at [x, y].
@@ -160,7 +181,11 @@ class Array2D {
          * 
          * @see Array2D::set
          */
-        T& get(int x, int y) const { return __values[x + y * X]; }
+        T& get(int x, int y) const { 
+            x = (X + (x % X)) % X;
+            y = (Y + (y % Y)) % Y;
+            return __values[x + y * X]; 
+        }
 
         /** 
          * @brief Sets an element at i to v.
@@ -170,7 +195,10 @@ class Array2D {
          * 
          * @see Array2D::get
          */
-        void set(int i, T v) { __values[i] = v; }
+        void set(int i, T v) { 
+            i = (len + (i % len)) % len;
+            __values[i] = v;
+        }
 
         /** 
          * @brief Sets an element at [x, y] to v.
@@ -183,7 +211,11 @@ class Array2D {
          * 
          * @see Array2D::get
          */
-        void set(int x, int y, T v) { __values[x + y * X] = v; }
+        void set(int x, int y, T v) {
+            x = (X + (x % X)) % X;
+            y = (Y + (y % Y)) % Y;
+            __values[x + y * X] = v;
+        }
 
         /**
          * @brief Mirrors array elements.
@@ -331,6 +363,7 @@ class Array2D {
             return newArray;
         };
 
+
         /**
          * @brief Clones this array.
          * 
@@ -357,6 +390,23 @@ class Array2D {
             for (int i = 0; i < len; i ++) cloneto.set(i, get(i)); 
         };
 
+
+        Array2D cut(int fromX, int toX, int fromY, int toY) {
+            Array2D<T> new_array(toX - fromX, toY - fromY);
+            cut(new_array, fromX, fromY);
+        }
+
+        void cut(Array2D<T> &cutto, int fromX, int fromY) {
+
+            // fix from, to
+            // if (fromX + cutto.X > X || fromY + cutto.Y > Y) throw std::runtime_error("Invalid cut coordinates.");
+
+
+            for (int __x = fromX; __x < fromX + cutto.X; __x ++) for (int __y = fromY; __y < fromX + cutto.Y; __y ++)
+                cutto.set(__x - fromX, __y - fromY, get(__x, __y));
+
+        }
+
         #ifdef _LIBCPP_IOSTREAM
         /** 
          * @brief Output array using std::cout.
@@ -370,6 +420,16 @@ class Array2D {
                 std::cout << std::endl;
             }
         }
+
+        friend std::ostream& operator<<(std::ostream& stream, const Array2D<T>& obj) {
+            for (int y = 0; y < obj.Y; y ++){
+                for (int x = 0; x < obj.X; x ++)
+                    stream << obj.get(x, y);
+                stream << std::endl;
+            }
+            return stream;
+        }
+
         #endif // _LIBCPP_IOSTREAM
 };
 

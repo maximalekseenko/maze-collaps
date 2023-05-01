@@ -14,7 +14,7 @@ fi
 # xxd -i $DATA_DIR/*.png > $BUILD_DIR/data.
 
 # # compile c++
-g++ -std=c++20 -o $BUILD_DIR/build $CODE_DIR/*.cpp -fsanitize=address -fdiagnostics-color=always
+g++ -std=c++20 -o $BUILD_DIR/build $CODE_DIR/**.cpp -fsanitize=address -fdiagnostics-color=always
 
 # add data
 # cat $BUILD_DIR/build $DATA_DIR/*.PNG > $BUILD_DIR/build2

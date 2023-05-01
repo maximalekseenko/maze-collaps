@@ -10,33 +10,27 @@
 #endif // _LIBCPP_MATH_H
 
 
+
 class Random{
     private:
-        static std::uniform_real_distribution<double> distrib;
-        static std::random_device dev;
-        static std::mt19937 gen;
+        std::uniform_real_distribution<double> distrib;
+        std::random_device dev;
+        std::mt19937 gen;
 
     public:
-        static double Double(){
+        Random(int min, int max, int seed = -1) :
+                    distrib(std::uniform_real_distribution<double>(min, max)),
+                    dev(std::random_device()),
+                    gen(std::mt19937(seed == -1? Random::dev() : seed)) {}
+
+        double Double(){
             return distrib(gen);
         }
 
-        /**
-         * @brief Get random number in range [a, b]
-         * 
-         * @param a 
-         * @param b 
-         * @return int 
-         */
-        static int FromRange(int a, int b){
+        int FromRange(int a, int b){
             if (a > b) std::swap(a, b);
             return round(distrib(gen) * (b - a + 1) + a - 0.5);
         }
 };
-
-std::uniform_real_distribution<double> Random::distrib = std::uniform_real_distribution<double>(0, 1);
-std::random_device Random::dev = std::random_device();
-std::mt19937 Random::gen = std::mt19937(Random::dev());
-
 
 #endif

@@ -1,10 +1,9 @@
 #pragma once
 #include "stb_image.h"
 
-#include <vector>
-
 #include "array2d.h"
 
+#include <vector>
 
 
 class Image {
