@@ -77,6 +77,7 @@ class Array2D {
             obj.clone(*this);
         }
         
+        Array2D() : Array2D(0, 0) {}
         /**
          * @brief Constructs Array2D filled with default values for type T.
          */
@@ -101,6 +102,7 @@ class Array2D {
 
 
     public:  // ----- iterator Overloads -----
+    // TODO FIX
         typedef T* iterator;
         typedef const T* const_iterator;
         iterator begin() { return &get(0); }
