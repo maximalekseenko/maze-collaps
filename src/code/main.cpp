@@ -13,10 +13,11 @@ int main() {
     // std::cout << Image::GetPixelValue(0xa0, 0xa0, 0xa0) << " ";
     // std::cout << Image::GetPixelValue(0xa0, 0x10, 0x10) << "\n";
 
-    OverlappingModel AA("dungeon1.png", 3, 50, 50, true, true, 1, false, Model::Heuristic::Entropy);
+    OverlappingModel AA("dungeon2.png", 3, 50, 50, true, true, 1, false, Model::Heuristic::Entropy);
 
-    AA.Run(-1, -1);
-    AA.Save("AA");
+    if (AA.Run(-1, -1))
+        AA.Save("AA");
+    else std::cout << "ERR";
     // Array2D<int> I = GenerateMap("dungeon1.png", 3, 12, 12);
 
     // Array2D<std::string> A(I.X, I.Y);
