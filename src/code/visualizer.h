@@ -36,7 +36,8 @@ struct Visualizer
 
         // write
         for (int i = 0; i < maxI; i ++) 
-            screen[x + y * width + i] = line[i];
+            if (line[i] != '~')
+                screen[x + y * width + i] = line[i];
 
         // changed
         isChanged = true;

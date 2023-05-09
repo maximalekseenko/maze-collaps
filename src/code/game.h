@@ -44,22 +44,22 @@ struct Game
         Visualizer::Write(0,  1, L"|                                                                                                  |");
         Visualizer::Write(0,  2, L"|                                                                                                  |");
         Visualizer::Write(0,  3, L"|                                                                                                  |");
-        Visualizer::Write(0,  4, L"|                                                                                                  |");
-        Visualizer::Write(0,  5, L"|                                                                                                  |");
-        Visualizer::Write(0,  6, L"|                                                                                                  |");
-        Visualizer::Write(0,  7, L"|                                                                                                  |");
-        Visualizer::Write(0,  8, L"|                                                                                                  |");
-        Visualizer::Write(0,  9, L"|                                                                                                  |");
-        Visualizer::Write(0, 10, L"|                                                                                                  |");
-        Visualizer::Write(0, 11, L"|                                                                                                  |");
-        Visualizer::Write(0, 12, L"|                                                                                                  |");
-        Visualizer::Write(0, 13, L"|                                                                                                  |");
-        Visualizer::Write(0, 14, L"|                                                                                                  |");
-        Visualizer::Write(0, 15, L"|                                                                                                  |");
-        Visualizer::Write(0, 16, L"|                                                                                                  |");
-        Visualizer::Write(0, 17, L"|                                                                                                  |");
-        Visualizer::Write(0, 18, L"|                                                                                                  |");
-        Visualizer::Write(0, 19, L"|                                                                                                  |");
+        Visualizer::Write(0,  4, L"|--------------------------------||                          Your spells                           |");
+        Visualizer::Write(0,  5, L"|................................|||--------------------|--------------------|--------------------||");
+        Visualizer::Write(0,  6, L"|................................|||                    |                    |                    ||");
+        Visualizer::Write(0,  7, L"|................................|||                    |                    |                    ||");
+        Visualizer::Write(0,  8, L"|................................|||                    |                    |                    ||");
+        Visualizer::Write(0,  9, L"|................................|||                    |                    |                    ||");
+        Visualizer::Write(0, 10, L"|................................|||                    |                    |                    ||");
+        Visualizer::Write(0, 11, L"|................................|||--------------------|--------------------|--------------------||");
+        Visualizer::Write(0, 12, L"|................................|||          Your item                    Item on ground         ||");
+        Visualizer::Write(0, 13, L"|................................|||------------------------------|-------------------------------||");
+        Visualizer::Write(0, 14, L"|................................|||                              |                               ||");
+        Visualizer::Write(0, 15, L"|................................|||                              |                               ||");
+        Visualizer::Write(0, 16, L"|................................|||                              |                               ||");
+        Visualizer::Write(0, 17, L"|................................|||                              |                               ||");
+        Visualizer::Write(0, 18, L"|................................|||                              |                               ||");
+        Visualizer::Write(0, 19, L"|--------------------------------|||------------------------------|-------------------------------||");
         Visualizer::Write(0, 20, L"|                                                                                                  |");
         Visualizer::Write(0, 21, L"|                                                                                                  |");
         Visualizer::Write(0, 22, L"|                                                                                                  |");
@@ -92,10 +92,9 @@ struct Game
         Visualizer::Write(0, 49, L"|---------------------------------------------------------------------------------------------------");
     }
 
-    void PrintIntro()
+
+    void VisualBackgroudIntro()
     {
-        // select spell by inputting spell's name in lowercase
-        // get spell discription with 'help <spell>' command
         Visualizer::Write(0,  0, L"----------------------------------------------------------------------------------------------------");
         Visualizer::Write(0,  1, L"|                        ...but when you add dragon blood to quantum lexir,                        |");
         Visualizer::Write(0,  2, L"|                             you realize what was done. But to late.                              |");
@@ -105,21 +104,21 @@ struct Game
         Visualizer::Write(0,  6, L"|                         before universe distabilizes and you vaporize...                         |");
         Visualizer::Write(0,  7, L"|                                                                                                  |");
         Visualizer::Write(0,  8, L"|                                                                                                  |");
-        Visualizer::Write(0,  9, L"|                                                                                                  |");
-        Visualizer::Write(0, 10, L"|                                                                                                  |");
-        Visualizer::Write(0, 11, L"|                                                                                                  |");
-        Visualizer::Write(0, 12, L"|                                                                                                  |");
-        Visualizer::Write(0, 13, L"|                                                                                                  |");
-        Visualizer::Write(0, 14, L"|                                                                                                  |");
-        Visualizer::Write(0, 15, L"|                                                                                                  |");
+        Visualizer::Write(0,  9, L"|               |--------------------| |--------------------| |--------------------|               |");
+        Visualizer::Write(0, 10, L"|               |                    | |                    | |                    |               |");
+        Visualizer::Write(0, 11, L"|               |                    | |                    | |                    |               |");
+        Visualizer::Write(0, 12, L"|               |                    | |                    | |                    |               |");
+        Visualizer::Write(0, 13, L"|               |                    | |                    | |                    |               |");
+        Visualizer::Write(0, 14, L"|               |                    | |                    | |                    |               |");
+        Visualizer::Write(0, 15, L"|               |--------------------| |--------------------| |--------------------|               |");
         Visualizer::Write(0, 16, L"|                                                                                                  |");
-        Visualizer::Write(0, 17, L"|                                                                                                  |");
-        Visualizer::Write(0, 18, L"|                                                                                                  |");
-        Visualizer::Write(0, 19, L"|                                                                                                  |");
-        Visualizer::Write(0, 20, L"|                                                                                                  |");
-        Visualizer::Write(0, 21, L"|                                                                                                  |");
-        Visualizer::Write(0, 22, L"|                                                                                                  |");
-        Visualizer::Write(0, 23, L"|                                                                                                  |");
+        Visualizer::Write(0, 17, L"|                          |--------------------|  |--------------------|                          |");
+        Visualizer::Write(0, 18, L"|                          |                    |  |                    |                          |");
+        Visualizer::Write(0, 19, L"|                          |                    |  |                    |                          |");
+        Visualizer::Write(0, 20, L"|                          |                    |  |                    |                          |");
+        Visualizer::Write(0, 21, L"|                          |                    |  |                    |                          |");
+        Visualizer::Write(0, 22, L"|                          |                    |  |                    |                          |");
+        Visualizer::Write(0, 23, L"|                          |--------------------|  |--------------------|                          |");
         Visualizer::Write(0, 24, L"|                                                                                                  |");
         Visualizer::Write(0, 25, L"|                                                                                                  |");
         Visualizer::Write(0, 26, L"|                                                                                                  |");
@@ -146,6 +145,43 @@ struct Game
         Visualizer::Write(0, 47, L"|                                                                                                  |");
         Visualizer::Write(0, 48, L"|                                                                                                  |");
         Visualizer::Write(0, 49, L"|---------------------------------------------------------------------------------------------------");
+    }
+
+
+    void VisaualSetSpell(int x, int y, int id)
+    {
+
+    }
+
+    void VisaualBorderSpellDefault(int x, int y)
+    {
+        Visualizer::Write(x, y+0, L"┏━━━━━━━━━━━━━━━━━━━━┓");
+        Visualizer::Write(x, y+1, L"┃                    ┃");
+        Visualizer::Write(x, y+2, L"┃                    ┃");
+        Visualizer::Write(x, y+3, L"┃                    ┃");
+        Visualizer::Write(x, y+4, L"┃                    ┃");
+        Visualizer::Write(x, y+5, L"┃                    ┃");
+        Visualizer::Write(x, y+6, L"┗━━━━━━━━━━━━━━━━━━━━┛");
+    }
+    void VisaualBorderSpellSelected(int x, int y)
+    {
+        Visualizer::Write(x, y+0, L"╔════════════════════╗");
+        Visualizer::Write(x, y+1, L"║                    ║");
+        Visualizer::Write(x, y+2, L"║                    ║");
+        Visualizer::Write(x, y+3, L"║                    ║");
+        Visualizer::Write(x, y+4, L"║                    ║");
+        Visualizer::Write(x, y+5, L"║                    ║");
+        Visualizer::Write(x, y+6, L"╚════════════════════╝");
+    }
+    void VisaualBorderSpellDisabled(int x, int y)
+    {
+        Visualizer::Write(x, y+0, L"┌────────────────────┐");
+        Visualizer::Write(x, y+1, L"│                    │");
+        Visualizer::Write(x, y+2, L"│                    │");
+        Visualizer::Write(x, y+3, L"│                    │");
+        Visualizer::Write(x, y+4, L"│                    │");
+        Visualizer::Write(x, y+5, L"│                    │");
+        Visualizer::Write(x, y+6, L"└────────────────────┘");
     }
 
 
@@ -156,7 +192,8 @@ struct Game
 
     void Intro()
     {
-
+        VisualBackgroudIntro();
+        
     }
 };
 

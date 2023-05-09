@@ -21,6 +21,11 @@ int main() {
     Visualizer::Init(100, 50);
     g.PrintIntro();
     Visualizer::Out();
+
+    int a;
+    std::cin >> a;
+    g.BorderSpellDisabled(16, 9);
+    Visualizer::Out();
     // g.Level(1);
 
 //     // std::cout << Image::GetPixelValue(0x10, 0xa0, 0x10) << " ";
