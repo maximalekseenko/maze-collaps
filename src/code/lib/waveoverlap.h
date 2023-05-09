@@ -154,59 +154,6 @@ class OverlappingModel : public Model {
     public: void Save(std::string filename)
     {
 
-        std::cout << "----- PATTERNS -----" << std::endl;
-
-        int iii = 0;
-        for (auto pattern : patterns)
-        {
-            for (int y = 0; y < N; y ++)
-            {
-                for (int x = 0; x < N; x ++)
-                    switch (colors[pattern[x + y * N]])
-                    {
-                        case 1052688:  std::cout << "."; break;
-                        case 10526880: std::cout << "█"; break;
-                        case 1052832:  std::cout << "◙"; break;
-                        default: break;
-                    }
-                std::cout << '\t' << iii << '\t' << hash(pattern, colors.size(), N) << std::endl;
-            }
-            std::cout << std::endl;
-            iii ++;
-        }
-
-        std::cout << "----- PROPAGATOR -----" << std::endl;
-        for (int d = 0; d < 4; d ++)
-            for (int t = 0; t < T; t ++) 
-            {
-                for (auto A : propagator[d][t])
-                { std::cout << "in " << d << " from " << t << " to " << A << std::endl;
-                    for (int y = 0; y < N; y ++)
-                    {
-                        for (int x = 0; x < N; x ++)
-                            switch (colors[patterns[t][x + y * N]])
-                            {
-                                case 1052688:  std::cout << "."; break;
-                                case 10526880: std::cout << "█"; break;
-                                case 1052832:  std::cout << "◙"; break;
-                                default: break;
-                            }
-                        std::cout << ' ';
-                        for (int x = 0; x < N; x ++)
-                            switch (colors[patterns[A][x + y * N]])
-                            {
-                                case 1052688:  std::cout << "."; break;
-                                case 10526880: std::cout << "█"; break;
-                                case 1052832:  std::cout << "◙"; break;
-                                default: break;
-                            }
-                        std::cout << std::endl;
-                    }std::cout << std::endl;
-                }
-            }
-
-                    // std::cout << d << ' ' << t << ' ' << A << std::endl;
-         
         std::cout << "----- RESULT -----" << std::endl;
 
         for (int y = 0; y < MY; y++)
@@ -221,60 +168,12 @@ class OverlappingModel : public Model {
                         case 1052688:  std::cout << "."; break;
                         case 10526880: std::cout << "█"; break;
                         case 1052832:  std::cout << "◙"; break;
+                        case 1089552:  std::cout << "#"; break;
                         default: break;
                     }
             }
-            // std::cout << '\t';
-            // for (int x = 0; x < MX; x++)
-            // {
-            //     int dx = x < MX - N + 1 ? 0 : N - 1;
-            //     std::cout << observed[x - dx + (y - dy) * MX] << '\t';
-            // }
             std::cout << std::endl;
         }
 
-
-        // int[] bitmap = new int[MX * MY];
-        // if (observed[0] >= 0)
-        // {
-        //     for (int y = 0; y < MY; y++)
-        //     {
-        //         int dy = y < MY - N + 1 ? 0 : N - 1;
-        //         for (int x = 0; x < MX; x++)
-        //         {
-        //             int dx = x < MX - N + 1 ? 0 : N - 1;
-        //             bitmap[x + y * MX] = colors[patterns[observed[x - dx + (y - dy) * MX]][dx + dy * N]];
-        //         }
-        //     }
-        // }
-        // else
-        // {
-        //     for (int i = 0; i < wave.Length; i++)
-        //     {
-        //         int contributors = 0, r = 0, g = 0, b = 0;
-        //         int x = i % MX, y = i / MX;
-        //         for (int dy = 0; dy < N; dy++) for (int dx = 0; dx < N; dx++)
-        //             {
-        //                 int sx = x - dx;
-        //                 if (sx < 0) sx += MX;
-
-        //                 int sy = y - dy;
-        //                 if (sy < 0) sy += MY;
-
-        //                 int s = sx + sy * MX;
-        //                 if (!periodic && (sx + N > MX || sy + N > MY || sx < 0 || sy < 0)) continue;
-        //                 for (int t = 0; t < T; t++) if (wave[s][t])
-        //                     {
-        //                         contributors++;
-        //                         int argb = colors[patterns[t][dx + dy * N]];
-        //                         r += (argb & 0xff0000) >> 16;
-        //                         g += (argb & 0xff00) >> 8;
-        //                         b += argb & 0xff;
-        //                     }
-        //             }
-        //         bitmap[i] = unchecked((int)0xff000000 | ((r / contributors) << 16) | ((g / contributors) << 8) | b / contributors);
-        //     }
-        // }
-        // BitmapHelper.SaveBitmap(bitmap, MX, MY, filename);
     }
 };

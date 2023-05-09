@@ -82,6 +82,7 @@
         "map": "cpp",
         "filesystem": "cpp",
         "set": "cpp",
-        "__tree": "cpp"
+        "__tree": "cpp",
+        "unordered_set": "cpp"
     }
 }
