@@ -1,12 +1,6 @@
-#define STB_IMAGE_IMPLEMENTATION
-
-
-
 #include "visualizer.h"
 
 #include "game.h"
-
-
 
 #include <locale>
 #include <codecvt>

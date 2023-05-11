@@ -4,6 +4,7 @@
 #include "image.h"
 #include <functional>
 #include <map>
+#include <iostream>
 
 
 class OverlappingWave : public Model {
