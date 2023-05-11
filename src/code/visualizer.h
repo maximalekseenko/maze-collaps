@@ -29,13 +29,9 @@ struct Visualizer
 
     static void Write(int x, int y, const std::wstring line)
     {
-        // fix length
-        // if (length + x > width) 
-        //     length = width - x - 1;
-        int maxI = x + line.size() > width ? width : line.size();
 
         // write
-        for (int i = 0; i < maxI; i ++) 
+        for (int i = 0; i < line.size(); i ++) 
             if (line[i] != '~')
                 screen[x + y * width + i] = line[i];
 

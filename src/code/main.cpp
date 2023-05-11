@@ -17,16 +17,15 @@ int main() {
     std::wcout.imbue(utf8);
 
 
+    // OverlappingWave AA("dungeon2.png", 4, 32,16, true, true, 8, false, Model::Heuristic::Entropy);
+    // AA.Run(-1, -1);
+    // AA.Save("");
+
     Game g;
     Visualizer::Init(100, 50);
-    g.PrintIntro();
-    Visualizer::Out();
-
-    int a;
-    std::cin >> a;
-    g.BorderSpellDisabled(16, 9);
-    Visualizer::Out();
-    // g.Level(1);
+    // g.Intro();
+    g.LoadMap(0);
+    g.Run();
 
 //     // std::cout << Image::GetPixelValue(0x10, 0xa0, 0x10) << " ";
 //     // std::cout << Image::GetPixelValue(0xa0, 0xa0, 0xa0) << " ";

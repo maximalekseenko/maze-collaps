@@ -329,17 +329,6 @@ class Model
             observed[i] = -1;
         }
         observedSoFar = 0;
-
-
-        if (ground)
-        {
-            for (int x = 0; x < MX; x++)
-            {
-                for (int t = 0; t < T - 1; t++) Ban(x + (MY - 1) * MX, t);
-                for (int y = 0; y < MY - 1; y++) Ban(x + y * MX, T - 1);
-            }
-            Propagate();
-        }
     }
 
     public: void Save(std::string filename);
