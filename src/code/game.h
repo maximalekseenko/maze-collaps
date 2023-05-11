@@ -23,7 +23,6 @@ struct Game
 {
     public:
         Player player;
-        std::vector<Enemy> enemies;
 
 
     std::string command, arg1, arg2;
@@ -65,9 +64,11 @@ struct Game
                             isPlayerCreated = true;
                             player = Player(x, y);
                         }
-
-                        // spawn enemy
-                        else enemies.push_back(Enemy::Create(x, y));
+                        else
+                        {
+                            // spawn enemy
+                            Enemy::Create(x, y);
+                        }
                     }
         }
 
@@ -141,9 +142,9 @@ struct Game
                     // else Visualizer::Write(GetVisX(x), GetVisY(y), TILES.find(-1).operator*().second);
             
             // enemies
-            // for (auto enemy : enemies)
-            //     if (InLOS(enemy.x, enemy.y))
-            //         Visualizer::Write(GetVisX(enemy.x), GetVisY(enemy.y), enemy.visual);
+            for (auto enemy : Enemy::enemies)
+                if (Map::IsLineOfSight(player.x, player.y, enemy.x, enemy.y))
+                    Visualizer::Write(GetVisX(enemy.x), GetVisY(enemy.y), enemy.visual);
 
             // player
             Visualizer::Write(GetVisX(player.x), GetVisY(player.y), player.visual);

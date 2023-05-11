@@ -2,10 +2,15 @@
 
 
 #include "random.h"
+#include <vector>
+#include "map.h"
 
 
 struct Enemy
 {
+    public:
+        static std::vector<Enemy> enemies;
+
     public: // +++BEHAVIOR VARIABLES+++
         int health;
         int x, y;
@@ -46,19 +51,26 @@ struct Enemy
 
         }
 
-    public:
-        static Enemy Create(int x, int y, double difficulty_mod = 1.0)
+    public: // +++CREATION AND MODIFICATION+++
+        static bool Create(int x, int y, double difficulty_mod = 1.0)
         {
+            if (!Map::IsNotObstacle(x, y)) return false;
+
             double value = Random::Get();
 
-            if      (value == 0)   return Enemy("d", 5, L"❦", L"❦", 0.9,                  x, y);
-            else if (value < 0.40) return Enemy("p", 1, L"♙", L"♟", 0.1 * difficulty_mod, x, y);
-            else if (value < 0.60) return Enemy("k", 1, L"♘", L"♞", 0.1 * difficulty_mod, x, y);
-            else if (value < 0.80) return Enemy("b", 1, L"♗", L"♝", 0.2 * difficulty_mod, x, y);
-            else if (value < 0.90) return Enemy("r", 1, L"♖", L"♜", 0.2 * difficulty_mod, x, y);
-            else if (value < 0.95) return Enemy("q", 1, L"♕", L"♛", 0.1 * difficulty_mod, x, y);
-            else if (value < 1   ) return Enemy("k", 1, L"♔", L"♚", 0.1 * difficulty_mod, x, y);
-            else                   return Enemy("e", -1,L"#", L"#", -1, x, y);
+            enemies.push_back(
+                value == 0   ? Enemy("d", 5, L"❦", L"❦", 0.9,                  x, y) :
+                value < 0.40 ? Enemy("p", 1, L"♙", L"♟", 0.1 * difficulty_mod, x, y) :
+                value < 0.60 ? Enemy("k", 1, L"♘", L"♞", 0.1 * difficulty_mod, x, y) :
+                value < 0.80 ? Enemy("b", 1, L"♗", L"♝", 0.2 * difficulty_mod, x, y) :
+                value < 0.90 ? Enemy("r", 1, L"♖", L"♜", 0.2 * difficulty_mod, x, y) :
+                value < 0.95 ? Enemy("q", 1, L"♕", L"♛", 0.1 * difficulty_mod, x, y) :
+                value < 1    ? Enemy("k", 1, L"♔", L"♚", 0.1 * difficulty_mod, x, y) :
+                               Enemy("e", -1,L"#", L"#", -1, x, y)
+            );
+
+            return true;
         }
 
 };
+std::vector<Enemy> Enemy::enemies;
