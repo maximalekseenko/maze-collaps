@@ -64,9 +64,9 @@ struct Game
                             isPlayerCreated = true;
                             player = Player(x, y);
                         }
+                        // spawn enemy
                         else
                         {
-                            // spawn enemy
                             Enemy::Create(x, y);
                         }
                     }
@@ -304,14 +304,4 @@ struct Game
         VisualBackgroudIntro();
         // player = Player();
     }
-};
-
-
-const std::map<int, const std::wstring> Game::TILES
-{
-    {-1,       L"*"}, // DARK
-    {1052688,  L"█"}, // WALL
-    {10526880, L" "}, // FLOOR
-    {1052832,  L" "}, // SPAWNER
-    {1089552,  L" "}, // TRAP
 };
