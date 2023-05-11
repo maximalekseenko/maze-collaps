@@ -18,7 +18,7 @@ g++ -std=c++20 -o $BUILD_DIR/build $CODE_DIR/**.cpp -fsanitize=address -fdiagnos
 
 # add data
 # cat $BUILD_DIR/build $DATA_DIR/*.PNG > $BUILD_DIR/build2
-# cp -a $DATA_DIR $BUILD_DIR/data
+cp -a $DATA_DIR $BUILD_DIR/data
 
 # run
 (cd $BUILD_DIR; ./build)

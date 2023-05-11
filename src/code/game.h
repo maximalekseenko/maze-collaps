@@ -12,6 +12,7 @@
 #include "overlappingwave.h"
 #include "player.h"
 #include "enemy.h"
+#include "map.h"
 
 #include "visualizer.h"
 
@@ -20,13 +21,6 @@
 
 struct Game
 {
-    public: // ++MAP RELATED VARIABLES+++
-        int* map = nullptr;
-        int MX = 32, MY = 16;
-        std::string mapName;
-        int mapId;
-        double difficulty;
-
     public:
         Player player;
         std::vector<Enemy> enemies;
@@ -37,51 +31,33 @@ struct Game
     private: // +++STATIC+++
         const static std::tuple<std::string, std::string> MAPS[];
         const static std::map<int, const std::wstring> TILES;
-        const static int GENTRYLIMIT;
 
 
     public: // +++LOAD MAP+++
-        void LoadMap(int mapId)
+        void LoadMap(int id)
         {
-            this->mapId = mapId;
-            this->difficulty = 1 + 0.1 * mapId;
-            this->mapName = std::get<0>(MAPS[mapId]);
-
-            MapGenerate();
+            
+            Map::Load(id);
 
             MapInit();
 
             VisualBackgroudMap();
-
             VisualDrawMap();
-
             Visualizer::Out();
         }
 
     
     private: // +++LOAD MAP+++
-        void MapGenerate()
-        {
-            // generate
-            auto generator = OverlappingWave(std::get<1>(MAPS[mapId]), 3, MX, MY, true, true, 8, false, Model::Heuristic::Entropy);
-            int trys = GENTRYLIMIT;
-            for(; trys != 0; trys --) if (generator.Run(-1, -1)) break;
-            if (trys == 0) throw std::runtime_error("LoadLevel trys limit reached");
-
-            // set map
-            if (this->map != nullptr) delete[] this->map;
-            this->map = generator.Result();
-        }
 
         void MapInit()
         {
 
             bool isPlayerCreated = false;
-            for (int y = 0; y < MY; y ++)
-                for (int x = 0; x < MX; x ++)
+            for (int y = 0; y < Map::MY; y ++)
+                for (int x = 0; x < Map::MX; x ++)
 
                     // if spawner
-                    if (map[x + y * MX] == 1052832)
+                    if (Map::Get(x, y) == Map::TILE::SPAWNER)
                     {
                         // spawn player
                         if (!isPlayerCreated) 
@@ -154,16 +130,20 @@ struct Game
         void VisualDrawMap()
         {
             // tiels
-            for (int y = 0; y < MY; y ++)
-                for (int x = 0; x < MX; x ++)
-                    if (InLOS(x, y))
-                         Visualizer::Write(GetVisX(x), GetVisY(y), TILES.find(map[x + y * MX]).operator*().second);
-                    else Visualizer::Write(GetVisX(x), GetVisY(y), TILES.find(-1).operator*().second);
+            for (int y = 0; y < Map::MY; y ++)
+                for (int x = 0; x < Map::MX; x ++)
+                    if (Map::IsLineOfSight(player.x, player.y, x, y))
+                        if (Map::Get(x, y) == Map::WALL)
+                             Visualizer::Write(GetVisX(x), GetVisY(y), L"█");
+                        else Visualizer::Write(GetVisX(x), GetVisY(y), L" ");
+                    else Visualizer::Write(GetVisX(x), GetVisY(y), L"*");
+                    //      Visualizer::Write(GetVisX(x), GetVisY(y), TILES.find(map[x + y * MX]).operator*().second);
+                    // else Visualizer::Write(GetVisX(x), GetVisY(y), TILES.find(-1).operator*().second);
             
             // enemies
-            for (auto enemy : enemies)
-                if (InLOS(enemy.x, enemy.y))
-                    Visualizer::Write(GetVisX(enemy.x), GetVisY(enemy.y), enemy.visual);
+            // for (auto enemy : enemies)
+            //     if (InLOS(enemy.x, enemy.y))
+            //         Visualizer::Write(GetVisX(enemy.x), GetVisY(enemy.y), enemy.visual);
 
             // player
             Visualizer::Write(GetVisX(player.x), GetVisY(player.y), player.visual);
@@ -172,43 +152,9 @@ struct Game
     private:
         int GetVisX(int x) { return 2 + GetMapX(x); }
         int GetVisY(int y) { return 5 + GetMapY(y); }
-        int GetMapX(int x) { return (MX * 3/2 + x - player.x) % MX; }
-        int GetMapY(int y) { return (MY * 3/2 + y - player.y) % MY; }
+        int GetMapX(int x) { return (Map::MX * 3/2 + x - player.x) % Map::MX; }
+        int GetMapY(int y) { return (Map::MY * 3/2 + y - player.y) % Map::MY; }
 
-        bool InLOS(int tx, int ty) {
-
-            // spell
-            if (player.isSpellEyeActive) return true;
-
-            int px = player.x, py = player.y;
-
-            // fix fo recursive
-            if (abs(tx - px + 1) > MX / 2)
-            {
-                if (tx < px) tx += MX;
-                else         tx -= MX;
-            }
-
-            if (abs(ty - py + 1) > MY / 2)
-            {
-                if (ty < py) ty += MY;
-                else         ty -= MY;
-            }
-
-            // find obstacles
-            int len = std::max(abs(tx - px), abs(ty - py));
-            for (int i = 0; i < len; i ++)
-            {
-                double step = double(i) / len;
-                int x = (int)(MX + round(px * (1.0 - step) + tx * step)) % MX;
-                int y = (int)(MY + round(py * (1.0 - step) + ty * step)) % MY;
-                
-                if (map[x + y * MX] == 1052688) return false;
-            }
-
-            // no obstacles found
-            return true;
-        }
 
 
     void VisualBackgroudIntro()
@@ -324,27 +270,19 @@ struct Game
                 /// movement
                 else if (task == "mu" || task == "move up"   ) 
                 {
-                    int newPlayerY = (MY + player.y - 1) % MY;
-                    if (IsNotObstacle(player.x, newPlayerY)) 
-                        player.y = newPlayerY;
+                        Map::Move(player.x, player.y, 0, -1);
                 }
                 else if (task == "ml" || task == "move left" )
                 {
-                    int newPlayerX = (MX + player.x - 1) % MX;
-                    if (IsNotObstacle(newPlayerX, player.y)) 
-                        player.x = newPlayerX;
+                    Map::Move(player.x, player.y, -1, 0);
                 }
                 else if (task == "md" || task == "move down" )
                 {
-                    int newPlayerY = (MY + player.y + 1) % MY;
-                    if (IsNotObstacle(player.x, newPlayerY)) 
-                        player.y = newPlayerY;
+                    Map::Move(player.x, player.y, 0, 1);
                 }
                 else if (task == "mr" || task == "move right")
                 {
-                    int newPlayerX = (MX + player.x + 1) % MX;
-                    if (IsNotObstacle(newPlayerX, player.y)) 
-                        player.x = newPlayerX;
+                    Map::Move(player.x, player.y, 1, 0);
                 }
 
                 /// spells
@@ -360,27 +298,12 @@ struct Game
             }
         }
 
-    bool IsNotObstacle(int x, int y)
-    {
-        if (map[x + y * MX] == 1052688) return false;
-        for (auto enemy : enemies) if (enemy.x == x && enemy.y == y) return false;
-        return true;
-    }
-
     void Intro()
     {
         VisualBackgroudIntro();
         // player = Player();
     }
 };
-
-
-const std::tuple<std::string, std::string> Game::MAPS[]
-{
-    {"The Entrance", "theentrance.png"},
-    {"Hostile Cave", "hostilecave.png"},
-};
-const int Game::GENTRYLIMIT = 5;
 
 
 const std::map<int, const std::wstring> Game::TILES

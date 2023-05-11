@@ -1,15 +1,11 @@
 #pragma once
 
 
-#include <random>
+#include "random.h"
 
 
 struct Enemy
 {
-    private:
-        static std::uniform_real_distribution<double> dist;
-        static std::mt19937 gen;
-
     public: // +++BEHAVIOR VARIABLES+++
         int health;
         int x, y;
@@ -53,7 +49,7 @@ struct Enemy
     public:
         static Enemy Create(int x, int y, double difficulty_mod = 1.0)
         {
-            double value = dist(gen);
+            double value = Random::Get();
 
             if      (value == 0)   return Enemy("d", 5, L"❦", L"❦", 0.9,                  x, y);
             else if (value < 0.40) return Enemy("p", 1, L"♙", L"♟", 0.1 * difficulty_mod, x, y);
@@ -66,5 +62,3 @@ struct Enemy
         }
 
 };
-std::uniform_real_distribution<double> Enemy::dist = std::uniform_real_distribution<double>();
-std::mt19937 Enemy::gen = std::mt19937(std::random_device()());
