@@ -14,7 +14,7 @@ class Image {
             int channels;
             unsigned char* image = stbi_load(filename, &width, &height, &channels, 0);
 
-            if (image == NULL) throw;
+            if (image == NULL) throw std::runtime_error("file '" + std::string(filename) + "' not found");
 
             int* parsedImage = new int[width * height];
 

@@ -1,9 +1,8 @@
 #pragma once
 
 
-#include "random.h"
+#include <string>
 #include <vector>
-#include "map.h"
 
 
 struct Enemy
@@ -14,7 +13,8 @@ struct Enemy
     public: // +++BEHAVIOR VARIABLES+++
         int health;
         int x, y;
-        bool aleart = false;
+        bool isChasing;
+        bool isAttacking;
         int tx, ty;
         std::string name;
         std::wstring visual;
@@ -26,10 +26,15 @@ struct Enemy
         Enemy(std::string name, int health, std::wstring visual_idle, std::wstring visual_attk, double difficulty, int x, int y);
 
     public:
-        void Turn(int tx, int ty, bool LOS, double difficulty_mod = 1.0);
+        void Turn(int tx, int ty, double difficulty_mod = 1.0);
+    
+    private:
+        void AttackStart();
+        void AttackEnd();
+
     private:
         void Roam();
-        void Attack();
+        void Attack(int tx, int ty);
 
 
     public: // +++CREATION AND MODIFICATION+++

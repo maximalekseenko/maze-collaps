@@ -6,6 +6,7 @@
 
 #include "overlappingwave.h"
 #include "enemy.h"
+#include "log.h"
 
 
 
@@ -24,7 +25,7 @@ double Map::difficulty;
 
 
 // +++LOAD FUNCTIONS+++
-void Map::Load(std::string fileName)
+bool Map::Load(std::string fileName)
 {
     auto generator = OverlappingWave(
         "data/" + fileName + ".png", 3, Map::MX, Map::MY, 
@@ -33,7 +34,11 @@ void Map::Load(std::string fileName)
     // generate
     int trys = GENTRYLIMIT;
     for(; trys != 0; trys --) if (generator.Run(-1, -1)) break;
-    if (trys == 0) throw std::runtime_error("LoadLevel trys limit reached");
+    if (trys == 0) 
+    {
+        Log::Out("--ERR: Map::Load() failed due try limit for '" + fileName + "'");
+        return false;
+    }
 
     // set map
     if (Map::map != nullptr) delete[] Map::map;
@@ -43,22 +48,25 @@ void Map::Load(std::string fileName)
     for (int i = 0; i < MX * MY; i ++)
         Map::map[i] = static_cast<TILE>(result[i]);
     delete[] result;
+
+    Log::Out("--LOG: Map::Load() success for '" + fileName + "'");
+    return true;
 }
 
 
-void Map::Load(int mapId)
+bool Map::Load(int mapId)
 {
     Map::mapId = mapId;
     switch (mapId)
     {
-        case 0: Load("hostilecave"); break;
-        case 1: Load("theentrance"); break;
-        default: break;
+        case 0: Load("hostilecave"); return true;
+        case 1: Load("theentrance"); return true;
+        default: return false;
     }
 }
 
 
-void Map::LoadNext() { Load(mapId + 1); }
+bool Map::LoadNext() { return Load(mapId + 1); }
 
 
 // +++GEOMETRY FUNCTIONS+++
@@ -80,10 +88,10 @@ bool Map::IsNotObstacle(int x, int y)
 void Map::Fix(int &x, int &y)
 {
     if (x >= MX) x %= MX;
-    else if (x < 0) x = MX - (abs(x) % MX);
+    else if (x < 0) x = MX + x % MX;
 
     if (y >= MY) y %= MY;
-    else if (y < 0) y = MY - (abs(y) % MY);
+    else if (y < 0) y = MY + y % MY;
 }
 
 bool Map::Move(int &x, int &y, int dx, int dy)
@@ -92,6 +100,7 @@ bool Map::Move(int &x, int &y, int dx, int dy)
     {
         x += dx;
         y += dy;
+        Fix(x, y);
         return true;
     }
 
@@ -99,15 +108,16 @@ bool Map::Move(int &x, int &y, int dx, int dy)
 }
 
 bool Map::IsLineOfSight(int x1, int y1, int x2, int y2)
-{
+{ 
+    // return true;
     // fix fo recursive
-    if (abs(x2 - x1 + 1) > MX / 2)
+    if (abs(x2 - x1) > MX / 2)
     {
         if (x2 < x1) x2 += MX;
         else         x2 -= MX;
     }
 
-    if (abs(y2 - y1 + 1) > MY / 2)
+    if (abs(y2 - y1) > MY / 2)
     {
         if (y2 < y1) y2 += MY;
         else         y2 -= MY;
@@ -118,10 +128,10 @@ bool Map::IsLineOfSight(int x1, int y1, int x2, int y2)
     for (int i = 0; i < len; i ++)
     {
         double step = double(i) / len;
-        int x = (int)(MX + round(x1 * (1.0 - step) + x2 * step)) % MX;
-        int y = (int)(MY + round(y1 * (1.0 - step) + y2 * step)) % MY;
+        int x = round(x1 * (1.0 - step) + x2 * step);
+        int y = round(y1 * (1.0 - step) + y2 * step);
         
-        if (map[x + y * MX] == 1052688) return false;
+        if (Get(x, y) == Map::TILE::WALL) return false;
     }
 
     // no obstacles found

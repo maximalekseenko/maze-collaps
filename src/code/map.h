@@ -25,9 +25,9 @@ struct Map
 
 
     public: // +++LOAD FUNCTIONS+++
-        static void Load(std::string fileName);
-        static void Load(int mapId);
-        static void LoadNext();
+        static bool Load(std::string fileName);
+        static bool Load(int mapId);
+        static bool LoadNext();
 
 
     public: // +++GEOMETRY FUNCTIONS+++

@@ -2,15 +2,17 @@
 
 
 #include "random.h"
-#include <vector>
 #include "map.h"
+#include "log.h"
 
+
+#include <vector>
 
 
 
 std::vector<Enemy> Enemy::enemies;
 
-// +++BEHAVIOR VARIABLES+++
+
 
 
 Enemy::Enemy(std::string name, int health, std::wstring visual_idle, std::wstring visual_attk, double difficulty, int x, int y)
@@ -19,26 +21,62 @@ Enemy::Enemy(std::string name, int health, std::wstring visual_idle, std::wstrin
     x(x), y(y) {}
 
 
-void Enemy::Turn(int tx, int ty, bool LOS, double difficulty_mod)
+void Enemy::Turn(int tx, int ty, double difficulty_mod)
 {
-    // bool act = dist(gen) > difficulty;
+    bool isTurning = Random::Get() - (0.2 * isChasing) < difficulty * difficulty_mod;
+    bool isInLOS = Map::IsLineOfSight(x, y, tx, ty);
 
-    // if (aleart && !LOS && !act) aleart = false;
-    // else if (act && !aleart && !LOS) Roam();
-    // else if (aleart && act) Attack();
-    // else { aleart = false;}
-    
-    // if (value > difficulty) return;
+
+    Log::Out(std::to_string(x) + '-' + std::to_string(y) + ' '
+           + std::to_string(isTurning) + ' ' 
+           + std::to_string(isInLOS) + ' '
+           + std::to_string(isAttacking) + ' ' 
+           + std::to_string(isChasing));
+        
+
+    // Attack
+    if (isAttacking)
+        if (isChasing) Attack(tx, ty);
+        else Attack(x, y);
+    else if (isTurning) AttackStart();
+
+
+    // LOS
+    if (isInLOS) isChasing = true;
+    else if (isChasing && !isTurning) isChasing = false;
+
+
+    Log::Out(std::to_string(x) + '-' + std::to_string(y) + ' '
+           + std::to_string(isTurning) + ' ' 
+           + std::to_string(isInLOS) + ' '
+           + std::to_string(isAttacking) + ' ' 
+           + std::to_string(isChasing));
+}
+
+void Enemy::AttackStart()
+{
+    isAttacking = true;
+    visual = visual_attk;
+    Log::Out("Attack start" + std::to_string(isAttacking));
+}
+void Enemy::AttackEnd()
+{
+    isAttacking = false;
+    visual = visual_idle;
+    Log::Out("Attack end");
 }
 
 
 void Enemy::Roam()
 {
-
+    AttackEnd();
 }
-void Enemy::Attack()
-{
 
+void Enemy::Attack(int tx, int ty)
+{
+    Log::Out("Attack!");
+
+    AttackEnd();
 }
 
 // +++CREATION AND MODIFICATION+++

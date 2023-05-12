@@ -137,8 +137,6 @@ struct Game
                              Visualizer::Write(GetVisX(x), GetVisY(y), L"█");
                         else Visualizer::Write(GetVisX(x), GetVisY(y), L" ");
                     else Visualizer::Write(GetVisX(x), GetVisY(y), L"*");
-                    //      Visualizer::Write(GetVisX(x), GetVisY(y), TILES.find(map[x + y * MX]).operator*().second);
-                    // else Visualizer::Write(GetVisX(x), GetVisY(y), TILES.find(-1).operator*().second);
             
             // enemies
             for (auto enemy : Enemy::enemies)
@@ -295,6 +293,7 @@ struct Game
                 else continue;
 
                 // enemy turn
+                for (auto enemy : Enemy::enemies) enemy.Turn(player.x, player.y);
             }
         }
 
