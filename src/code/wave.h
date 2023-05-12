@@ -171,16 +171,10 @@ class Model
         for (int l = 0; l < limit || limit < 0; l++)
         {
             int node = NextUnobservedNode(gen);
-            // std::cout << "-now observing: " << node << std::endl;
             if (node >= 0)
             {
                 Observe(node, gen);
                 bool success = Propagate();
-                // for (int y = 0; y < MY; y ++) {
-                //     for (int x = 0; x < MX; x ++)
-                //         std::cout << sumsOfOnes[x + y * MX] << '\t';
-                //     std::cout << std::endl;
-                // } std::cout << std::endl;
                 if (!success) return false;
 
             }
@@ -195,7 +189,6 @@ class Model
     }
 
     /// @brief Get next node to observe
-    /// @return 
     private: int NextUnobservedNode(std::mt19937& gen)
     {
         if (heuristic == Heuristic::Scanline)
