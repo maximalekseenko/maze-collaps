@@ -3,17 +3,11 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <functional>
 
-// enemies.push_back(
-//         value == 0   ? Enemy("d", 5, L"❦", L"❦", 0.9,                  position) :
-//         value < 0.40 ? Enemy("p", 1, L"♙", L"♟", 0.1 * difficulty_mod, position) :
-//         value < 0.60 ? Enemy("n", 1, L"♘", L"♞", 0.1 * difficulty_mod, position) :
-//         value < 0.80 ? Enemy("b", 1, L"♗", L"♝", 0.2 * difficulty_mod, position) :
-//         value < 0.90 ? Enemy("r", 1, L"♖", L"♜", 0.2 * difficulty_mod, position) :
-//         value < 0.95 ? Enemy("q", 1, L"♕", L"♛", 0.1 * difficulty_mod, position) :
-//         value < 1    ? Enemy("k", 1, L"♔", L"♚", 0.1 * difficulty_mod, position) :
-//                        Enemy("e", -1,L"#", L"#", -1,                   position)
-//     );
+
+
 struct Enemy
 {
     public:
@@ -27,36 +21,37 @@ struct Enemy
             QUEEN  = 5,
             KING   = 6
         };
+        struct EnemyData
+        {  
+            const std::wstring visual_idle;
+            const std::wstring visual_attk;
+            const std::function<std::vector<int>(int)> GetMoves;
+        };
+        static const std::map<Name, EnemyData> ENEMYDATAS;
         static std::vector<Enemy> enemies;
-        static std::tuple<Name, std::wstring, std::wstring,std::wstring> enemiyData[];
 
     public: // +++BEHAVIOR VARIABLES+++
-        int health;
+        Name name;
+        double difficulty;
         int position;
         bool isChasing = false;
         bool isAttacking = false;
-        std::string name;
-        std::wstring visual, visual_attk, visual_idle;
-        double difficulty;
 
     private:
-        Enemy(std::string name, int health, std::wstring visual_idle, std::wstring visual_attk, double difficulty, int position);
+        Enemy(Name name, int position, double difficulty = 1.0);
 
-    public:
+
+    public: // +++COMMON USE+++
+        std::wstring GetVisual();
         void Turn(int targetPosition, double difficulty_mod = 1.0);
     
-    private:
-        void AttackStart();
-        void AttackEnd();
 
-    private:
+    private: // +++TURN SUPPORT FUNCTION+++
         void Attack(int targetPos);
         double GetDepth(int position, int targetPosition, int moveLimit);
 
+
     public: // +++CREATION AND MODIFICATION+++
         static bool Create(int position, double difficulty_mod = 1.0);
-
-
-        static std::vector<int> GetMoves(std::string name, int position);
 
 };

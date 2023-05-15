@@ -139,7 +139,7 @@ struct Game
             // enemies
             for (auto enemy : Enemy::enemies)
                 if (SEE || Map::IsLineOfSight(player.position, enemy.position))
-                    Visualizer::Write(GetVisX(Map::X(enemy.position)), GetVisY(Map::Y(enemy.position)), enemy.visual);
+                    Visualizer::Write(GetVisX(Map::X(enemy.position)), GetVisY(Map::Y(enemy.position)), enemy.GetVisual());
 
             // player
             Visualizer::Write(GetVisX(Map::X(player.position)), GetVisY(Map::Y(player.position)), player.visual);
