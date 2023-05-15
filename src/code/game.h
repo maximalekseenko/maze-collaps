@@ -26,10 +26,6 @@ struct Game
 
     std::string command, arg1, arg2;
 
-    private: // +++STATIC+++
-        const static std::tuple<std::string, std::string> MAPS[];
-        const static std::map<int, const std::wstring> TILES;
-
 
     public: // +++LOAD MAP+++
         void LoadMap(int id)
@@ -50,25 +46,26 @@ struct Game
         void MapInit()
         {
 
+            Enemy::enemies.clear();
             bool isPlayerCreated = false;
-            for (int y = 0; y < Map::MY; y ++)
-                for (int x = 0; x < Map::MX; x ++)
-
-                    // if spawner
-                    if (Map::Get(x, y) == Map::TILE::SPAWNER)
+            for (int i = 0; i < Map::MI; i ++)
+            {
+                // if spawner
+                if (Map::Get(i) == Map::TILE::SPAWNER)
+                {
+                    // spawn player
+                    if (!isPlayerCreated) 
                     {
-                        // spawn player
-                        if (!isPlayerCreated) 
-                        {
-                            isPlayerCreated = true;
-                            player = Player(x, y);
-                        }
-                        // spawn enemy
-                        else
-                        {
-                            Enemy::Create(x, y);
-                        }
+                        isPlayerCreated = true;
+                        player = Player(i);
                     }
+                    // spawn enemy
+                    else
+                    {
+                        Enemy::Create(i);
+                    }
+                }
+            }
         }
 
 
@@ -129,29 +126,31 @@ struct Game
     public:
         void VisualDrawMap()
         {
+            bool SEE = false;
             // tiels
             for (int y = 0; y < Map::MY; y ++)
                 for (int x = 0; x < Map::MX; x ++)
-                    if (Map::IsLineOfSight(player.x, player.y, x, y))
-                        if (Map::Get(x, y) == Map::WALL)
+                    if (SEE || Map::IsLineOfSight(player.position, x + y * Map::MX))
+                        if (Map::Get(x + y * Map::MX) == Map::WALL)
                              Visualizer::Write(GetVisX(x), GetVisY(y), L"█");
-                        else Visualizer::Write(GetVisX(x), GetVisY(y), L" ");
+                        else Visualizer::Write(GetVisX(x), GetVisY(y), L".");
                     else Visualizer::Write(GetVisX(x), GetVisY(y), L"*");
             
             // enemies
             for (auto enemy : Enemy::enemies)
-                if (Map::IsLineOfSight(player.x, player.y, enemy.x, enemy.y))
-                    Visualizer::Write(GetVisX(enemy.x), GetVisY(enemy.y), enemy.visual);
+                if (SEE || Map::IsLineOfSight(player.position, enemy.position))
+                    Visualizer::Write(GetVisX(Map::X(enemy.position)), GetVisY(Map::Y(enemy.position)), enemy.visual);
 
             // player
-            Visualizer::Write(GetVisX(player.x), GetVisY(player.y), player.visual);
+            Visualizer::Write(GetVisX(Map::X(player.position)), GetVisY(Map::Y(player.position)), player.visual);
         }
 
     private:
         int GetVisX(int x) { return 2 + GetMapX(x); }
         int GetVisY(int y) { return 5 + GetMapY(y); }
-        int GetMapX(int x) { return (Map::MX * 3/2 + x - player.x) % Map::MX; }
-        int GetMapY(int y) { return (Map::MY * 3/2 + y - player.y) % Map::MY; }
+        int GetMapX(int x) { return (Map::MX * 3/2 + x - Map::X(player.position)) % Map::MX; }
+        int GetMapY(int y) { return (Map::MY * 3/2 + y - Map::Y(player.position)) % Map::MY; }
+
 
 
 
@@ -254,10 +253,6 @@ struct Game
 
             while (true)
             {  
-                // draw map
-                VisualDrawMap();
-                Visualizer::Out();
-
                 // get task and args 
                 getline(std::cin, task);
 
@@ -268,19 +263,23 @@ struct Game
                 /// movement
                 else if (task == "mu" || task == "move up"   ) 
                 {
-                        Map::Move(player.x, player.y, 0, -1);
+                    if (!Map::IsNotObstacle(Map::Up(player.position))) continue;
+                    Map::Up(&player.position);
                 }
                 else if (task == "ml" || task == "move left" )
                 {
-                    Map::Move(player.x, player.y, -1, 0);
+                    if (!Map::IsNotObstacle(Map::Left(player.position))) continue;
+                    Map::Left(&player.position);
                 }
                 else if (task == "md" || task == "move down" )
                 {
-                    Map::Move(player.x, player.y, 0, 1);
+                    if (!Map::IsNotObstacle(Map::Down(player.position))) continue;
+                    Map::Down(&player.position);
                 }
                 else if (task == "mr" || task == "move right")
                 {
-                    Map::Move(player.x, player.y, 1, 0);
+                    if (!Map::IsNotObstacle(Map::Right(player.position))) continue;
+                    Map::Right(&player.position);
                 }
 
                 /// spells
@@ -293,7 +292,14 @@ struct Game
                 else continue;
 
                 // enemy turn
-                for (auto enemy : Enemy::enemies) enemy.Turn(player.x, player.y);
+                for (auto& enemy : Enemy::enemies) {
+                    enemy.Turn(player.position);
+                    if (enemy.position == player.position) throw std::runtime_error("ERROR: GAME LOST");
+                }
+
+                // draw map
+                VisualDrawMap();
+                Visualizer::Out();
             }
         }
 

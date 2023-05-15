@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <tuple>
 
 
 struct Map
@@ -18,7 +19,7 @@ struct Map
         static TILE* map;
 
     public: // +++READONLY* MEMBERS+++
-        static int MX, MY;
+        static int MX, MY, MI;
         static std::string mapName;
         static int mapId;
         static double difficulty;
@@ -30,16 +31,29 @@ struct Map
         static bool LoadNext();
 
 
+    public: // +++ACCESS FUNCTIONS+++
+        static TILE& Get(int pos);
+        static int Move(int* fromPos, int dX, int dY);
+        static int Move(int fromPos, int dX, int dY);
+        static int Up(int* fromPos);
+        static int Up(int fromPos);
+        static int Down(int* fromPos);
+        static int Down(int fromPos);
+        static int Left(int* fromPos);
+        static int Left(int fromPos);
+        static int Right(int* fromPos);
+        static int Right(int fromPos);
+        static int Fix(int* fromPos);
+        static int Fix(int fromPos);
+        static int FixX(int* x);
+        static int FixX(int x);
+        static int FixY(int* y);
+        static int FixY(int y);
+        static int X(int position);
+        static int Y(int position);
+
+
     public: // +++GEOMETRY FUNCTIONS+++
-
-        static TILE& Get(int x, int y);
-
-
-        static bool IsNotObstacle(int x, int y);
-        static void Fix(int &x, int &y);
-
-        static bool Move(int &x, int &y, int dx, int dy);
-
-        static bool IsLineOfSight(int x1, int y1, int x2, int y2);
-
+        static bool IsNotObstacle(int pos);
+        static bool IsLineOfSight(int fromPos, int toPos);
 };

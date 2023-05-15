@@ -6,7 +6,7 @@
 struct Player
 {
     public:
-        int x, y;
+        int position;
         std::wstring visual = L"✪";
 
 
@@ -17,8 +17,8 @@ struct Player
 
     public:
         Player(){}
-        Player(int x, int y)
-            : x(x), y(y)
+        Player(int position)
+            : position(position)
         {
 
         }

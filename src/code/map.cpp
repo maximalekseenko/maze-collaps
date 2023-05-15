@@ -18,7 +18,9 @@ Map::TILE* Map::map = nullptr;
 
 
 // +++READONLY* MEMBERS+++
-int Map::MX = 32, Map::MY = 16;
+int Map::MX = 32;
+int Map::MY = 16;
+int Map::MI = Map::MX * Map::MY;
 std::string Map::mapName;
 int Map::mapId = -1;
 double Map::difficulty;
@@ -44,9 +46,8 @@ bool Map::Load(std::string fileName)
     if (Map::map != nullptr) delete[] Map::map;
 
     int* result = generator.Result();
-    Map::map = new TILE[MX * MY];
-    for (int i = 0; i < MX * MY; i ++)
-        Map::map[i] = static_cast<TILE>(result[i]);
+    Map::map = new TILE[MI];
+    for (int i = 0; i < MI; i ++) Map::map[i] = static_cast<TILE>(result[i]);
     delete[] result;
 
     Log::Out("--LOG: Map::Load() success for '" + fileName + "'");
@@ -64,51 +65,92 @@ bool Map::Load(int mapId)
         default: return false;
     }
 }
-
-
 bool Map::LoadNext() { return Load(mapId + 1); }
 
 
-// +++GEOMETRY FUNCTIONS+++
-
-Map::TILE& Map::Get(int x, int y)
+// +++ACCESS FUNCTIONS+++
+Map::TILE& Map::Get(int i)
 {
-    Fix(x, y);
-    return map[x + y * MX];
+    return map[Fix(i)];
 }
 
-
-bool Map::IsNotObstacle(int x, int y)
+int Map::Move(int* i, int dX, int dY)
 {
-    if (Get(x, y) == TILE::WALL) return false;
-    for (auto enemy : Enemy::enemies) if (enemy.x == x && enemy.y == y) return false;
+    dX %= MX;
+    dY %= MY;
+
+    int fX = (MX + ((*i % MX + dX) % MX)) % MX;
+    int fY = (MY + ((*i / MX + dY) % MY)) % MY;
+    *i = fX + fY * MX;
+    return *i;
+}
+int Map::Move(int i, int dX, int dY) { return Move(&i, dX, dY); }
+
+int Map::Up(int* i)
+{
+    *i = Map::Fix(*i - MX);
+    return *i;
+}
+int Map::Up(int i) { return Up(&i); }
+
+int Map::Down(int* i)
+{
+    *i = Map::Fix(*i + MX);
+    return *i;
+}
+int Map::Down(int i) { return Down(&i); }
+
+int Map::Left(int* i)
+{
+    *i = *i % MX == 0 ? *i + MX - 1 : *i - 1;
+    return *i;
+}
+int Map::Left(int i) { return Left(&i); }
+
+int Map::Right(int* i)
+{
+    *i = *i % MX == MX - 1 ? *i - MX + 1 : *i + 1;
+    return *i;
+}
+int Map::Right(int i) { return Right(&i); }
+
+
+int Map::Fix(int* i)
+{
+    if (*i < 0) *i = MI + *i % MI;
+    else if (*i >= MI) *i = *i % MI;
+    return *i;
+}
+int Map::Fix(int i) { return Fix(&i); }
+
+int Map::FixX(int* x)
+{
+    *x = (MX + *x % MX) % MX;
+    return *x;
+}
+int Map::FixX(int x) { return FixX(&x); }
+
+int Map::FixY(int* y)
+{
+    *y = (MY + (*y % MY)) % MY;
+    return *y;
+}
+int Map::FixY(int y) { return FixY(&y); }
+
+// +++GEOMETRY FUNCTIONS+++
+bool Map::IsNotObstacle(int i)
+{
+    if (Get(i) == TILE::WALL) return false;
+    for (auto enemy : Enemy::enemies) if (enemy.position == i) return false;
     return true;
 }
-
-void Map::Fix(int &x, int &y)
-{
-    if (x >= MX) x %= MX;
-    else if (x < 0) x = MX + x % MX;
-
-    if (y >= MY) y %= MY;
-    else if (y < 0) y = MY + y % MY;
-}
-
-bool Map::Move(int &x, int &y, int dx, int dy)
-{
-    if (IsNotObstacle(x + dx, y + dy) && IsLineOfSight(x, y, x + dx, y + dy))
-    {
-        x += dx;
-        y += dy;
-        Fix(x, y);
-        return true;
-    }
-
-    return false;
-}
-
-bool Map::IsLineOfSight(int x1, int y1, int x2, int y2)
+bool Map::IsLineOfSight(int i1, int i2)
 { 
+    int x1 = Map::X(i1);
+    int y1 = Map::Y(i1);
+    int x2 = Map::X(i2);
+    int y2 = Map::Y(i2);
+
     // return true;
     // fix fo recursive
     if (abs(x2 - x1) > MX / 2)
@@ -128,12 +170,56 @@ bool Map::IsLineOfSight(int x1, int y1, int x2, int y2)
     for (int i = 0; i < len; i ++)
     {
         double step = double(i) / len;
-        int x = round(x1 * (1.0 - step) + x2 * step);
-        int y = round(y1 * (1.0 - step) + y2 * step);
+        int x = FixX(round(x1 * (1.0 - step) + x2 * step));
+        int y = FixY(round(y1 * (1.0 - step) + y2 * step));
         
-        if (Get(x, y) == Map::TILE::WALL) return false;
+        if (Get(x + y * MX) == Map::TILE::WALL) return false;
     }
-
+    
     // no obstacles found
     return true;
+
+
+
+
+    // int x1 = Map::X(i1);
+    // int y1 = Map::Y(i1);
+    // int x2 = Map::X(i2);
+    // int y2 = Map::Y(i2);
+
+    // // fix from 
+    // if (abs(x1 - x2) > abs(x1 + x2 - MX))
+    // {
+    //     if (x2 < x1) x2 += MX;
+    //     else         x2 -= MX;
+    // }
+
+    // if (abs(y1 - y2) > abs(y1 + y2 - MY))
+    // {
+    //     if (y2 < y1) y2 += MY;
+    //     else         y2 -= MY;
+    // }
+
+    // // find obstacles
+    // int len = std::max(std::min(
+    //             abs(x1 - x2),
+    //             abs(x1 + x2 - MX)
+    //         ), std::min(
+    //             abs(y1 - y2),
+    //             abs(y1 + y2 - MY)
+    //         ));
+    // for (int i = 0; i < len; i ++)
+    // {
+    //     double step = double(i) / len;
+    //     int x = FixX(round(x1 * (1.0 - step) + x2 * step));
+    //     int y = FixY(round(y1 * (1.0 - step) + y2 * step));
+        
+    //     if (Get(x + y * MX) == Map::TILE::WALL) return false;
+    // }
+
+    // // no obstacles found
+    // return true;
 }
+
+int Map::X(int position) { return position % MX; }
+int Map::Y(int position) { return position / MX; }
