@@ -175,50 +175,9 @@ bool Map::IsLineOfSight(int i1, int i2)
         
         if (Get(x + y * MX) == Map::TILE::WALL) return false;
     }
-    
+
     // no obstacles found
     return true;
-
-
-
-
-    // int x1 = Map::X(i1);
-    // int y1 = Map::Y(i1);
-    // int x2 = Map::X(i2);
-    // int y2 = Map::Y(i2);
-
-    // // fix from 
-    // if (abs(x1 - x2) > abs(x1 + x2 - MX))
-    // {
-    //     if (x2 < x1) x2 += MX;
-    //     else         x2 -= MX;
-    // }
-
-    // if (abs(y1 - y2) > abs(y1 + y2 - MY))
-    // {
-    //     if (y2 < y1) y2 += MY;
-    //     else         y2 -= MY;
-    // }
-
-    // // find obstacles
-    // int len = std::max(std::min(
-    //             abs(x1 - x2),
-    //             abs(x1 + x2 - MX)
-    //         ), std::min(
-    //             abs(y1 - y2),
-    //             abs(y1 + y2 - MY)
-    //         ));
-    // for (int i = 0; i < len; i ++)
-    // {
-    //     double step = double(i) / len;
-    //     int x = FixX(round(x1 * (1.0 - step) + x2 * step));
-    //     int y = FixY(round(y1 * (1.0 - step) + y2 * step));
-        
-    //     if (Get(x + y * MX) == Map::TILE::WALL) return false;
-    // }
-
-    // // no obstacles found
-    // return true;
 }
 
 int Map::X(int position) { return position % MX; }

@@ -34,6 +34,7 @@ struct Enemy
         Name name;
         double difficulty;
         int position;
+        int stunTime = 0;
         bool isChasing = false;
         bool isAttacking = false;
 

@@ -126,6 +126,16 @@ struct Game
     public:
         void VisualDrawMap()
         {
+            // AAA;
+            for (int i = 0; i < 3; i ++)
+                Visualizer::Write(i, 0, 
+                    player.sources[i] == Player::SpellSource::CHAOS ? L"C"
+                    : player.sources[i] == Player::SpellSource::DIVINITY ? L"D"
+                    : player.sources[i] == Player::SpellSource::WRATH ? L"W"
+                    : L"O");
+
+            // AAA;
+
             bool SEE = false;
             // tiels
             for (int y = 0; y < Map::MY; y ++)
@@ -282,12 +292,18 @@ struct Game
                     Map::Right(&player.position);
                 }
 
-                /// spells
-                else if (task == "ce" || task == "cast eye"  )
-                {
-                    player.isSpellEyeActive = !player.isSpellEyeActive;
-                }
-                
+                /// prep
+                else if (task == "pc" || task == "prepair chaos")
+                    player.Prep(Player::SpellSource::CHAOS);
+                else if (task == "pw" || task == "prepair wrath")
+                    player.Prep(Player::SpellSource::WRATH);
+                else if (task == "pd" || task == "prepair divinity")
+                    player.Prep(Player::SpellSource::DIVINITY);
+
+                /// cast
+                else if (task == "c" || task == "cast")
+                    player.Cast();
+
                 /// unknown command
                 else continue;
 

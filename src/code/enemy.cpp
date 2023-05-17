@@ -215,6 +215,13 @@ std::wstring Enemy::GetVisual()
 
 void Enemy::Turn(int targetPosition, double difficulty_mod)
 {
+    if (stunTime > 0)
+    {
+        isChasing = false;
+        isAttacking = false;
+        stunTime--;
+    }
+
     bool isTurning = Random::Get() - (0.2 * isChasing) < difficulty * difficulty_mod;
     bool isInLOS = Map::IsLineOfSight(this->position, targetPosition);
 
