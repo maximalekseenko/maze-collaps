@@ -86,10 +86,7 @@ bool Player::Cast(Player::Element nextelement)
         {
             if (enemy.position == pos)
             {
-                Log::Out("--Log: Player Attack Hit Enemy " + std::to_string(enemy.name) + " at [" + std::to_string(Map::X(pos)) + " " + std::to_string(Map::Y(pos)) + "]");
-                if (enemy.Kill(this->slots[0]))
-                    Log::Out("--Log: Player Attack Kill Enemy at [" + std::to_string(Map::X(pos)) + " " + std::to_string(Map::Y(pos)) + "]");
-
+                enemy.Kill(this->slots[0]);
                 return CASTBREAK;
             }
         }
@@ -113,49 +110,50 @@ bool Player::Cast(Player::Element nextelement)
     else if (slots[2] == CAST_DIR_A)
     {
         for ( // L
-            int limit = Map::MX/2, pos = position; 
-            limit > 0; 
+            int limit = 0, pos = position; 
+            limit < Map::MX/2; 
             limit ++
         ) if (cast_effect(Map::Move(&pos, -1,  0)) == CASTBREAK) break;
         for ( // R
-            int limit = Map::MX/2, pos = position; 
-            limit > 0; 
+            int limit = 0, pos = position; 
+            limit < Map::MX/2; 
             limit ++
         ) if (cast_effect(Map::Move(&pos,  1,  0)) == CASTBREAK) break;
         for ( // U
-            int limit = Map::MX/2, pos = position; 
-            limit > 0; 
+            int limit = 0, pos = position; 
+            limit < Map::MY/2; 
             limit ++
         ) if (cast_effect(Map::Move(&pos,  0, -1)) == CASTBREAK) break;
         for ( // D
-            int limit = Map::MX/2, pos = position; 
-            limit > 0; 
+            int limit = 0, pos = position; 
+            limit < Map::MY/2; 
             limit ++
         ) if (cast_effect(Map::Move(&pos,  0,  1)) == CASTBREAK) break;
     }
     else if (slots[2] == CAST_DIR_D)
-    // {
-    //     for ( // LU
-    //         int limit = Map::MX/2, pos = position; 
-    //         limit > 0;
-    //         limit ++
-    //     ) if (cast_effect(Map::Move(&pos, -1, -1)) == CASTBREAK) break;
-    //     for ( // LD
-    //         int limit = Map::MX/2, pos = position; 
-    //         limit > 0; 
-    //         limit ++
-    //     ) if (cast_effect(Map::Move(&pos, -1,  1)) == CASTBREAK) break;
-    //     for ( // RU
-    //         int limit = Map::MX/2, pos = position; 
-    //         limit > 0; 
-    //         limit ++
-    //     ) if (cast_effect(Map::Move(&pos,  1, -1)) == CASTBREAK) break;
-    //     for ( // RD
-    //         int limit = Map::MX/2, pos = position; 
-    //         limit > 0; 
-    //         limit ++
-    //     ) if (cast_effect(Map::Move(&pos,  1,  1)) == CASTBREAK) break;
-    // }
+    {
+        int _max_limit = std::min(Map::MX/2, Map::MY/2);
+        for ( // LU
+            int limit = 0, pos = position; 
+            limit < _max_limit;
+            limit ++
+        ) if (cast_effect(Map::Move(&pos, -1, -1)) == CASTBREAK) break;
+        for ( // LD
+            int limit = 0, pos = position; 
+            limit < _max_limit;
+            limit ++
+        ) if (cast_effect(Map::Move(&pos, -1,  1)) == CASTBREAK) break;
+        for ( // RU
+            int limit = 0, pos = position; 
+            limit < _max_limit;
+            limit ++
+        ) if (cast_effect(Map::Move(&pos,  1, -1)) == CASTBREAK) break;
+        for ( // RD
+            int limit = 0, pos = position; 
+            limit < _max_limit;
+            limit ++
+        ) if (cast_effect(Map::Move(&pos,  1,  1)) == CASTBREAK) break;
+    }
 
     slots[0] = Element::NONE;
     slots[1] = Element::NONE;

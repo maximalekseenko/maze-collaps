@@ -77,22 +77,22 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         for ( // LU
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1, -1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1, -1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // LD
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1,  1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1,  1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // RD
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1, -1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1, -1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // RD
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1,  1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1,  1)); 
             limit ++
         ) possibleMoves.push_back(pos);
 
@@ -104,22 +104,22 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         for ( // L
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1,  0)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1,  0)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // R
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1,  0)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1,  0)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // U
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  0, -1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  0, -1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // D
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  0,  1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  0,  1)); 
             limit ++
         ) possibleMoves.push_back(pos);
 
@@ -131,42 +131,42 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         for ( // L
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1,  0)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1,  0)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // R
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1,  0)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1,  0)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // U
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  0, -1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  0, -1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // D
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  0,  1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  0,  1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // LU
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1, -1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1, -1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // LD
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1,  1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos, -1,  1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // RD
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1, -1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1, -1)); 
             limit ++
         ) possibleMoves.push_back(pos);
         for ( // RD
             int limit = 0, pos = position; 
-            limit > AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1,  1)); 
+            limit < AIMOVEDISTANCE && Map::IsNotObstacle(Map::Move(&pos,  1,  1)); 
             limit ++
         ) possibleMoves.push_back(pos);
 
@@ -243,10 +243,14 @@ void Enemy::Turn(int targetPosition, double difficulty_mod)
 
 bool Enemy::Kill(Player::Element __damage_type)
 {
-    if (ENEMYDATAS.find(name)->second.Type != __damage_type) return false;
+    if (ENEMYDATAS.at(name).Type != __damage_type) return false;
 
     auto e_it = std::find_if(enemies.begin(), enemies.end(), [this](Enemy e){ return e.id == this->id; });
-    if (e_it == enemies.end()) return false;
+    if (e_it == enemies.end())
+    {
+        Log::Out("--ERR: Killing a ghost");
+        return false;
+    }
     enemies.erase(e_it);
     return true;
 }
