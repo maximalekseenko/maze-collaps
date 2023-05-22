@@ -14,6 +14,7 @@
 #include "map.h"
 
 #include "userInterface.h"
+#include "log.h"
 
 
 
@@ -67,7 +68,9 @@ struct Game
                 while (Player::player.Turn() == TURNCONTINUE) {}
 
                 // enemies
-                for (auto& enemy : Enemy::enemies) {
+
+                for (auto& enemy : Enemy::enemies)
+                {
                     enemy.Turn(Player::player.position);
                     if (enemy.position == Player::player.position) throw std::runtime_error("ERROR: GAME LOST");
                 }
