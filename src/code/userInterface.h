@@ -26,5 +26,5 @@ struct UserInterface
         static void DrawSlots();
 
     public: // +++INPUTS+++
-        static char Input();
+        static int Input();
 };

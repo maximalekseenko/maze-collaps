@@ -10,6 +10,10 @@
 #define LABLE_Y 0
 
 
+#define TEXT_TYPE "type"
+#define TEXT_DIRECTION "direction"
+
+
 #define WGLOBAL_W 34
 #define WGLOBAL_H 34
 #define WGLOBAL_X 0
@@ -74,7 +78,13 @@ void UserInterface::UpdateAll()
 void UserInterface::DrawBackground()
 {
     box(WGlobal, 0, 0);
+    // Lable
     mvwaddstr(WGlobal, LABLE_Y, LABLE_X, LABLE_TEXT);
+
+    // slots
+    mvwaddstr(WGlobal, WSLOT_Y - 1 - WGLOBAL_Y, WSLOT_X - WGLOBAL_X, TEXT_TYPE);
+
+
     wrefresh(WGlobal);
 }
 
@@ -108,13 +118,35 @@ void UserInterface::DrawMap()
     wrefresh(WMap);
 }
 
-void UserInterface::DrawSlots()
+const char* GetPlayerElement(int i)
 {
-
+    switch (Player::player.slots[i])
+    {
+    case Player::Element::A: return "┼";
+    case Player::Element::B: return "╳";
+    case Player::Element::C: return "◯";
+    default: return ".";
+    }
 }
 
-char UserInterface::Input()
+
+void UserInterface::DrawSlots()
 {
+    box(WSlot0, 0, 0);
+    box(WSlot1, 0, 0);
+    box(WSlot2, 0, 0);
+    mvwprintw(WSlot0, 2, 5, GetPlayerElement(0));
+    mvwprintw(WSlot1, 2, 5, GetPlayerElement(1));
+    mvwprintw(WSlot2, 2, 5, GetPlayerElement(2));
+
+    wrefresh(WSlot0);
+    wrefresh(WSlot1);
+    wrefresh(WSlot2);
+}
+
+int UserInterface::Input()
+{
+    move(WGLOBAL_H + WGLOBAL_Y, 0);
     return getch();
 }
 

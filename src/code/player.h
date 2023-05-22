@@ -5,6 +5,10 @@
 #include <functional>
 
 
+#define TURNCONTINUE true
+#define TURNBREAK false
+
+
 struct Player
 {
     public:
@@ -34,15 +38,10 @@ struct Player
 
 
     public: // +++ACTIONS+++
-        // bool Turn();
+        bool Turn();
 
 
     private: // +++ACTIONS+++
-        // bool Prep(Element);
-        // bool Move();
-        
-
-    public: // +++ACTIVATORS+++
-        // bool Move();
-        // bool Cast();
+        bool Cast(Element);
+        bool Move(int dx, int dy);
 };

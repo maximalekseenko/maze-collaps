@@ -15,7 +15,7 @@
 
 const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 {{
-    {Enemy::Name::DRAGON, Enemy::EnemyData{"❦", "❦", [](int position)
+    {Enemy::Name::DRAGON, Enemy::EnemyData{"❦", "❦", Player::Element::NONE, [](int position)
     {
         std::vector<int> possibleMoves;
         int pos;
@@ -30,7 +30,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::PAWN,   Enemy::EnemyData{"♙", "♟", [](int position)
+    {Enemy::Name::PAWN,   Enemy::EnemyData{"♙", "♟", Player::Element::A, [](int position)
     {
         std::vector<int> possibleMoves;
         int pos;
@@ -45,7 +45,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::KNIGHT, Enemy::EnemyData{"♘", "♞", [](int position)
+    {Enemy::Name::KNIGHT, Enemy::EnemyData{"♘", "♞", Player::Element::A, [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -69,7 +69,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::BISHOP, Enemy::EnemyData{"♗", "♝", [](int position)
+    {Enemy::Name::BISHOP, Enemy::EnemyData{"♗", "♝", Player::Element::B, [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -96,7 +96,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::ROOK,   Enemy::EnemyData{"♖", "♜", [](int position)
+    {Enemy::Name::ROOK,   Enemy::EnemyData{"♖", "♜", Player::Element::B, [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -123,7 +123,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::QUEEN,  Enemy::EnemyData{"♕", "♛", [](int position)
+    {Enemy::Name::QUEEN,  Enemy::EnemyData{"♕", "♛", Player::Element::C, [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -170,7 +170,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::KING,   Enemy::EnemyData{"♔", "♚", [](int position)
+    {Enemy::Name::KING,   Enemy::EnemyData{"♔", "♚", Player::Element::C, [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -198,12 +198,11 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
 
 std::vector<Enemy> Enemy::enemies;
-
-
+int Enemy::lastId = 0;
 
 
 Enemy::Enemy(Name name, int position, double difficulty)
-    : name(name), position(position), difficulty(difficulty)
+    : name(name), position(position), difficulty(difficulty), id(++lastId)
 {
 }
 
@@ -239,6 +238,16 @@ void Enemy::Turn(int targetPosition, double difficulty_mod)
     else if (isChasing && !isTurning) isChasing = false;
 }
 
+bool Enemy::Kill(Player::Element __damage_type)
+{
+    if (ENEMYDATAS.find(name)->second.Type != __damage_type) return false;
+
+    auto e_it = std::find_if(enemies.begin(), enemies.end(), [this](Enemy e){ return e.id == this->id; });
+    if (e_it == enemies.end()) return false;
+    enemies.erase(e_it);
+    return true;
+}
+
 void Enemy::Attack(int targetPosition)
 {
     // King spawn
@@ -269,7 +278,7 @@ void Enemy::Attack(int targetPosition)
         }
     }
 
-    std::vector<int> possibleMoves = (*ENEMYDATAS.find(name)).second.GetMoves(position);
+    std::vector<int> possibleMoves = ENEMYDATAS.find(name)->second.GetMoves(position);
     int bestMove = position;
     double bestWeight = -1;
 
@@ -309,7 +318,7 @@ double Enemy::GetDepth(int position, int targetPosition, int moveLimit)
     int bestDepth = -1;
 
     // get possible move
-    std::vector<int> possibleMoves = (*ENEMYDATAS.find(name)).second.GetMoves(position);
+    std::vector<int> possibleMoves = ENEMYDATAS.find(name)->second.GetMoves(position);
 
     // find best depth
     for (auto newPosition : possibleMoves)
