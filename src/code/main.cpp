@@ -6,6 +6,7 @@
 #include <locale>
 #include <codecvt>
 int main(int argc, char *argv[]) {
+    Log::Out("+++BEGIN+++");
     setlocale(LC_ALL, "");
     UserInterface::Init();
 
@@ -14,4 +15,5 @@ int main(int argc, char *argv[]) {
     
     g.Run();
     UserInterface::Exit();
+    Log::Out("+++END+++");
 }

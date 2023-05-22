@@ -45,7 +45,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::KNIGHT, Enemy::EnemyData{"♘", "♞", Player::Element::A, [](int position)
+    {Enemy::Name::KNIGHT, Enemy::EnemyData{"♘", "♞", Player::Element::B, [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -96,7 +96,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::ROOK,   Enemy::EnemyData{"♖", "♜", Player::Element::B, [](int position)
+    {Enemy::Name::ROOK,   Enemy::EnemyData{"♖", "♜", Player::Element::A, [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -250,6 +250,10 @@ bool Enemy::Kill(Player::Element __damage_type)
 
 void Enemy::Attack(int targetPosition)
 {
+    Log::Out("--LOG: Enemy::Attack is called by "
+         + std::to_string(name)
+         + " from " + std::to_string(position)
+         + " to " + std::to_string(targetPosition));
     // King spawn
     if (!isChasing && name == Name::KING && Random::Get() < 0.3) 
     {
@@ -302,6 +306,11 @@ void Enemy::Attack(int targetPosition)
 
 double Enemy::GetDepth(int position, int targetPosition, int moveLimit)
 {
+    Log::Out("--CAL: Calculating depth (from["
+         + std::to_string(Map::X(position)) + " " + std::to_string(Map::Y(position))
+         + "], to["
+         + std::to_string(Map::X(position)) + " " + std::to_string(Map::Y(position))
+         + "], limit[" + std::to_string(moveLimit) + "/" + std::to_string(MOVELIMIT) + "])");
 
     if (position == targetPosition) return 0;
 

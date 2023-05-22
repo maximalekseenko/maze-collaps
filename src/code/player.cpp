@@ -40,7 +40,7 @@ bool Player::Turn()
     std::string task;
 
     int button = UserInterface::Input();
-    Log::Out(std::to_string(button));
+    Log::Out("--LOG: Player button press: " + std::to_string(button));
 
     // do action
     if (button == BUTTONEXIT) throw std::runtime_error("GAME QUIT");
@@ -54,31 +54,27 @@ bool Player::Turn()
     if (button == BUTTONCB) return Cast(Element::B);
     if (button == BUTTONCC) return Cast(Element::C);
 
+    Log::Out("--LOG: Player button not found: " + std::to_string(button));
     return TURNCONTINUE;
 }
 
 
-bool Player::Cast(Player::Element newsource)
+bool Player::Cast(Player::Element nextelement)
 {
+    // add element
     slots[0] = slots[1];
     slots[1] = slots[2];
-    slots[2] = newsource;
+    slots[2] = nextelement;
+
+    Log::Out("--LOG: Player element added: " + std::to_string(nextelement));
 
 
-    // no cast
+    // if not enough elements
     if (slots[0] == Element::NONE || slots[1] == Element::NONE || slots[2] == Element::NONE) return TURNBREAK;
-    Log::Out("A");
 
-    // no direction
+    // if different elements in direction
     if (slots[1] != slots[2]) return TURNBREAK;
-    Log::Out("B");
-
-
-    // next map
-    if (slots[0] != slots[1] && slots[1] != slots[2] && slots[2] != slots[0])
-        return TURNBREAK;
-    Log::Out("C");
-
+    
     // effect
     auto cast_effect = [this](int pos)
     {
@@ -87,19 +83,21 @@ bool Player::Cast(Player::Element newsource)
 
         // enemy target
         for (auto &enemy : Enemy::enemies)
+        {
             if (enemy.position == pos)
             {
-                enemy.Kill(this->slots[0]);
-                Log::Out("Hit Enemy at " + std::to_string(enemy.name));
+                Log::Out("--Log: Player Attack Hit Enemy " + std::to_string(enemy.name) + " at [" + std::to_string(Map::X(pos)) + " " + std::to_string(Map::Y(pos)) + "]");
+                if (enemy.Kill(this->slots[0]))
+                    Log::Out("--Log: Player Attack Kill Enemy at [" + std::to_string(Map::X(pos)) + " " + std::to_string(Map::Y(pos)) + "]");
+
                 return CASTBREAK;
             }
+        }
         
         // nothing
         return CASTCONTINUE;
     };
 
-    // if (direction == ID_ERR) return false;
-    Log::Out(std::to_string(slots[2] == CAST_DIR_R) + " " + std::to_string(slots[2] == CAST_DIR_A) + " " + std::to_string(slots[2] == CAST_DIR_D));
     if (slots[2] == CAST_DIR_R)
     {
         int pos;
@@ -170,6 +168,13 @@ bool Player::Move(int dx, int dy)
     if (!Map::IsNotObstacle(Map::Move(position, dx, dy))) return TURNCONTINUE;
 
     Map::Move(&position, dx, dy);
+    Log::Out("--LOG: Player moved from ["
+         + std::to_string(Map::X(position) - dx) + " " + std::to_string(Map::Y(position) - dy)
+         + "] to ["
+         + std::to_string(Map::X(position)) + " " + std::to_string(Map::Y(position))
+         + "]");
+
     Cast(Element::NONE);
+
     return TURNBREAK;
 }

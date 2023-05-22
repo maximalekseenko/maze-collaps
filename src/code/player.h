@@ -14,8 +14,8 @@ struct Player
     public:
         enum Element
         {
-            NONE = -1,
-            A = 0,
+            NONE = 0,
+            A = 1,
             B = 2,
             C = 3,
         };
