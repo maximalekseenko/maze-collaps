@@ -182,3 +182,4 @@ bool Map::IsLineOfSight(int i1, int i2)
 
 int Map::X(int position) { return position % MX; }
 int Map::Y(int position) { return position / MX; }
+int Map::I(int x, int y) { return x + y * MX; }

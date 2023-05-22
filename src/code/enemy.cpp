@@ -15,7 +15,7 @@
 
 const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 {{
-    {Enemy::Name::DRAGON, Enemy::EnemyData{L"❦", L"❦", [](int position)
+    {Enemy::Name::DRAGON, Enemy::EnemyData{"❦", "❦", [](int position)
     {
         std::vector<int> possibleMoves;
         int pos;
@@ -30,7 +30,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::PAWN,   Enemy::EnemyData{L"♙", L"♟", [](int position)
+    {Enemy::Name::PAWN,   Enemy::EnemyData{"♙", "♟", [](int position)
     {
         std::vector<int> possibleMoves;
         int pos;
@@ -45,7 +45,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::KNIGHT, Enemy::EnemyData{L"♘", L"♞", [](int position)
+    {Enemy::Name::KNIGHT, Enemy::EnemyData{"♘", "♞", [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -69,7 +69,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::BISHOP, Enemy::EnemyData{L"♗", L"♝", [](int position)
+    {Enemy::Name::BISHOP, Enemy::EnemyData{"♗", "♝", [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -96,7 +96,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::ROOK,   Enemy::EnemyData{L"♖", L"♜", [](int position)
+    {Enemy::Name::ROOK,   Enemy::EnemyData{"♖", "♜", [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -123,7 +123,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::QUEEN,  Enemy::EnemyData{L"♕", L"♛", [](int position)
+    {Enemy::Name::QUEEN,  Enemy::EnemyData{"♕", "♛", [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -170,7 +170,7 @@ const std::map<Enemy::Name, Enemy::EnemyData> Enemy::ENEMYDATAS
 
         return possibleMoves;
     }}},
-    {Enemy::Name::KING,   Enemy::EnemyData{L"♔", L"♚", [](int position)
+    {Enemy::Name::KING,   Enemy::EnemyData{"♔", "♚", [](int position)
     {
         std::vector<int> possibleMoves;
 
@@ -207,7 +207,7 @@ Enemy::Enemy(Name name, int position, double difficulty)
 {
 }
 
-std::wstring Enemy::GetVisual()
+const char* Enemy::GetVisual()
 {
     if (!isAttacking) return (*ENEMYDATAS.find(name)).second.visual_idle;
     else return (*ENEMYDATAS.find(name)).second.visual_attk;

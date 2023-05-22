@@ -1,5 +1,9 @@
 #include "userInterface.h"
 
+#include "map.h"
+#include "player.h"
+#include "enemy.h"
+
 
 #define LABLE_TEXT "collaps-maze"
 #define LABLE_X 2
@@ -44,11 +48,6 @@ void UserInterface::Init()
     WSlot1  = newwin(WSLOT_H, WSLOT_W, WSLOT_Y + WSLOT_DY * 1, WSLOT_X + WSLOT_DX * 1);
     WSlot2  = newwin(WSLOT_H, WSLOT_W, WSLOT_Y + WSLOT_DY * 2, WSLOT_X + WSLOT_DX * 2);
     refresh();
-
-
-    UpdateAll();
-
-    getch();
 }
 
 
@@ -80,11 +79,34 @@ void UserInterface::DrawBackground()
 }
 
 
+int FixedX(int i) { return (Map::MX * 3/2 + Map::X(i) - Map::X(Player::player.position)) % Map::MX; }
+int FixedY(int i) { return (Map::MY * 3/2 + Map::Y(i) - Map::Y(Player::player.position)) % Map::MY; }
+
+
 void UserInterface::DrawMap()
 {
+    bool SEE = false;
 
+    // tiles
+    for (int i = 0; i < Map::MI; i ++)
+        if (SEE || Map::IsLineOfSight(Player::player.position, i))
+            if (Map::Get(i) == Map::TILE::WALL)
+                mvwprintw(WMap, FixedY(i), FixedX(i), "█");
+            else  mvwprintw(WMap, FixedY(i), FixedX(i), ".");
+        else  mvwprintw(WMap, FixedY(i), FixedX(i), "*");
+        
+    
+    // enemies
+    for (auto enemy : Enemy::enemies)
+        if (SEE || Map::IsLineOfSight(Player::player.position, enemy.position))
+            mvwprintw(WMap, FixedY(enemy.position), FixedX(enemy.position), enemy.GetVisual());
+
+    // player
+    mvwprintw(WMap, FixedY(Player::player.position), FixedX(Player::player.position), Player::player.visual);
+
+
+    wrefresh(WMap);
 }
-
 
 void UserInterface::DrawSlots()
 {

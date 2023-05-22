@@ -20,7 +20,7 @@ struct Player
     public:
         int position;
         Element slots[3]{Element::NONE, Element::NONE, Element::NONE};
-        std::wstring visual = L"✪";
+        const char* visual = "✪";
 
 
     public:
@@ -34,15 +34,15 @@ struct Player
 
 
     public: // +++ACTIONS+++
-        bool Turn();
+        // bool Turn();
 
 
     private: // +++ACTIONS+++
-        bool Prep(Element);
-        bool Move();
+        // bool Prep(Element);
+        // bool Move();
         
 
     public: // +++ACTIVATORS+++
-        bool Move();
-        bool Cast();
+        // bool Move();
+        // bool Cast();
 };

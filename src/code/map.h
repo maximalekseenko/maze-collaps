@@ -51,6 +51,7 @@ struct Map
         static int FixY(int y);
         static int X(int position);
         static int Y(int position);
+        static int I(int x, int y);
 
 
     public: // +++GEOMETRY FUNCTIONS+++

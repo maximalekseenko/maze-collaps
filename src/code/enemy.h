@@ -23,8 +23,8 @@ struct Enemy
         };
         struct EnemyData
         {  
-            const std::wstring visual_idle;
-            const std::wstring visual_attk;
+            const char* visual_idle;
+            const char* visual_attk;
             const std::function<std::vector<int>(int)> GetMoves;
         };
         static const std::map<Name, EnemyData> ENEMYDATAS;
@@ -43,7 +43,7 @@ struct Enemy
 
 
     public: // +++COMMON USE+++
-        std::wstring GetVisual();
+        const char* GetVisual();
         void Turn(int targetPosition, double difficulty_mod = 1.0);
     
 
