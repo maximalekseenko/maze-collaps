@@ -216,7 +216,6 @@ const char* Enemy::GetVisual()
 
 void Enemy::Turn(int targetPosition, double difficulty_mod)
 {
-    Log::Out("Turn 0");
     if (stunTime > 0)
     {
         isChasing = false;
