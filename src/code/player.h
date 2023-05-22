@@ -8,24 +8,19 @@
 struct Player
 {
     public:
-        enum SpellSource
+        enum Element
         {
-            NONE     = -1,
-            CHAOS    = 0,
-            WRATH    = 2,
-            DIVINITY = 3,
+            NONE = -1,
+            A = 0,
+            B = 2,
+            C = 3,
         };
         static Player player;
 
     public:
         int position;
-        SpellSource sources[3]{SpellSource::NONE, SpellSource::NONE, SpellSource::NONE};
+        Element slots[3]{Element::NONE, Element::NONE, Element::NONE};
         std::wstring visual = L"✪";
-
-
-    public: // +++SPELL EFFECTS+++
-        bool shield;
-        bool stabilizing;
 
 
     public:
@@ -39,7 +34,15 @@ struct Player
 
 
     public: // +++ACTIONS+++
-        bool Prep(SpellSource);
-        bool Cast();
+        bool Turn();
+
+
+    private: // +++ACTIONS+++
+        bool Prep(Element);
         bool Move();
+        
+
+    public: // +++ACTIVATORS+++
+        bool Move();
+        bool Cast();
 };

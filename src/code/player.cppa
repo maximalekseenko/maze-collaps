@@ -7,46 +7,79 @@
 #include <vector>
 
 
-
-// (C) Chaos - increases distability
-// (W) Wrath - decreases mana, cost decreces ove time no use
-// (D) Divinity - uses divinity
-
-
-// =Effect+= // Single
-// (C) Change
-// (W) Dig
-// (D) Stun
-
-// =Direction= // Double
-// (C) Circle
-// (W) Diagonal
-// (D) Axis
-
-// =Ultimate= // Triple
-// (C) Stabilize
-// (W) 
-// (D) Shield
-
-#define DIR_AMOUNT 1
-#define EFF_AMOUNT 2
-
-#define ID_ERR -1
-#define ID_C 0
-#define ID_W 1
-#define ID_D 2
-
-#define EFF_CHANGE ID_C
-#define EFF_DIG    ID_W
-#define EFF_STUN   ID_D
-
-#define DIR_CIRCLE     ID_C
-#define DIR_DIAGONAL   ID_W
-#define DIR_AXIS       ID_D
-
 #define CASTCONTINUE true
 #define CASTBREAK    false
 
+
+bool Player::Turn()
+{
+    // get action
+    std::string task;
+    // getline(std::cin, task);
+    getchar();
+
+    // do action
+    if (task == "quit") throw std::runtime_error("GAME QUIT");
+    if (task == "move")
+
+
+    while (true)
+    {  
+        // get task and args 
+        getline(std::cin, task);
+
+        // check command
+        /// system
+        if (task == "quit") break;
+
+        /// movement
+        else if (task == "mu" || task == "move up"   ) 
+        {
+            if (!Map::IsNotObstacle(Map::Up(player.position))) continue;
+            Map::Up(&player.position);
+        }
+        else if (task == "ml" || task == "move left" )
+        {
+            if (!Map::IsNotObstacle(Map::Left(player.position))) continue;
+            Map::Left(&player.position);
+        }
+        else if (task == "md" || task == "move down" )
+        {
+            if (!Map::IsNotObstacle(Map::Down(player.position))) continue;
+            Map::Down(&player.position);
+        }
+        else if (task == "mr" || task == "move right")
+        {
+            if (!Map::IsNotObstacle(Map::Right(player.position))) continue;
+            Map::Right(&player.position);
+        }
+
+        /// prep
+        else if (task == "pc" || task == "prepair chaos")
+            player.Prep(Player::SpellSource::CHAOS);
+        else if (task == "pw" || task == "prepair wrath")
+            player.Prep(Player::SpellSource::WRATH);
+        else if (task == "pd" || task == "prepair divinity")
+            player.Prep(Player::SpellSource::DIVINITY);
+
+        /// cast
+        else if (task == "c" || task == "cast")
+            player.Cast();
+
+        /// unknown command
+        else continue;
+
+        // enemy turn
+        for (auto& enemy : Enemy::enemies) {
+            enemy.Turn(player.position);
+            if (enemy.position == player.position) throw std::runtime_error("ERROR: GAME LOST");
+        }
+
+        // draw map
+        VisualDrawMap();
+        Visualizer::Out();
+    }
+}
 
 bool Player::Prep(Player::SpellSource newsource)
 {

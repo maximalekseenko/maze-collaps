@@ -242,7 +242,7 @@ void Enemy::Turn(int targetPosition, double difficulty_mod)
 void Enemy::Attack(int targetPosition)
 {
     // King spawn
-    if (name == Name::KING && Random::Get() < 0.2) 
+    if (!isChasing && name == Name::KING && Random::Get() < 0.3) 
     {
         int direction = Random::Get() * 4;
         switch (direction)

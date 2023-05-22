@@ -11,7 +11,7 @@ if [ ! -d $BUILD_DIR ]; then
 fi
 
 # # compile c++
-g++ -std=c++20 -o $BUILD_DIR/build $CODE_DIR/**.cpp -fsanitize=address -fdiagnostics-color=always
+g++ -std=c++20 -o $BUILD_DIR/build $CODE_DIR/**.cpp -fsanitize=address -fdiagnostics-color=always -lncurses
 
 # add data
 cp -a $DATA_DIR $BUILD_DIR/data
