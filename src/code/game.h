@@ -21,7 +21,7 @@
 struct Game
 {
     public: // +++LOAD MAP+++
-        void LoadMap(int id)
+        static void LoadMap(int id)
         {
             Map::Load(id);
 
@@ -33,7 +33,7 @@ struct Game
     
     private: // +++LOAD MAP+++
 
-        void MapInit()
+        static void MapInit()
         {
 
             Enemy::enemies.clear();
@@ -60,7 +60,7 @@ struct Game
 
 
     public: // +++RUN+++
-        void Run()
+        static void Run()
         {
             while (true)
             {  
@@ -68,15 +68,20 @@ struct Game
                 while (Player::player.Turn() == TURNCONTINUE) {}
 
                 // enemies
-
                 for (auto& enemy : Enemy::enemies)
-                {
                     enemy.Turn(Player::player.position);
-                    if (enemy.position == Player::player.position) throw std::runtime_error("ERROR: GAME LOST");
-                }
 
+                // loss
+                for (auto& enemy : Enemy::enemies)
+                    if (enemy.position == Player::player.position) 
+                        throw std::runtime_error("ERROR: GAME LOST");
+                        
                 // update
                 UserInterface::Update();
+
+                // victory
+                if (Enemy::enemies.size() == 0 && !Map::LoadNext()) throw std::runtime_error("ERROR: VICTORY");
+
             }
         }
 };

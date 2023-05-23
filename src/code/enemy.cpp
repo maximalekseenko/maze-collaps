@@ -237,7 +237,7 @@ void Enemy::Turn(int targetPosition, double difficulty_mod)
 
     // LOS
     if (isInLOS) isChasing = true;
-    else if (isChasing && !isTurning) isChasing = false;
+    else if (isChasing && !isTurning && Random::Get() - 0.5 < difficulty * difficulty_mod) isChasing = false;
 
 }
 
@@ -323,7 +323,6 @@ double Enemy::GetDepth(int position, int targetPosition, int moveLimit)
     if (position == targetPosition) return 0;
 
     // limit -> break recursion and return distance to target
-
     if (moveLimit <= 0) return sqrt(
              + std::pow(std::min(
                 abs(Map::X(position) - Map::X(targetPosition)),

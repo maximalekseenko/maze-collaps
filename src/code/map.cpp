@@ -29,6 +29,7 @@ double Map::difficulty;
 // +++LOAD FUNCTIONS+++
 bool Map::Load(std::string fileName)
 {
+    mapName = fileName;
     auto generator = OverlappingWave(
         "data/" + fileName + ".png", 3, Map::MX, Map::MY, 
         true, true, 8, false, Model::Heuristic::Entropy);
@@ -60,6 +61,7 @@ bool Map::Load(int mapId)
     Map::mapId = mapId;
     switch (mapId)
     {
+        case -1: Load("test"); return true;
         case 0: Load("hostilecave"); return true;
         case 1: Load("theentrance"); return true;
         default: return false;

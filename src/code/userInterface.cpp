@@ -97,93 +97,59 @@ void UserInterface::UpdateAll()
 
 void UserInterface::DrawBackground()
 {
-    // box(WGlobal, 0, 0);
 
-    // slots
-    // //  type
-    // mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X,               "┌");
-    // mvwaddline(WGlobal, WSLOT_Y - 1, WSLOT_X + 1,           WSLOT_W - 2, "─", true);
-    // mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X + WSLOT_W - 1, "┐");
-    // mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X + 1,           TEXT_TYPE);
-    // //  direction
-    // mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X + WSLOT_DX, "┌");
-    // mvwaddline(WGlobal, WSLOT_Y - 1, WSLOT_X + WSLOT_DX + 1, WSLOT_W + WSLOT_DX - 2, "─", true);
-    // mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X + WSLOT_DX * 2 + WSLOT_W - 1, "┐");
-    // mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X + WSLOT_DX + 1, TEXT_DIRECTION);
 
-    // mvwaddstr( WGlobal,  0, 0, "┌───────────────────────────────────┐");
-    // mvwaddstr( WGlobal,  1, 0, "│                                   │");
-    // mvwaddstr( WGlobal,  2, 0, "│********************..**********   │");
-    // mvwaddstr( WGlobal,  3, 0, "│***************..****♙..********   │");
-    // mvwaddstr( WGlobal,  4, 0, "│***************..****..*********   │");
-    // mvwaddstr( WGlobal,  5, 0, "│***************..*██..█*********   │");
-    // mvwaddstr( WGlobal,  6, 0, "│***************..█....██********   │");
-    // mvwaddstr( WGlobal,  7, 0, "│****************....♕..█********   │");
-    // mvwaddstr( WGlobal,  8, 0, "│**************██.......█********   │");
-    // mvwaddstr( WGlobal,  9, 0, "│**************█...♗..♘..█*******   │");
-    // mvwaddstr( WGlobal, 10, 0, "│**************█.✪.......█*******   │");
-    // mvwaddstr( WGlobal, 11, 0, "│************.......█************   │");
-    // mvwaddstr( WGlobal, 12, 0, "│********.......♘..██************   │");
-    // mvwaddstr( WGlobal, 13, 0, "│****.♘......██.....*************   │");
-    // mvwaddstr( WGlobal, 14, 0, "│.......**█***██..█.*************   │");
-    // mvwaddstr( WGlobal, 15, 0, "│█.**█**********██*..************   │");
-    // mvwaddstr( WGlobal, 16, 0, "│*******************..***********   │");
-    // mvwaddstr( WGlobal, 17, 0, "│*******************...**********   │");
-    // mvwaddstr( WGlobal, 18, 0, "│┌───────┐ ┌─────────────────┐      │");
-    // mvwaddstr( WGlobal, 19, 0, "│┌───────┐ ┌───────┐ ┌───────┐      │");
-    // mvwaddstr( WGlobal, 20, 0, "││       │ │       │ │       │      │");
-    // mvwaddstr( WGlobal, 21, 0, "││   .   │ │   .   │ │   .   │      │");
-    // mvwaddstr( WGlobal, 22, 0, "││       │ │       │ │       │      │");
-    // mvwaddstr( WGlobal, 23, 0, "│└───────┘ └───────┘ └───────┘      │");
-    // mvwaddstr( WGlobal, 24, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 25, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 26, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 27, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 28, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 29, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 30, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 31, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 32, 0, "│                                   │");
-    // mvwaddstr( WGlobal, 33, 0, "└───────────────────────────────────┘");
+    int y = 0;
+    mvwaddstr( WGlobal,   y, 0, "┌───────────────────────────────────┐");
+    mvwaddstr( WGlobal, ++y, 0, "│ Current map:                      │");
+    mvwaddstr( WGlobal, ++y, 0, "│********************..**********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│***************..****♙..********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│***************..****..*********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│***************..*██..█*********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│***************..█....██********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│****************....♕..█********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│**************██.......█********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│**************█...♗..♘..█*******   │");
+    mvwaddstr( WGlobal, ++y, 0, "│**************█.✪.......█*******   │");
+    mvwaddstr( WGlobal, ++y, 0, "│************.......█************   │");
+    mvwaddstr( WGlobal, ++y, 0, "│********.......♘..██************   │");
+    mvwaddstr( WGlobal, ++y, 0, "│****.♘......██.....*************   │");
+    mvwaddstr( WGlobal, ++y, 0, "│.......**█***██..█.*************   │");
+    mvwaddstr( WGlobal, ++y, 0, "│█.**█**********██*..************   │");
+    mvwaddstr( WGlobal, ++y, 0, "│*******************..***********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│*******************...**********   │");
+    mvwaddstr( WGlobal, ++y, 0, "│┌───────┐ ┌─────────────────┐      │");
+    mvwaddstr( WGlobal, ++y, 0, "│┌───────┐ ┌───────┐ ┌───────┐      │");
+    mvwaddstr( WGlobal, ++y, 0, "││       │ │       │ │       │      │");
+    mvwaddstr( WGlobal, ++y, 0, "││   .   │<│   .   │<│   .   │<     │");
+    mvwaddstr( WGlobal, ++y, 0, "││       │ │       │ │       │      │");
+    mvwaddstr( WGlobal, ++y, 0, "│└───────┘ └───────┘ └───────┘      │");
+    mvwaddstr( WGlobal, ++y, 0, "│                                   │");
+    mvwaddstr( WGlobal, ++y, 0, "│ [wasd]: move                      │");
+    mvwaddstr( WGlobal, ++y, 0, "│ [i]: cast '┼', damages ♙ and ♖    │");
+    mvwaddstr( WGlobal, ++y, 0, "│ [o]: cast '╳', damages ♘ and ♗    │");
+    mvwaddstr( WGlobal, ++y, 0, "│ [p]: cast '◯', damages ♕ and ♔    │");
+    mvwaddstr( WGlobal, ++y, 0, "│                                   │");
+    mvwaddstr( WGlobal, ++y, 0, "│ Incapaciate all enemies to win    │");
+    mvwaddstr( WGlobal, ++y, 0, "│                                   │");
+    mvwaddstr( WGlobal, ++y, 0, "│                                   │");
+    mvwaddstr( WGlobal, ++y, 0, "└───────────────────────────────────┘");
 
-    mvwaddstr( WGlobal,  0, 0, "┌───────────────────────────────────┐");
-    mvwaddstr( WGlobal,  1, 0, "│                                   │");
-    mvwaddstr( WGlobal,  2, 0, "│********************..**********   │");
-    mvwaddstr( WGlobal,  3, 0, "│***************..****♙..********   │");
-    mvwaddstr( WGlobal,  4, 0, "│***************..****..*********   │");
-    mvwaddstr( WGlobal,  5, 0, "│***************..*██..█*********   │");
-    mvwaddstr( WGlobal,  6, 0, "│***************..█....██********   │");
-    mvwaddstr( WGlobal,  7, 0, "│****************....♕..█********   │");
-    mvwaddstr( WGlobal,  8, 0, "│**************██.......█********   │");
-    mvwaddstr( WGlobal,  9, 0, "│**************█...♗..♘..█*******   │");
-    mvwaddstr( WGlobal, 10, 0, "│**************█.✪.......█*******   │");
-    mvwaddstr( WGlobal, 11, 0, "│************.......█************   │");
-    mvwaddstr( WGlobal, 12, 0, "│********.......♘..██************   │");
-    mvwaddstr( WGlobal, 13, 0, "│****.♘......██.....*************   │");
-    mvwaddstr( WGlobal, 14, 0, "│.......**█***██..█.*************   │");
-    mvwaddstr( WGlobal, 15, 0, "│█.**█**********██*..************   │");
-    mvwaddstr( WGlobal, 16, 0, "│*******************..***********   │");
-    mvwaddstr( WGlobal, 17, 0, "│*******************...**********   │");
-    mvwaddstr( WGlobal, 18, 0, "│┌───────┐ ┌─────────────────┐      │");
-    mvwaddstr( WGlobal, 19, 0, "│┌───────┐ ┌───────┐ ┌───────┐      │");
-    mvwaddstr( WGlobal, 20, 0, "││││ . │││<│   .   │<│   .   │<     │");
-    mvwaddstr( WGlobal, 21, 0, "│└───────┘ └───────┘ └───────┘      │");
-    mvwaddstr( WGlobal, 22, 0, "│                                   │");
-    mvwaddstr( WGlobal, 23, 0, "│                                   │");
-    mvwaddstr( WGlobal, 24, 0, "│                                   │");
-    mvwaddstr( WGlobal, 25, 0, "│                                   │");
-    mvwaddstr( WGlobal, 26, 0, "│                                   │");
-    mvwaddstr( WGlobal, 27, 0, "│                                   │");
-    mvwaddstr( WGlobal, 28, 0, "│                                   │");
-    mvwaddstr( WGlobal, 29, 0, "│                                   │");
-    mvwaddstr( WGlobal, 30, 0, "│                                   │");
-    mvwaddstr( WGlobal, 31, 0, "│                                   │");
-    mvwaddstr( WGlobal, 32, 0, "│                                   │");
-    mvwaddstr( WGlobal, 33, 0, "└───────────────────────────────────┘");
+
 
 
     // Lable
     mvwaddstr(WGlobal, LABLE_Y, LABLE_X, LABLE_TEXT);
+
+    // slots
+    mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X + 1,           TEXT_TYPE);
+    mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X + WSLOT_DX + 1, TEXT_DIRECTION);
+
+    // map name
+    mvwaddstr( WGlobal, 1, 15, Map::mapName.c_str());
+
+    // // map name
+    // mvwaddstr( WGlobal, 1, 15, Map::mapName.c_str());
 
 
     wrefresh(WGlobal);

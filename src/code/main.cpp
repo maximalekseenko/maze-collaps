@@ -10,10 +10,9 @@ int main(int argc, char *argv[]) {
     setlocale(LC_ALL, "");
     UserInterface::Init();
 
-    Game g;
-    g.LoadMap(0);
+    Game::LoadMap(0);
     
-    g.Run();
+    Game::Run();
     UserInterface::Exit();
     Log::Out("+++END+++");
 }
