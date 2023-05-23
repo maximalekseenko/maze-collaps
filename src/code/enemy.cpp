@@ -300,9 +300,11 @@ void Enemy::Attack(int targetPosition)
         // void-kill protection
         if (!isChasing && newPosition == targetPosition) continue;
 
+        // get weight of this move
         double posWeight = Random::Get()
              + (isChasing ? GetDepth(newPosition, targetPosition, MOVELIMIT) : 0);
 
+        // is better?
         if (posWeight < bestWeight || bestWeight == -1)
         {
             bestWeight = posWeight;
