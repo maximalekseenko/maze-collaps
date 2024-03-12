@@ -93,9 +93,9 @@ class Model
     protected: // +++CONSTRUCTORS AND DESTRUCTORS+++
         
         Model(int width, int height, int N, bool periodic, Heuristic heuristic)
-                : MX(width), MY(height), N(N), 
-                    periodic(periodic), heuristic(heuristic),
-                    dist(0, 1)
+                : dist(0, 1),
+                    MX(width), MY(height), N(N), 
+                    periodic(periodic), heuristic(heuristic)
         {}
 
         ~Model() 

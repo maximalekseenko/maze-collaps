@@ -54,14 +54,14 @@ SOFTWARE.
 template <typename T>
 class Array2D {
     public: // ----- public Members -----
-        /// @brief Amount of all elements in array2d.
-        const int len;
-
         /// @brief Amount of cols in array2d.
         const int X;
 
         /// @brief Amount of rows in array2d.
         const int Y;
+
+        /// @brief Amount of all elements in array2d.
+        const int len;
 
 
     private: // ----- private Members -----

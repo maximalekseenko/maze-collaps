@@ -97,7 +97,7 @@ bool Player::Cast(Player::Element nextelement)
 
     if (slots[2] == CAST_DIR_R)
     {
-        int pos;
+        // int pos;
         cast_effect(Map::Move(position, -1,  0)); // L
         cast_effect(Map::Move(position,  1,  0)); // R
         cast_effect(Map::Move(position,  0, -1)); // U

@@ -204,7 +204,7 @@ int Enemy::lastId = 0;
 
 
 Enemy::Enemy(Name name, int position, double difficulty)
-    : name(name), position(position), difficulty(difficulty), id(++lastId)
+    : id(++lastId), name(name), difficulty(difficulty), position(position)
 {
 }
 

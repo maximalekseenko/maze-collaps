@@ -6,6 +6,7 @@
 #include "array2d.h"
 
 #include <vector>
+#include <stdexcept>
 
 
 class Image {
