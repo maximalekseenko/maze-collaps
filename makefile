@@ -25,6 +25,7 @@ all: build-debug
 
 
 build-debug: create_directories create_executable create_data
+	(cd $(OUT_DIR); ./$(EXECUTABLE))
 build-prod: create_directories create_executable create_data clean
 
 
