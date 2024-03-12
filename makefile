@@ -9,6 +9,8 @@ DATA_DIR 	= ./src/data/
 
 BIN_DIR     = ./bin/
 OBJ_DIR 	= ./bin/obj/
+OUT_PREF	?= build
+OUT_DIR		= $(BIN_DIR)/$(OUT_PREF)
 
 SOURCES 	= $(wildcard $(CODE_DIR)/*.cpp)
 LIBS	    = -lncurses
@@ -23,19 +25,17 @@ all: build-debug
 
 
 build-debug: create_directories create_executable create_data
-build-prod: create_directories create_executable create_data
+build-prod: create_directories create_executable create_data clean
 
 
 # ------------------------- create directories -------------------------
-create_directories: $(BIN_DIR) $(OBJ_DIR)
-
-
-$(BIN_DIR): # +++ create binary directory +++
+create_directories:
+#	+++ create binary directory +++
 	mkdir -p $(BIN_DIR)
-
-
-$(OBJ_DIR): # +++ create object directory +++
+# 	+++ create object directory +++
 	mkdir -p $(OBJ_DIR)
+# 	+++ create out directory +++
+	mkdir -p $(OUT_DIR)
 
 
 # ------------------------- create executable -------------------------
@@ -47,14 +47,12 @@ $(OBJECTS): $(OBJ_PATTERN) : $(SRC_PATTERN) # +++ compile +++
 
 
 $(EXECUTABLE): $(OBJECTS) # +++ link +++
-	# $(OBJECTS)
-	$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o $(BIN_DIR)/$(EXECUTABLE)
+	$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o $(OUT_DIR)/$(EXECUTABLE)
 
 
 # ------------------------- create data -------------------------
 create_data:
-	# cp -Rf $(DATA_DIR) $(BIN_DIR)
-	rsync -rupE $(DATA_DIR) $(BIN_DIR)/data
+	rsync -a --delete $(DATA_DIR) $(OUT_DIR)/data
 
 
 # ------------------------- extra -------------------------
@@ -62,4 +60,4 @@ clean: # +++ cleanup +++
 	$(RM) -rf $(OBJ_DIR)
 
 
-.PHONY: create_directories create_executable create_data clean
+.PHONY: create_directories create_executable create_data clean build-debug build-prod
