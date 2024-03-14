@@ -26,12 +26,12 @@ all: build-debug
 
 build-debug: create_directories create_executable create_data
 	(cd $(OUT_DIR); ./$(EXECUTABLE))
-build-prod: create_directories create_executable create_data clean
+build-prod: clean create_directories create_executable create_data clean
 
 
 # ------------------------- create directories -------------------------
 create_directories:
-#	+++ create binary directory +++
+	#	+++ create binary directory +++
 	mkdir -p $(BIN_DIR)
 # 	+++ create object directory +++
 	mkdir -p $(OBJ_DIR)
