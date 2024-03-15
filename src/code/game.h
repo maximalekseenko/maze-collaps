@@ -2,86 +2,47 @@
 
 
 
-#include <tuple>
-#include <iostream>
-#include <string>
-#include <map>
 #include <vector>
 
-
-#include "player.h"
-#include "enemy.h"
+#include "entity.h"
 #include "map.h"
-
-#include "userInterface.h"
-#include "log.h"
 
 
 
 struct Game
 {
-    public: // +++LOAD MAP+++
-        static void LoadMap(int id)
-        {
-            Map::Load(id);
+    public:
+        /// @brief placeholder untill i find a better way to acces current game instance.
+        static Game game;
 
-            MapInit();
+    public: // +++ CONSTRUCTORS AND DESTRUCTORS +++ //
+        Game();
+        ~Game();
 
-            UserInterface::UpdateAll();
-        }
+    public: // +++ ACCESSABLE RUNTIME MEMBERS +++ //
+        Map *current_map;
+        std::vector<Entity> entities;
 
-    
-    private: // +++LOAD MAP+++
+    public: // 
 
-        static void MapInit()
-        {
+        /// @brief Begins circle of running the game.
+        void Run();
 
-            Enemy::enemies.clear();
-            bool isPlayerCreated = false;
-            for (int i = 0; i < Map::MI; i ++)
-            {
-                // if spawner
-                if (Map::Get(i) == Map::TILE::SPAWNER)
-                {
-                    // spawn player
-                    if (!isPlayerCreated) 
-                    {
-                        isPlayerCreated = true;
-                        Player::player = Player(i);
-                    }
-                    // spawn enemy
-                    else
-                    {
-                        Enemy::Create(i);
-                    }
-                }
-            }
-        }
+        /// @brief Run turn logic of specific entity.
+        /// @param __actor entity to turn
+        void Turn(Entity __actor);
 
+    public: 
+        /// @brief Loads map into the game and initialize it with Game::InitializeMap.
+        /// @param __mapFileName name of mapFile to load 
+        void LoadMap(std::string __mapFileName);
 
-    public: // +++RUN+++
-        static void Run()
-        {
-            while (true)
-            {  
-                // player
-                while (Player::player.Turn() == TURNCONTINUE) {}
+        /// @brief Initializes map by creating all entities. Calls Game::ClearMap on run.
+        /// @param __map map to initialize
+        void InitializeMap(Map *__map);
 
-                // enemies
-                for (auto& enemy : Enemy::enemies)
-                    enemy.Turn(Player::player.position);
+        /// @brief Clears all map related variables (e.g. entities)
+        void ClearMap();
+        
 
-                // loss
-                for (auto& enemy : Enemy::enemies)
-                    if (enemy.position == Player::player.position) 
-                        throw std::runtime_error("ERROR: GAME LOST");
-                        
-                // update
-                UserInterface::Update();
-
-                // victory
-                if (Enemy::enemies.size() == 0 && !Map::LoadNext()) throw std::runtime_error("ERROR: VICTORY");
-
-            }
-        }
 };

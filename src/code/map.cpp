@@ -5,7 +5,6 @@
 
 
 #include "overlappingwave.h"
-#include "enemy.h"
 #include "log.h"
 
 
@@ -13,25 +12,25 @@
 #define GENTRYLIMIT 10
 
 
+Map::Map(std::string name)
+    : MX(32), MY(16), MI(32 * 16)
+{
+    Load(name);
+}
+Map::~Map() {
+    
+}
+
 // +++PRIVATE MEMBERS+++
 Map::TILE* Map::map = nullptr;
 
 
-// +++READONLY* MEMBERS+++
-int Map::MX = 32;
-int Map::MY = 16;
-int Map::MI = Map::MX * Map::MY;
-std::string Map::mapName;
-int Map::mapId = -1;
-double Map::difficulty;
-
-
 // +++LOAD FUNCTIONS+++
-bool Map::Load(std::string fileName)
+bool Map::Load(std::string __path)
 {
-    mapName = fileName;
+    path = __path;
     auto generator = OverlappingWave(
-        "data/" + fileName + ".png", 3, Map::MX, Map::MY, 
+        __path, 3, Map::MX, Map::MY, 
         true, true, 8, false, Model::Heuristic::Entropy);
         
     // generate
@@ -39,7 +38,7 @@ bool Map::Load(std::string fileName)
     for(; trys != 0; trys --) if (generator.Run(-1, -1)) break;
     if (trys == 0) 
     {
-        Log::Out("--ERR: Map::Load() failed due try limit for '" + fileName + "'");
+        Log::Out("--ERR: Map::Load() failed due try limit for '" + __path + "'");
         return false;
     }
 
@@ -51,24 +50,9 @@ bool Map::Load(std::string fileName)
     for (int i = 0; i < MI; i ++) Map::map[i] = static_cast<TILE>(result[i]);
     delete[] result;
 
-    Log::Out("--LOG: Map::Load() success for '" + fileName + "'");
+    Log::Out("--LOG: Map::Load() success for '" + path + "'");
     return true;
 }
-
-
-bool Map::Load(int mapId)
-{
-    Map::mapId = mapId;
-    switch (mapId)
-    {
-        case -1: Load("test"); return true;
-        case 0: Load("hostilecave"); return true;
-        case 1: Load("theentrance"); return true;
-        default: return false;
-    }
-}
-bool Map::LoadNext() { return Load(mapId + 1); }
-
 
 // +++ACCESS FUNCTIONS+++
 Map::TILE& Map::Get(int i)
@@ -143,7 +127,7 @@ int Map::FixY(int y) { return FixY(&y); }
 bool Map::IsNotObstacle(int i)
 {
     if (Get(i) == TILE::WALL) return false;
-    for (auto enemy : Enemy::enemies) if (enemy.position == i) return false;
+    // for (auto enemy : Enemy::enemies) if (enemy.position == i) return false;
     return true;
 }
 bool Map::IsLineOfSight(int i1, int i2)

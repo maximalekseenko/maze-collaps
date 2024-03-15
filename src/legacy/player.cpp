@@ -34,7 +34,7 @@
 Player Player::player;
 
 
-bool Player::Turn()
+bool Player::Turn(Map* __map)
 {
     // get action
     std::string task;
@@ -45,21 +45,21 @@ bool Player::Turn()
     // do action
     if (button == BUTTONEXIT) throw std::runtime_error("GAME QUIT");
 
-    if (button == BUTTONMU) return Move( 0, -1);
-    if (button == BUTTONMD) return Move( 0,  1);
-    if (button == BUTTONML) return Move(-1,  0);
-    if (button == BUTTONMR) return Move( 1,  0);
+    if (button == BUTTONMU) return Move( 0, -1, __map);
+    if (button == BUTTONMD) return Move( 0,  1, __map);
+    if (button == BUTTONML) return Move(-1,  0, __map);
+    if (button == BUTTONMR) return Move( 1,  0, __map);
 
-    if (button == BUTTONCA) return Cast(Element::A);
-    if (button == BUTTONCB) return Cast(Element::B);
-    if (button == BUTTONCC) return Cast(Element::C);
+    if (button == BUTTONCA) return Cast(Element::A, __map);
+    if (button == BUTTONCB) return Cast(Element::B, __map);
+    if (button == BUTTONCC) return Cast(Element::C, __map);
 
     Log::Out("--LOG: Player button not found: " + std::to_string(button));
     return TURNCONTINUE;
 }
 
 
-bool Player::Cast(Player::Element nextelement)
+bool Player::Cast(Player::Element nextelement, Map* __map)
 {
     // add element
     slots[0] = slots[1];
@@ -79,7 +79,7 @@ bool Player::Cast(Player::Element nextelement)
     auto cast_effect = [this](int pos)
     {
         // wall block
-        if (Map::Get(pos) == Map::TILE::WALL) return CASTBREAK;
+        if (__map->Get(pos) == Map::TILE::WALL) return CASTBREAK;
 
         // enemy target
         for (auto &enemy : Enemy::enemies)
@@ -98,61 +98,61 @@ bool Player::Cast(Player::Element nextelement)
     if (slots[2] == CAST_DIR_R)
     {
         // int pos;
-        cast_effect(Map::Move(position, -1,  0)); // L
-        cast_effect(Map::Move(position,  1,  0)); // R
-        cast_effect(Map::Move(position,  0, -1)); // U
-        cast_effect(Map::Move(position,  0,  1)); // D
-        cast_effect(Map::Move(position, -1, -1)); // LU
-        cast_effect(Map::Move(position, -1,  1)); // LD
-        cast_effect(Map::Move(position,  1, -1)); // RU
-        cast_effect(Map::Move(position,  1,  1)); // RD
+        cast_effect(__map->Move(position, -1,  0)); // L
+        cast_effect(__map->Move(position,  1,  0)); // R
+        cast_effect(__map->Move(position,  0, -1)); // U
+        cast_effect(__map->Move(position,  0,  1)); // D
+        cast_effect(__map->Move(position, -1, -1)); // LU
+        cast_effect(__map->Move(position, -1,  1)); // LD
+        cast_effect(__map->Move(position,  1, -1)); // RU
+        cast_effect(__map->Move(position,  1,  1)); // RD
     }
     else if (slots[2] == CAST_DIR_A)
     {
         for ( // L
             int limit = 0, pos = position; 
-            limit < Map::MX/2; 
+            limit < __map->MX/2; 
             limit ++
-        ) if (cast_effect(Map::Move(&pos, -1,  0)) == CASTBREAK) break;
+        ) if (cast_effect(__map->Move(&pos, -1,  0)) == CASTBREAK) break;
         for ( // R
             int limit = 0, pos = position; 
-            limit < Map::MX/2; 
+            limit < __map->MX/2; 
             limit ++
-        ) if (cast_effect(Map::Move(&pos,  1,  0)) == CASTBREAK) break;
+        ) if (cast_effect(__map->Move(&pos,  1,  0)) == CASTBREAK) break;
         for ( // U
             int limit = 0, pos = position; 
-            limit < Map::MY/2; 
+            limit < __map->MY/2; 
             limit ++
-        ) if (cast_effect(Map::Move(&pos,  0, -1)) == CASTBREAK) break;
+        ) if (cast_effect(__map->Move(&pos,  0, -1)) == CASTBREAK) break;
         for ( // D
             int limit = 0, pos = position; 
-            limit < Map::MY/2; 
+            limit < __map->MY/2; 
             limit ++
-        ) if (cast_effect(Map::Move(&pos,  0,  1)) == CASTBREAK) break;
+        ) if (cast_effect(__map->Move(&pos,  0,  1)) == CASTBREAK) break;
     }
     else if (slots[2] == CAST_DIR_D)
     {
-        int _max_limit = std::min(Map::MX/2, Map::MY/2);
+        int _max_limit = std::min(__map->MX/2, __map->MY/2);
         for ( // LU
             int limit = 0, pos = position; 
             limit < _max_limit;
             limit ++
-        ) if (cast_effect(Map::Move(&pos, -1, -1)) == CASTBREAK) break;
+        ) if (cast_effect(__map->Move(&pos, -1, -1)) == CASTBREAK) break;
         for ( // LD
             int limit = 0, pos = position; 
             limit < _max_limit;
             limit ++
-        ) if (cast_effect(Map::Move(&pos, -1,  1)) == CASTBREAK) break;
+        ) if (cast_effect(__map->Move(&pos, -1,  1)) == CASTBREAK) break;
         for ( // RU
             int limit = 0, pos = position; 
             limit < _max_limit;
             limit ++
-        ) if (cast_effect(Map::Move(&pos,  1, -1)) == CASTBREAK) break;
+        ) if (cast_effect(__map->Move(&pos,  1, -1)) == CASTBREAK) break;
         for ( // RD
             int limit = 0, pos = position; 
             limit < _max_limit;
             limit ++
-        ) if (cast_effect(Map::Move(&pos,  1,  1)) == CASTBREAK) break;
+        ) if (cast_effect(__map->Move(&pos,  1,  1)) == CASTBREAK) break;
     }
 
     slots[0] = Element::NONE;
@@ -161,18 +161,18 @@ bool Player::Cast(Player::Element nextelement)
     return TURNBREAK;
 }
 
-bool Player::Move(int dx, int dy)
+bool Player::Move(int dx, int dy, Map* __map)
 {
-    if (!Map::IsNotObstacle(Map::Move(position, dx, dy))) return TURNCONTINUE;
+    if (!__map->IsNotObstacle(__map->Move(position, dx, dy))) return TURNCONTINUE;
 
-    Map::Move(&position, dx, dy);
+    __map->Move(&position, dx, dy);
     Log::Out("--LOG: Player moved from ["
-         + std::to_string(Map::X(position) - dx) + " " + std::to_string(Map::Y(position) - dy)
+         + std::to_string(__map->X(position) - dx) + " " + std::to_string(__map->Y(position) - dy)
          + "] to ["
-         + std::to_string(Map::X(position)) + " " + std::to_string(Map::Y(position))
+         + std::to_string(__map->X(position)) + " " + std::to_string(__map->Y(position))
          + "]");
 
-    Cast(Element::NONE);
+    Cast(Element::NONE, __map);
 
     return TURNBREAK;
 }

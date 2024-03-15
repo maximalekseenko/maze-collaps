@@ -1,8 +1,8 @@
 #include "userInterface.h"
 
 #include "map.h"
-#include "player.h"
-#include "enemy.h"
+// #include "player.h"
+// #include "enemy.h"
 
 
 #define LABLE_TEXT "collaps-maze"
@@ -81,21 +81,21 @@ void UserInterface::Exit()
 }    
 
 
-void UserInterface::Update()
+void UserInterface::Update(Map* __map)
 {
-    DrawMap();
-    DrawSlots();
+    DrawMap(__map);
+    DrawSlots(__map);
 }
 
 
-void UserInterface::UpdateAll()
+void UserInterface::UpdateAll(Map* __map)
 {
-    DrawBackground();
-    Update();
+    DrawBackground(__map);
+    Update(__map);
 }
 
 
-void UserInterface::DrawBackground()
+void UserInterface::DrawBackground(Map* __map)
 {
 
 
@@ -146,40 +146,40 @@ void UserInterface::DrawBackground()
     mvwaddstr( WGlobal, WSLOT_Y - 1, WSLOT_X + WSLOT_DX + 1, TEXT_DIRECTION);
 
     // map name
-    mvwaddstr( WGlobal, 1, 15, Map::mapName.c_str());
+    mvwaddstr( WGlobal, 1, 15, __map->name.c_str());
 
     // // map name
-    // mvwaddstr( WGlobal, 1, 15, Map::mapName.c_str());
+    // mvwaddstr( WGlobal, 1, 15, __map->mapName.c_str());
 
 
     wrefresh(WGlobal);
 }
 
 
-int MapFixedX(int i) { return (Map::MX * 3/2 + Map::X(i) - Map::X(Player::player.position)) % Map::MX + WMAP_W / 2 - Map::MX / 2; }
-int MapFixedY(int i) { return (Map::MY * 3/2 + Map::Y(i) - Map::Y(Player::player.position)) % Map::MY + WMAP_H / 2 - Map::MY / 2; }
+int MapFixedX(int i, Map* __map) { return (__map->MX * 3/2 + __map->X(i) - __map->X(Player::player.position)) % __map->MX + WMAP_W / 2 - __map->MX / 2; }
+int MapFixedY(int i, Map* __map) { return (__map->MY * 3/2 + __map->Y(i) - __map->Y(Player::player.position)) % __map->MY + WMAP_H / 2 - __map->MY / 2; }
 
 
-void UserInterface::DrawMap()
+void UserInterface::DrawMap(Map* __map)
 {
-    bool SEE = false;
+    bool SEE = true;
 
     // tiles
-    for (int i = 0; i < Map::MI; i ++)
-        if (SEE || Map::IsLineOfSight(Player::player.position, i))
-            if (Map::Get(i) == Map::TILE::WALL)
-                mvwprintw(WMap, MapFixedY(i), MapFixedX(i), "█");
-            else  mvwprintw(WMap, MapFixedY(i), MapFixedX(i), ".");
-        else  mvwprintw(WMap, MapFixedY(i), MapFixedX(i), "*");
+    for (int i = 0; i < __map->MI; i ++)
+        if (SEE || __map->IsLineOfSight(Player::player.position, i))
+            if (__map->Get(i) == __map->TILE::WALL)
+                mvwprintw(WMap, MapFixedY(i, __map), MapFixedX(i, __map), "█");
+            else  mvwprintw(WMap, MapFixedY(i, __map), MapFixedX(i, __map), ".");
+        else  mvwprintw(WMap, MapFixedY(i, __map), MapFixedX(i, __map), "*");
         
     
     // enemies
     for (auto enemy : Enemy::enemies)
-        if (SEE || Map::IsLineOfSight(Player::player.position, enemy.position))
-            mvwprintw(WMap, MapFixedY(enemy.position), MapFixedX(enemy.position), enemy.GetVisual());
+        if (SEE || __map->IsLineOfSight(Player::player.position, enemy.position))
+            mvwprintw(WMap, MapFixedY(enemy.position, __map), MapFixedX(enemy.position, __map), enemy.GetVisual());
 
     // player
-    mvwprintw(WMap, MapFixedY(Player::player.position), MapFixedX(Player::player.position), Player::player.visual);
+    mvwprintw(WMap, MapFixedY(Player::player.position, __map), MapFixedX(Player::player.position, __map), Player::player.visual);
 
 
     wrefresh(WMap);
@@ -197,7 +197,7 @@ const char* GetPlayerElement(int i)
 }
 
 
-void UserInterface::DrawSlots()
+void UserInterface::DrawSlots(Map* __map)
 {
     box(WSlot0, 0, 0);
     box(WSlot1, 0, 0);

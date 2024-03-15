@@ -14,47 +14,47 @@ struct Map
             TRAP    = 1089552,
         };
 
+    public:
+        Map(std::string path);
+        ~Map();
 
     private: // +++MEMBERS+++
         static TILE* map;
 
     public: // +++READONLY* MEMBERS+++
-        static int MX, MY, MI;
-        static std::string mapName;
-        static int mapId;
-        static double difficulty;
+        int MX, MY, MI;
+        std::string name;
+        std::string path;
+        double difficulty;
 
 
     public: // +++LOAD FUNCTIONS+++
-        static bool Load(std::string fileName);
-        static bool Load(int mapId);
-        static bool LoadNext();
-
+        bool Load(std::string fileName);
 
     public: // +++ACCESS FUNCTIONS+++
-        static TILE& Get(int pos);
-        static int Move(int* fromPos, int dX, int dY);
-        static int Move(int fromPos, int dX, int dY);
-        static int Up(int* fromPos);
-        static int Up(int fromPos);
-        static int Down(int* fromPos);
-        static int Down(int fromPos);
-        static int Left(int* fromPos);
-        static int Left(int fromPos);
-        static int Right(int* fromPos);
-        static int Right(int fromPos);
-        static int Fix(int* fromPos);
-        static int Fix(int fromPos);
-        static int FixX(int* x);
-        static int FixX(int x);
-        static int FixY(int* y);
-        static int FixY(int y);
-        static int X(int position);
-        static int Y(int position);
-        static int I(int x, int y);
+        TILE& Get(int pos);
+        int Move(int* fromPos, int dX, int dY);
+        int Move(int fromPos, int dX, int dY);
+        int Up(int* fromPos);
+        int Up(int fromPos);
+        int Down(int* fromPos);
+        int Down(int fromPos);
+        int Left(int* fromPos);
+        int Left(int fromPos);
+        int Right(int* fromPos);
+        int Right(int fromPos);
+        int Fix(int* fromPos);
+        int Fix(int fromPos);
+        int FixX(int* x);
+        int FixX(int x);
+        int FixY(int* y);
+        int FixY(int y);
+        int X(int position);
+        int Y(int position);
+        int I(int x, int y);
 
 
     public: // +++GEOMETRY FUNCTIONS+++
-        static bool IsNotObstacle(int pos);
-        static bool IsLineOfSight(int fromPos, int toPos);
+        bool IsNotObstacle(int pos);
+        bool IsLineOfSight(int fromPos, int toPos);
 };
