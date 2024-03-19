@@ -21,12 +21,12 @@ OBJECTS		= $(SOURCES:$(SRC_PATTERN)=$(OBJ_PATTERN))
 
 
 # ------------------------- commands -------------------------
-all: build-debug
+all: build-update
 
 
-build-debug: create_directories create_executable create_data
+build-update: create_directories create_executable create_data
 	(cd $(OUT_DIR); ./$(EXECUTABLE))
-build-prod: clean create_directories create_executable create_data clean
+build-full: clean create_directories create_executable create_data clean
 
 
 # ------------------------- create directories -------------------------
