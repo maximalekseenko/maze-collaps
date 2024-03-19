@@ -24,7 +24,9 @@ OBJECTS		= $(SOURCES:$(SRC_PATTERN)=$(OBJ_PATTERN))
 all: build-update
 
 
-build-update: create_directories create_executable create_data
+build-debug: create_directories create_executable create_data
+	(cd $(OUT_DIR); ./$(EXECUTABLE))
+build-full-debug: clean create_directories create_executable create_data clean
 	(cd $(OUT_DIR); ./$(EXECUTABLE))
 build-full: clean create_directories create_executable create_data clean
 
