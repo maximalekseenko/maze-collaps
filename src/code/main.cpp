@@ -1,16 +1,17 @@
 
 // #include "userInterface.h"
 
+#include "renderer.h"
 #include "game.h"
-#include "log.h"
+#include "lib/log.h"
 #include <locale>
 #include <codecvt>
+
 
 int main(int argc, char *argv[]) {
     Log::Out("+++BEGIN+++");
     setlocale(LC_ALL, "");
-    // UserInterface::Init();
-
+    Renderer::Init();
 
     Game *game = new Game();
 

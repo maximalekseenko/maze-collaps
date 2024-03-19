@@ -5,7 +5,7 @@
 
 
 #include "overlappingwave.h"
-#include "log.h"
+#include "lib/log.h"
 
 
 

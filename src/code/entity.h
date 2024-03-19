@@ -7,7 +7,7 @@
 class Entity
 {
     public:
-        Entity();
+        Entity(int __pos);
         ~Entity();
 
     private:
