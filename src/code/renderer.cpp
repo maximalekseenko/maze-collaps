@@ -35,10 +35,10 @@ void Renderer::Render_Game(
         __center, __safe
     );
 
-    for (auto _ent = Game::game.entities.begin(); _ent != Game::game.entities.end(); ++_ent)
+    for (auto _ent : Game::game.entities)
         Render_Entity(
             Game::game.current_map, 
-            _ent.base(),
+            _ent,
             0, 0,
             __center, __safe
         );

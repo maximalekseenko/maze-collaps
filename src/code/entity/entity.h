@@ -8,7 +8,7 @@ class Entity
 {
     public:
         Entity(int __pos);
-        ~Entity();
+        virtual ~Entity();
 
     private:
         static int nextId;
@@ -16,7 +16,9 @@ class Entity
     public:
         const int id;
         int position;
-        // EntityLogic logic;
 
         int visual_id;
+
+    public:
+        virtual void Turn();
 };

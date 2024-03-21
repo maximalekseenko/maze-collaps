@@ -2,7 +2,7 @@
 
 
 #include "map.h"
-#include "entity.h"
+#include "entity/entity.h"
 
 
 class Renderer {

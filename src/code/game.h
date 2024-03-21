@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "entity.h"
+#include "entity/entity.h"
 #include "map.h"
 
 
@@ -21,7 +21,7 @@ struct Game
 
     public: // +++ ACCESSABLE RUNTIME MEMBERS +++ //
         Map *current_map;
-        std::vector<Entity> entities;
+        std::vector<Entity*> entities;
 
     public: // 
 
