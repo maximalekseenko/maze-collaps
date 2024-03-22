@@ -8,6 +8,7 @@ class Entity
 {
     public:
         Entity(int __pos);
+        Entity(int __pos, int __vid);
         virtual ~Entity();
 
     private:
@@ -17,7 +18,8 @@ class Entity
         const int id;
         int position;
 
-        int visual_id;
+    public:
+        virtual const char* GetVisual();
 
     public:
         virtual void Turn();

@@ -11,14 +11,11 @@
 int main(int argc, char *argv[]) {
     Log::Out("+++BEGIN+++");
     setlocale(LC_ALL, "");
-    Renderer::Init();
 
-    Game *game = new Game();
+    Renderer::Init();
 
     Game::game.LoadMap("data/hostilecave.png");
     Game::game.Run();
-
-    delete game;
 
     // UserInterface::Exit();
     Log::Out("+++END+++");

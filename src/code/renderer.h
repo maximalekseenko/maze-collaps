@@ -6,6 +6,9 @@
 
 
 class Renderer {
+    public:
+        static Renderer renderer;
+        
     private:
         static bool initialized;
 

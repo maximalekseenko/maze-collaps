@@ -5,6 +5,9 @@
 #include <ncurses.h>
 
 
+Renderer Renderer::renderer = Renderer();
+
+
 void PrintFinish(int __y=0) 
 { 
     move(__y,0); 
@@ -78,7 +81,7 @@ void Renderer::Render_Entity(
     mvprintw(
         MapFixedY(__ent->position, __map, __center) + __offset_y,
         MapFixedX(__ent->position, __map, __center) + __offset_x, 
-        "0"
+        __ent->GetVisual()
     );
     if (__safe) PrintFinish(__map->MY);
 }

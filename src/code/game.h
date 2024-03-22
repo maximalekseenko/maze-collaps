@@ -28,9 +28,7 @@ struct Game
         /// @brief Begins circle of running the game.
         void Run();
 
-        /// @brief Run turn logic of specific entity.
-        /// @param __actor entity to turn
-        void Turn(Entity __actor);
+        Entity* MakeEntity(int __pos);
 
     public: 
         /// @brief Loads map into the game and initialize it with Game::InitializeMap.
