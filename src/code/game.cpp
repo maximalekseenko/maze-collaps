@@ -32,23 +32,10 @@ Game::~Game(){
 
 void Game::Run()
 {
-    for (auto &_ent : this->entities) _ent->Turn();
-    Renderer::Render_Game(entities[0]->position);
-
-    for (auto &_ent : this->entities) _ent->Turn();
-    Renderer::Render_Map(current_map,36,0,entities[0]->position);
-    for (auto _ent : entities) Renderer::renderer.Render_Entity(current_map, _ent, 36, 0, entities[0]->position);
-    
-    for (auto &_ent : this->entities) _ent->Turn();
-    Renderer::Render_Map(current_map,0,20,entities[0]->position);
-    for (auto _ent : entities) Renderer::renderer.Render_Entity(current_map, _ent, 0, 20, entities[0]->position);
-
-    for (auto &_ent : this->entities) _ent->Turn();
-    Renderer::Render_Map(current_map,36,20,entities[0]->position);
-    for (auto _ent : entities) Renderer::renderer.Render_Entity(current_map, _ent, 36, 20, entities[0]->position);
-
     while (true)
     {
+        Renderer::Render_Game(entities[0]->position);
+        for (auto &_ent : this->entities) _ent->Turn();
     }
 }
 
