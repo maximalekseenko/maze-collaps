@@ -9,5 +9,8 @@ class Controls {
         static bool initialized;
 
     public:
-        void Run();
+        static bool is_running;
+        static void Run();
+    private:
+        static void HandleMouseMovement(int __x, int __y);
 };

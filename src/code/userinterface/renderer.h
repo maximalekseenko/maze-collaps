@@ -28,6 +28,7 @@ class Renderer {
         static void Update();
 
     public:
+        static bool is_running;
         static void Run();
 
     public:

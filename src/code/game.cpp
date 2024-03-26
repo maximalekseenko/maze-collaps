@@ -38,7 +38,7 @@ class Button : public InterfaceElement
         {
             y = __y;
             x = 10;
-            w = 10;
+            w = 9;
             h = 3;
             visualComponent = VisualComponent({
                 VisualComponent::VisualComponentRule(0,0,"+------+", Renderer::Color::CYAN),
@@ -47,6 +47,11 @@ class Button : public InterfaceElement
                 VisualComponent::VisualComponentRule(0,2,"+------+", Renderer::Color::CYAN)
             });
         }
+        void OnHover(bool __on) override
+        {
+            Log::Out(__on ? "BTN: HOVON" : "BTN: HOVOFF");
+            visualComponent.rules[2].colorF = __on ? Renderer::Color::RED : Renderer::Color::YELLOW;
+        }
 };
 
 
@@ -54,8 +59,9 @@ void Game::Run()
 {
     Button b1 = Button(1, "PLAY");
     Button b2 = Button(6, "EXIT");
-    while (true)
-        Log::Out("g" + std::to_string(InterfaceElement::layers[InterfaceElement::Layer::BUTTONS].size()));
+    while (Renderer::is_running) {}
+
+        // Log::Out("g" + std::to_string(InterfaceElement::layers[InterfaceElement::Layer::BUTTONS].size()));
     // {
         // Renderer::Render_Game(entities[0]->position);
         // for (auto &_ent : this->entities) _ent->Turn();

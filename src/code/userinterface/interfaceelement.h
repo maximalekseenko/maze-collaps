@@ -3,6 +3,7 @@
 #include <vector>
 #include <ncurses.h>
 #include "visualcomponent.h"
+#include <mutex>
 
 
 class InterfaceElement 
@@ -21,6 +22,7 @@ class InterfaceElement
         #define INTERFACE_ELEMENT_LAYERS_AMOUNT 4
 
         static std::vector<InterfaceElement*> layers[INTERFACE_ELEMENT_LAYERS_AMOUNT];
+        static std::recursive_mutex layers_lock;
     private: 
 
 
@@ -37,9 +39,9 @@ class InterfaceElement
         bool enabled = true;
 
     public: // +++ 
-        // void Render();
+        std::recursive_mutex lock;
 
     public: // +++ EVENTS +++
-        // virtual void OnHover();
-        // virtual void OnClick();
+        virtual void OnHover(bool);
+        virtual void OnClick(bool);
 };
