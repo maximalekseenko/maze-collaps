@@ -7,10 +7,6 @@
 #include "../lib/random.h"
 
 
-// TEMP
-#include <ncurses.h>
-
-
 bool IsNotObstacle(int __pos) {
     if (Game::game.current_map->Get(__pos) == Map::TILE::WALL) return false;
     for (auto __ent : Game::game.entities) if (__pos == __ent->position && __ent->id != 0) return false;
@@ -161,30 +157,23 @@ void Enemy::Turn() {
             this->activated = true;
         }
     } else {
-
-        Log::Out("--LOG: Enemy::Attack is called by "
-            + std::to_string(type)
-            + " from " + std::to_string(position)
-            + " to " + std::to_string(Game::game.entities[0]->position));
-
         int bestMove = position;
         double bestWeight = -9999;
-            Log::Out("---" + std::to_string(type));
         for (auto newPosition : GetMovesForEnemy(this->type, this->position))
         {
             // get weight of this move
             double posWeight = Random::Get() + GetPositionWeight(this->type, newPosition, Game::game.entities[0]->position, 3);
             // is better?
-            Log::Out(std::to_string(posWeight) + 
-                " [" + std::to_string(Game::game.current_map->X(newPosition)) + " " + std::to_string(Game::game.current_map->Y(newPosition)) + "] to" +
-                " [" + std::to_string(Game::game.current_map->X(Game::game.entities[0]->position)) + " " + std::to_string(Game::game.current_map->Y(Game::game.entities[0]->position)) + "]"
-            );
             if (posWeight > bestWeight || bestWeight == -9999)
             {
                 bestWeight = posWeight;
                 bestMove = newPosition;
             }
         }
+        Log::Out("--LOG: Enemy \"" + std::to_string(type) + "\" moved from"
+            " [" + std::to_string(Game::game.current_map->X(position)) + " " + std::to_string(Game::game.current_map->Y(position)) + "] to" +
+            " [" + std::to_string(Game::game.current_map->X(bestMove)) + " " + std::to_string(Game::game.current_map->Y(bestMove)) + "]"
+        );
         this->position = bestMove;
 
         // reset
@@ -197,6 +186,25 @@ const char* Player::GetVisual() {
     return "0";
 }
 void Player::Turn() {
-    Log::Out(std::to_string(id));
-    getch();
+
+    // MEVENT event;
+    // int ch = getch();
+    // while (true) {
+    //     if (ch == ERR) continue;
+    //     else if (ch == KEY_MOUSE) {
+    //         MEVENT event;
+    //         if (getmouse(&event) == OK) {
+    //             Renderer::MoveMouse(event.x, event.y);
+    //             // snprintf(buffer, max_size, "Mouse at row=%d, column=%d bstate=0x%08lx",
+    //             //         event.y, event.x, event.bstate);
+    //         }
+    //         else {
+    //             // ERR
+    //         }
+    //     }
+    //     else {
+    //         break;
+    //         // snprintf(buffer, max_size, "Pressed key %d (%s)", c, keyname(c));      
+    //     }
+    // }
 }
