@@ -13,6 +13,7 @@ VisualComponent::VisualComponentRule::~VisualComponentRule()
 {}
 
 
+
 VisualComponent::VisualComponent()
 {}
 VisualComponent::VisualComponent(std::vector<VisualComponentRule> __rules)

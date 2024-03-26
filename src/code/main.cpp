@@ -17,12 +17,13 @@ int main(int argc, char *argv[]) {
 
 	std::thread t_renderer(Renderer::Run);
 	std::thread c_renderer(Controls::Run);
-
-    Game::game.LoadMap("data/hostilecave.png");
-    Game::game.Run();
+    
+    Game::LoadMap("data/hostilecave.png");
+    std::thread g_renderer(Game::Run);
 
 	t_renderer.join();
 	c_renderer.join();
+	g_renderer.join();
 
     // UserInterface::Exit();
     Log::Out("+++END+++");

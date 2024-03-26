@@ -29,7 +29,7 @@ class InterfaceElement
     public:
         InterfaceElement(Layer __layer);
         InterfaceElement(Layer __layer, VisualComponent __vc);
-        ~InterfaceElement();
+        virtual ~InterfaceElement();
         
     public: // +++ PUBLIC VARIABLES +++
         const Layer layer;
@@ -42,6 +42,13 @@ class InterfaceElement
         std::recursive_mutex lock;
 
     public: // +++ EVENTS +++
+    public:
+        void Hover(bool);
+        void Click(bool);
+    private:
+        bool hovered=false;
+
         virtual void OnHover(bool);
         virtual void OnClick(bool);
+    
 };

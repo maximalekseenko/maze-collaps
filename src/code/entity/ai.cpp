@@ -8,8 +8,8 @@
 
 
 bool IsNotObstacle(int __pos) {
-    if (Game::game.current_map->Get(__pos) == Map::TILE::WALL) return false;
-    for (auto __ent : Game::game.entities) if (__pos == __ent->position && __ent->id != 0) return false;
+    if (Game::current_map->Get(__pos) == Map::TILE::WALL) return false;
+    for (auto __ent : Game::entities) if (__pos == __ent->position && __ent->id != 0) return false;
     return true;
 }
 
@@ -44,21 +44,21 @@ std::vector<int> GetMovesForEnemy(int __type, int __pos) {
 
     if (__type == 1) {
         int pos;
-        pos = Game::game.current_map->Move(__pos, -2, -1); // LLU
+        pos = Game::current_map->Move(__pos, -2, -1); // LLU
         if (IsNotObstacle(pos)) possibleMoves.push_back(pos);
-        pos = Game::game.current_map->Move(__pos, -2,  1); // LLD
+        pos = Game::current_map->Move(__pos, -2,  1); // LLD
         if (IsNotObstacle(pos)) possibleMoves.push_back(pos);
-        pos = Game::game.current_map->Move(__pos, -1, -2); // LUU
+        pos = Game::current_map->Move(__pos, -1, -2); // LUU
         if (IsNotObstacle(pos)) possibleMoves.push_back(pos);
-        pos = Game::game.current_map->Move(__pos, -1,  2); // LDD
+        pos = Game::current_map->Move(__pos, -1,  2); // LDD
         if (IsNotObstacle(pos)) possibleMoves.push_back(pos);
-        pos = Game::game.current_map->Move(__pos,  2, -1); // RRU
+        pos = Game::current_map->Move(__pos,  2, -1); // RRU
         if (IsNotObstacle(pos)) possibleMoves.push_back(pos);
-        pos = Game::game.current_map->Move(__pos,  2,  1); // RRD
+        pos = Game::current_map->Move(__pos,  2,  1); // RRD
         if (IsNotObstacle(pos)) possibleMoves.push_back(pos);
-        pos = Game::game.current_map->Move(__pos,  1, -2); // RUU
+        pos = Game::current_map->Move(__pos,  1, -2); // RUU
         if (IsNotObstacle(pos)) possibleMoves.push_back(pos);
-        pos = Game::game.current_map->Move(__pos,  1,  2); // RDD
+        pos = Game::current_map->Move(__pos,  1,  2); // RDD
         if (IsNotObstacle(pos)) possibleMoves.push_back(pos);
     } else {
 
@@ -76,44 +76,44 @@ std::vector<int> GetMovesForEnemy(int __type, int __pos) {
             if (move_hv) {
                 for ( // L
                     int limit = 0, pos = __pos; 
-                    limit < distlimit && IsNotObstacle(Game::game.current_map->Move(&pos, -1,  0)); 
+                    limit < distlimit && IsNotObstacle(Game::current_map->Move(&pos, -1,  0)); 
                     limit ++
                 ) possibleMoves.push_back(pos);
                 for ( // R
                     int limit = 0, pos = __pos; 
-                    limit < distlimit && IsNotObstacle(Game::game.current_map->Move(&pos,  1,  0)); 
+                    limit < distlimit && IsNotObstacle(Game::current_map->Move(&pos,  1,  0)); 
                     limit ++
                 ) possibleMoves.push_back(pos);
                 for ( // U
                     int limit = 0, pos = __pos; 
-                    limit < distlimit && IsNotObstacle(Game::game.current_map->Move(&pos,  0, -1)); 
+                    limit < distlimit && IsNotObstacle(Game::current_map->Move(&pos,  0, -1)); 
                     limit ++
                 ) possibleMoves.push_back(pos);
                 for ( // D
                     int limit = 0, pos = __pos; 
-                    limit < distlimit && IsNotObstacle(Game::game.current_map->Move(&pos,  0,  1)); 
+                    limit < distlimit && IsNotObstacle(Game::current_map->Move(&pos,  0,  1)); 
                     limit ++
                 ) possibleMoves.push_back(pos);
             }
             if (move_d) {
                 for ( // LU
                     int limit = 0, pos = __pos; 
-                    limit < distlimit && IsNotObstacle(Game::game.current_map->Move(&pos, -1, -1)); 
+                    limit < distlimit && IsNotObstacle(Game::current_map->Move(&pos, -1, -1)); 
                     limit ++
                 ) possibleMoves.push_back(pos);
                 for ( // LD
                     int limit = 0, pos = __pos; 
-                    limit < distlimit && IsNotObstacle(Game::game.current_map->Move(&pos, -1,  1)); 
+                    limit < distlimit && IsNotObstacle(Game::current_map->Move(&pos, -1,  1)); 
                     limit ++
                 ) possibleMoves.push_back(pos);
                 for ( // RD
                     int limit = 0, pos = __pos; 
-                    limit < distlimit && IsNotObstacle(Game::game.current_map->Move(&pos,  1, -1)); 
+                    limit < distlimit && IsNotObstacle(Game::current_map->Move(&pos,  1, -1)); 
                     limit ++
                 ) possibleMoves.push_back(pos);
                 for ( // RD
                     int limit = 0, pos = __pos; 
-                    limit < distlimit && IsNotObstacle(Game::game.current_map->Move(&pos,  1,  1)); 
+                    limit < distlimit && IsNotObstacle(Game::current_map->Move(&pos,  1,  1)); 
                     limit ++
                 ) possibleMoves.push_back(pos);
             }
@@ -129,11 +129,11 @@ double GetPositionWeight(int __type, int __pos, int __tpos, int __mlim)
     // mlim -> weight depends on distance to target
     if (__mlim <= 0) return -sqrt(
              + std::pow(std::min(
-                abs(Game::game.current_map->X(__pos) - Game::game.current_map->X(__tpos)),
-                Game::game.current_map->MX - abs(Game::game.current_map->X(__pos) - Game::game.current_map->X(__tpos))), 2)
+                abs(Game::current_map->X(__pos) - Game::current_map->X(__tpos)),
+                Game::current_map->MX - abs(Game::current_map->X(__pos) - Game::current_map->X(__tpos))), 2)
              + std::pow(std::min(
-                abs(Game::game.current_map->Y(__pos) - Game::game.current_map->Y(__tpos)),
-                Game::game.current_map->MY - abs(Game::game.current_map->Y(__pos) - Game::game.current_map->Y(__tpos))), 2)
+                abs(Game::current_map->Y(__pos) - Game::current_map->Y(__tpos)),
+                Game::current_map->MY - abs(Game::current_map->Y(__pos) - Game::current_map->Y(__tpos))), 2)
             );
 
     double _bestWeight = -9999;
@@ -162,7 +162,7 @@ void Enemy::Turn() {
         for (auto newPosition : GetMovesForEnemy(this->type, this->position))
         {
             // get weight of this move
-            double posWeight = Random::Get() + GetPositionWeight(this->type, newPosition, Game::game.entities[0]->position, 3);
+            double posWeight = Random::Get() + GetPositionWeight(this->type, newPosition, Game::entities[0]->position, 3);
             // is better?
             if (posWeight > bestWeight || bestWeight == -9999)
             {
@@ -171,8 +171,8 @@ void Enemy::Turn() {
             }
         }
         Log::Out("--LOG: Enemy \"" + std::to_string(type) + "\" moved from"
-            " [" + std::to_string(Game::game.current_map->X(position)) + " " + std::to_string(Game::game.current_map->Y(position)) + "] to" +
-            " [" + std::to_string(Game::game.current_map->X(bestMove)) + " " + std::to_string(Game::game.current_map->Y(bestMove)) + "]"
+            " [" + std::to_string(Game::current_map->X(position)) + " " + std::to_string(Game::current_map->Y(position)) + "] to" +
+            " [" + std::to_string(Game::current_map->X(bestMove)) + " " + std::to_string(Game::current_map->Y(bestMove)) + "]"
         );
         this->position = bestMove;
 

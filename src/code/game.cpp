@@ -16,26 +16,19 @@
 #include "userinterface/interfaceelement.h"
 
 
-Game Game::game = Game();
 
-
-Game::Game(){
-    this->current_map = new Map("data/theentrance.png");
-}
-
-Game::~Game(){
-    delete this->current_map;
-
-    for (auto _ent : this->entities) delete _ent;
-    this->entities.clear();
-}
+Map* Game::current_map = new Map("data/theentrance.png");;
+std::vector<Entity*> Game::entities;
 
 // TEMP
+bool game_run;
 class Button : public InterfaceElement
 {
     public:
-        Button(int __y, std::string _s) : InterfaceElement(InterfaceElement::Layer::BUTTONS) 
+        int action;
+        Button(int __y, std::string _s, int __a) : InterfaceElement(InterfaceElement::Layer::BUTTONS) 
         {
+            action = __a;
             y = __y;
             x = 30;
             w = 15;
@@ -52,17 +45,42 @@ class Button : public InterfaceElement
         }
         void OnHover(bool __on) override
         {
-            Log::Out(__on ? "BTN: HOVON" : "BTN: HOVOFF");
             visualComponent.rules[0].colorF = __on ? Renderer::Color::BRIGHT_YELLOW : Renderer::Color::YELLOW;
+        }
+        void OnClick(bool __on) override
+        {
+            Log::Out("CLICK");
+            if (action == 0)
+                game_run = true;
+            if (action == 1)
+                visualComponent.rules[0].ch = "USE ^C LOL";
         }
 };
 
 
+
 void Game::Run()
 {
-    Button b1 = Button(1, "PLAY");
-    Button b2 = Button(6, "EXIT");
-    while (Renderer::is_running) {}
+    
+    Button* b1 = new Button(1, "PLAY", 0);
+    Button* b2 = new Button(6, "EXIT", 1);
+    while (!game_run) {}
+    {
+        std::lock_guard layers_locker(InterfaceElement::layers_lock);
+        // delete b1;
+        // delete b2;
+        InterfaceElement::layers[b1->layer].erase(
+            std::remove(
+                InterfaceElement::layers[b1->layer].begin(), 
+                InterfaceElement::layers[b1->layer].end(), 
+                b1), 
+            InterfaceElement::layers[b1->layer].end()
+        );
+    }
+
+    delete b1;
+
+    while (game_run) {}
 
         // Log::Out("g" + std::to_string(InterfaceElement::layers[InterfaceElement::Layer::BUTTONS].size()));
     // {
@@ -74,26 +92,26 @@ void Game::Run()
 
 void Game::LoadMap(std::string __mapFileName) 
 {
-    delete this->current_map;
-    this->current_map = new Map(__mapFileName);
-    this->InitializeMap(this->current_map);
+    delete Game::current_map;
+    Game::current_map = new Map(__mapFileName);
+    Game::InitializeMap(Game::current_map);
 }
 
 
   
 void Game::InitializeMap(Map *__map)
 {
-    this->ClearMap();
-    this->entities.clear();
+    Game::ClearMap();
+    Game::entities.clear();
     for (int i = 0; i < current_map->MI; i ++)
     {
         // if spawner
         if (current_map->Get(i) == current_map->TILE::SPAWNER)
         {
-            if (this->entities.size() == 0)
-                this->entities.push_back(new Player(i));
+            if (Game::entities.size() == 0)
+                Game::entities.push_back(new Player(i));
             else
-                this->entities.push_back(this->MakeEntity(i));
+                Game::entities.push_back(Game::MakeEntity(i));
         }
     }
 }

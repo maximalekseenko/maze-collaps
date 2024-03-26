@@ -23,6 +23,9 @@ class VisualComponent
                 const char * ch = " ";
                 Renderer::Color colorF=Renderer::Color::WHITE;
                 Renderer::Color colorB=Renderer::Color::BLACK;
+
+            public:
+
         };
 
 

@@ -7,54 +7,20 @@
 
 #include "../lib/log.h"
 
+WINDOW* control_win;
 void Controls::Init()
 {
+    std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
+
+    control_win = newwin(0, 0, 0, 0);
+
     noecho();
-    nodelay(stdscr, TRUE);
+    nodelay(control_win, TRUE);
     cbreak();
-    keypad(stdscr, TRUE);
+    keypad(control_win, TRUE);
     mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
     // printf("\033[?1003l\n");
     printf("\033[?1003h\n");
-}
-
-
-bool Controls::is_running = false;
-void Controls::Run() 
-{
-    is_running = true;
-    while (is_running) 
-    {
-        int c;
-        {
-            std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
-            c = getch();
-        }
-        MEVENT event;
-        switch(c)
-        {
-            case KEY_UP:
-                Renderer::is_running = false;
-                is_running = false;
-                break;
-            case KEY_DOWN:
-                break;
-            case KEY_MOUSE:
-                if(getmouse(&event) == OK)
-                {
-                    HandleMouseMovement(event.x, event.y);
-                    if(event.bstate & BUTTON1_PRESSED)
-                        HandleMouseButton1(event.x, event.y);
-                    else if(event.bstate & BUTTON2_PRESSED)
-                        Log::Out("CON: b2");
-                    else {}
-                        // Log::Out("CON: b3");
-                }
-                break;
-            default:
-                break;
-        }
-    }
 }
 
 bool PointWithinBorders(int __px, int __py, int __bx, int __by, int __bw, int __bh)
@@ -65,47 +31,76 @@ bool PointWithinBorders(int __px, int __py, int __bx, int __by, int __bw, int __
         && __by + __bh > __py;
 }
 
-void Controls::HandleMouseButton1(int __x, int __y)
+void HandleMouseButton1(int __x, int __y)
 {
+    std::lock_guard layers_locker(InterfaceElement::layers_lock);
     for (int _il = 0; _il < INTERFACE_ELEMENT_LAYERS_AMOUNT; _il ++)
         for (auto &_el : InterfaceElement::layers[_il])
         {
             std::lock_guard<std::recursive_mutex> locker(_el->lock);
             if (PointWithinBorders(__x, __y, _el->x, _el->y, _el->w, _el->h))
             {
-                _el->OnClick(true);
+                _el->Click(true);
                 return;
             }
         }
 }
 
-InterfaceElement *hashed_el=nullptr;
-void Controls::HandleMouseMovement(int __x, int __y)
+
+void HandleMouseMovement(int __x, int __y)
 {
+    std::lock_guard layers_locker(InterfaceElement::layers_lock);
+
+    bool found=false;
     for (int _il = 0; _il < INTERFACE_ELEMENT_LAYERS_AMOUNT; _il ++)
         for (auto &_el : InterfaceElement::layers[_il])
         {
             std::lock_guard<std::recursive_mutex> locker(_el->lock);
-            if (PointWithinBorders(__x, __y, _el->x, _el->y, _el->w, _el->h))
+            if (!found && PointWithinBorders(__x, __y, _el->x, _el->y, _el->w, _el->h))
             {
-                if (hashed_el != _el)
-                {
-                    if (hashed_el != nullptr)
-                    {
-                        std::lock_guard<std::recursive_mutex> locker(hashed_el->lock);
-                        hashed_el->OnHover(false);
-                    }
-                    _el->OnHover(true);
-                    hashed_el = _el;
-                }
-                return;
+                _el->Hover(true);
             }
+            else
+                _el->Hover(false);
+        }
+}
+
+
+void Controls::Run() 
+{
+    int c;
+    MEVENT event;
+
+    while (true) 
+    {
+        // get input
+        {
+            std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
+            c = wgetch(control_win);
         }
 
-    if (hashed_el != nullptr)
-    {
-        std::lock_guard<std::recursive_mutex> locker(hashed_el->lock);
-        hashed_el->OnHover(false);
-        hashed_el = nullptr;
+        // check input
+        switch(c)
+        {
+
+            // mouse
+            case KEY_MOUSE:
+                if(getmouse(&event) == OK)
+                {
+                    // mouse movement
+                    HandleMouseMovement(event.x, event.y);
+
+                    // mouse button 1
+                    if(event.bstate & BUTTON1_PRESSED)
+                        HandleMouseButton1(event.x, event.y);
+
+                    // mouse button 3
+                    else if(event.bstate & BUTTON3_PRESSED)
+                        Log::Out("CON: b3");
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
