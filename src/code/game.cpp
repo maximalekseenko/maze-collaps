@@ -37,20 +37,23 @@ class Button : public InterfaceElement
         Button(int __y, std::string _s) : InterfaceElement(InterfaceElement::Layer::BUTTONS) 
         {
             y = __y;
-            x = 10;
-            w = 9;
+            x = 30;
+            w = 15;
             h = 3;
             visualComponent = VisualComponent({
-                VisualComponent::VisualComponentRule(0,0,"+------+", Renderer::Color::CYAN),
-                VisualComponent::VisualComponentRule(0,1,"|      |", Renderer::Color::CYAN),
                 VisualComponent::VisualComponentRule(2,1,_s.c_str(), Renderer::Color::YELLOW),
-                VisualComponent::VisualComponentRule(0,2,"+------+", Renderer::Color::CYAN)
+                VisualComponent::VisualComponentRule(0, 0, "┌─────────────" , Renderer::Color::WHITE),
+                VisualComponent::VisualComponentRule(14,0,               "┐", Renderer::Color::BRIGHT_BLACK),
+                VisualComponent::VisualComponentRule(0, 1, "│"              , Renderer::Color::WHITE),
+                VisualComponent::VisualComponentRule(14,1,               "│", Renderer::Color::BRIGHT_BLACK),
+                VisualComponent::VisualComponentRule(0, 2, "└"              , Renderer::Color::WHITE),
+                VisualComponent::VisualComponentRule(1, 2,  "─────────────┘", Renderer::Color::BRIGHT_BLACK),
             });
         }
         void OnHover(bool __on) override
         {
             Log::Out(__on ? "BTN: HOVON" : "BTN: HOVOFF");
-            visualComponent.rules[2].colorF = __on ? Renderer::Color::RED : Renderer::Color::YELLOW;
+            visualComponent.rules[0].colorF = __on ? Renderer::Color::BRIGHT_YELLOW : Renderer::Color::YELLOW;
         }
 };
 

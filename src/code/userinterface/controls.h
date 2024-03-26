@@ -13,4 +13,5 @@ class Controls {
         static void Run();
     private:
         static void HandleMouseMovement(int __x, int __y);
+        static void HandleMouseButton1(int __x, int __y);
 };

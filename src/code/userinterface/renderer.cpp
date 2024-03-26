@@ -9,27 +9,32 @@
 #include "userinterface.h"
 
 
-#define MAP_OFFSET_X 1
-#define MAP_OFFSET_Y 1
 
+// TEMP ?
+int colornum(int fg, int bg)
+{
+    int B, bbb, ffff;
 
-int mX = -1, mY = -1;
+    B = 1 << 7;
+    bbb = (7 & bg) << 4;
+    ffff = 7 & fg;
 
-std::recursive_mutex render_lock;
-void Renderer::RenderText(int __x, int __y, const char* __text, Color __colorF=Color::WHITE, Color __colorB=Color::BLACK)
+    return (B | bbb | ffff);
+}
+
+void Renderer::RenderText(int __x, int __y, const char* __text, Color __colorF, Color __colorB)
 {
     std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
-    std::lock_guard render_locker(render_lock);
-    attron(COLOR_PAIR(__colorF*8+__colorB));
+
+    attron(COLOR_PAIR(colornum(__colorF, __colorB)));
+    if (__colorF / RENDERER_COLOR_AMOUNT == 1) attron(A_BOLD);
+
     mvprintw(__y, __x, __text);
-    attroff(COLOR_PAIR(__colorF*8+__colorB));
+
+    attroff(COLOR_PAIR(colornum(__colorF, __colorB)));
+    if (__colorF / RENDERER_COLOR_AMOUNT == 1) attroff(A_BOLD);
 }
 
-void PrintFinish(int __y=0) 
-{ 
-    move(__y,0); 
-    refresh();
-}
 int MapFixedX(int __i, Map* __map, int __center) { return (__map->MX * 3/2 + __map->X(__i) - __map->X(__center)) % __map->MX; }
 int MapFixedY(int __i, Map* __map, int __center) { return (__map->MY * 3/2 + __map->Y(__i) - __map->Y(__center)) % __map->MY; }
 
@@ -39,12 +44,10 @@ void Renderer::Init()
 {
     std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
     initscr();
-    raw();
 
     curs_set(0);
 
     clear();
-    cbreak();
 
     InitColors();
 
@@ -55,12 +58,12 @@ void Renderer::InitColors()
 {
     std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
     
-    start_color();
     use_default_colors();
+    start_color();
 
     for (int _iF = 0; _iF < RENDERER_COLOR_AMOUNT; _iF ++)
         for (int _iB = 0; _iB < RENDERER_COLOR_AMOUNT; _iB ++)
-            init_pair(_iF * RENDERER_COLOR_AMOUNT + _iB, _iF, _iB);
+            init_pair(colornum(_iF, _iB), _iF, _iB);
 }
 
 
@@ -86,11 +89,15 @@ void Renderer::Run()
 
 void Renderer::Update()
 {
+
+    // Log::Out("RND: RENDERS");
     for (int _il = 0; _il < INTERFACE_ELEMENT_LAYERS_AMOUNT; _il ++)
         for (auto &_el : InterfaceElement::layers[_il])
         {
-            std::lock_guard<std::recursive_mutex> locker(_el->lock);
+            std::lock_guard el_locker(_el->lock);
             _el->visualComponent.Render(_el->x, _el->y);
         }
-    PrintFinish(-1);
+        
+    std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
+    refresh();
 }
