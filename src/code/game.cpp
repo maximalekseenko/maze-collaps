@@ -13,7 +13,7 @@
 #include "entity/enemy.h"
 #include "lib/log.h"
 
-#include "userinterface/interfaceelement.h"
+#include "userinterface/visualcomponent.h"
 
 
 
@@ -22,38 +22,121 @@ std::vector<Entity*> Game::entities;
 
 // TEMP
 bool game_run;
-class Button : public InterfaceElement
+class UIButton : public VisualComponent
 {
     public:
         int action;
-        Button(int __y, std::string _s, int __a) : InterfaceElement(InterfaceElement::Layer::BUTTONS) 
+        std::string text;
+        UIButton(int __y, std::string _s, int __a)
+        : VisualComponent(30, __y, 15, 3, VisualComponent::Layer::BUTTONS) 
         {
-            action = __a;
-            y = __y;
-            x = 30;
-            w = 15;
-            h = 3;
-            visualComponent = VisualComponent({
-                VisualComponent::VisualComponentRule(2,1,_s.c_str(), Renderer::Color::YELLOW),
-                VisualComponent::VisualComponentRule(0, 0, "┌─────────────" , Renderer::Color::WHITE),
-                VisualComponent::VisualComponentRule(14,0,               "┐", Renderer::Color::BRIGHT_BLACK),
-                VisualComponent::VisualComponentRule(0, 1, "│"              , Renderer::Color::WHITE),
-                VisualComponent::VisualComponentRule(14,1,               "│", Renderer::Color::BRIGHT_BLACK),
-                VisualComponent::VisualComponentRule(0, 2, "└"              , Renderer::Color::WHITE),
-                VisualComponent::VisualComponentRule(1, 2,  "─────────────┘", Renderer::Color::BRIGHT_BLACK),
-            });
+            std::lock_guard el_lock(lock);
+            text = _s;
+
+            this->AddLine(2,    1, text.c_str(),      Renderer::Color::YELLOW);
+            this->AddLine(0,    0, "┌─────────────" , Renderer::Color::WHITE);
+            this->AddLine(14,   0,               "┐", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(0,    1, "│"              , Renderer::Color::WHITE);
+            this->AddLine(14,   1,               "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(0,    2, "└"              , Renderer::Color::WHITE);
+            this->AddLine(1,    2,  "─────────────┘", Renderer::Color::BRIGHT_BLACK);
         }
         void OnHover(bool __on) override
         {
-            visualComponent.rules[0].colorF = __on ? Renderer::Color::BRIGHT_YELLOW : Renderer::Color::YELLOW;
+            this->AddLine(2,    1, text.c_str(),        __on ? Renderer::Color::BRIGHT_YELLOW : Renderer::Color::YELLOW);
         }
         void OnClick(bool __on) override
         {
-            Log::Out("CLICK");
+            Log::Out("HOV");
             if (action == 0)
                 game_run = true;
             if (action == 1)
-                visualComponent.rules[0].ch = "USE ^C LOL";
+            {   
+                this->text = "USE ^C LOL";
+                this->AddLine(2,    1, text.c_str(), Renderer::Color::YELLOW);
+            }
+        }
+};
+#define MAPX 1
+#define MAPY 1
+class UIMap : public VisualComponent
+{
+    public:
+        int action;
+        UIMap() : VisualComponent(MAPX, MAPY, 32, 16, VisualComponent::Layer::STATIC) 
+        {
+            std::lock_guard el_lock(lock);
+
+            for (int _i = 0; _i < Game::current_map->MI; _i ++)
+                this->AddLine(
+                        Game::current_map->X(_i),
+                        Game::current_map->Y(_i),
+                        Game::current_map->Get(_i) == Map::TILE::WALL ? "█" : ".",
+                        Game::current_map->Get(_i) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK  
+                );
+
+        }
+};
+class UIBack : public VisualComponent
+{
+    public:
+        int action;
+        UIBack() : VisualComponent(MAPX-1, MAPY-1, 34, 18, VisualComponent::Layer::BACKGROUND) 
+        { std::lock_guard el_lock(lock);
+
+            this->AddLine(0, 0, "┌────────────────────────────────" , Renderer::Color::WHITE);
+            // this->AddLine(33,0,               "", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(0, 1, "│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n└", Renderer::Color::WHITE);
+            this->AddLine(33, 0, "┐", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 1, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 2, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 3, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 4, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 5, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 6, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 7, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 8, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 9, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 10, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 11, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 12, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 13, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 14, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 15, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(33, 16, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(1, 17, "────────────────────────────────┘" , Renderer::Color::BRIGHT_BLACK);
+
+            this->AddLine(0, 18, "┌────────────────────────────────" , Renderer::Color::WHITE);
+            this->AddLine(33, 18, "┐", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(0, 19, "│\n└" , Renderer::Color::WHITE);
+            this->AddLine(33, 19, "│", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(1, 20, "────────────────────────────────┘" , Renderer::Color::BRIGHT_BLACK);
+
+            this->AddLine(1, 19, "♥♥♥" , Renderer::Color::BRIGHT_RED);
+            this->AddLine(4, 19, "♥♥♥♥" , Renderer::Color::RED);
+        }
+};
+class UIFoe : public VisualComponent
+{
+    public:
+        int action;
+        UIFoe() : VisualComponent(0, 0, 1, 1, VisualComponent::Layer::DYNAMIC) 
+        {
+            std::lock_guard el_lock(lock);
+        }
+        void SetEnt(Entity* __ent)
+        {
+            std::lock_guard el_lock(lock);
+            SetXY(
+                Game::current_map->X(__ent->position) + MAPX,
+                Game::current_map->Y(__ent->position) + MAPY
+            );
+
+            this->AddLine(
+                    0, 0,
+                    __ent->GetVisual(),
+                    __ent->id == 0 ? Renderer::Color::GREEN : Renderer::Color::BRIGHT_RED
+            );
         }
 };
 
@@ -61,32 +144,30 @@ class Button : public InterfaceElement
 
 void Game::Run()
 {
-    
-    Button* b1 = new Button(1, "PLAY", 0);
-    Button* b2 = new Button(6, "EXIT", 1);
-    while (!game_run) {}
-    {
-        std::lock_guard layers_locker(InterfaceElement::layers_lock);
-        // delete b1;
-        // delete b2;
-        InterfaceElement::layers[b1->layer].erase(
-            std::remove(
-                InterfaceElement::layers[b1->layer].begin(), 
-                InterfaceElement::layers[b1->layer].end(), 
-                b1), 
-            InterfaceElement::layers[b1->layer].end()
-        );
+    {   
+        UIButton b1(1, "PLAY", 0);
+        UIButton b2(6, "EXIT", 1);
+        b1.Activate();
+        b2.Activate();
+        while (!game_run) {}
     }
 
-    delete b1;
+    {
+        UIBack b;
+        UIMap m;
+        m.Activate();
+        b.Activate();
+        UIFoe* ents = new UIFoe[entities.size()];
+        for (int i=0; i<entities.size();i++)
+        {
+            ents[i].SetEnt(entities[i]);
+            ents[i].Activate();
+        }
+        while (game_run) {}
 
-    while (game_run) {}
+        delete[] ents;
+    }
 
-        // Log::Out("g" + std::to_string(InterfaceElement::layers[InterfaceElement::Layer::BUTTONS].size()));
-    // {
-        // Renderer::Render_Game(entities[0]->position);
-        // for (auto &_ent : this->entities) _ent->Turn();
-    // }
 }
 
 

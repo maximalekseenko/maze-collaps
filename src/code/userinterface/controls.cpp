@@ -2,7 +2,7 @@
 
 #include <ncurses.h>
 
-#include "interfaceelement.h"
+#include "visualcomponent.h"
 #include "userinterface.h"
 
 #include "../lib/log.h"
@@ -33,12 +33,12 @@ bool PointWithinBorders(int __px, int __py, int __bx, int __by, int __bw, int __
 
 void HandleMouseButton1(int __x, int __y)
 {
-    std::lock_guard layers_locker(InterfaceElement::layers_lock);
-    for (int _il = 0; _il < INTERFACE_ELEMENT_LAYERS_AMOUNT; _il ++)
-        for (auto &_el : InterfaceElement::layers[_il])
+    std::lock_guard layers_locker(VisualComponent::layers_lock);
+    for (int _il = 0; _il < VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
+        for (auto &_el : VisualComponent::layers[_il])
         {
             std::lock_guard<std::recursive_mutex> locker(_el->lock);
-            if (PointWithinBorders(__x, __y, _el->x, _el->y, _el->w, _el->h))
+            if (PointWithinBorders(__x, __y, _el->GetX(), _el->GetY(), _el->GetW(), _el->GetH()))
             {
                 _el->Click(true);
                 return;
@@ -49,14 +49,14 @@ void HandleMouseButton1(int __x, int __y)
 
 void HandleMouseMovement(int __x, int __y)
 {
-    std::lock_guard layers_locker(InterfaceElement::layers_lock);
+    std::lock_guard layers_locker(VisualComponent::layers_lock);
 
     bool found=false;
-    for (int _il = 0; _il < INTERFACE_ELEMENT_LAYERS_AMOUNT; _il ++)
-        for (auto &_el : InterfaceElement::layers[_il])
+    for (int _il = 0; _il < VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
+        for (auto &_el : VisualComponent::layers[_il])
         {
-            std::lock_guard<std::recursive_mutex> locker(_el->lock);
-            if (!found && PointWithinBorders(__x, __y, _el->x, _el->y, _el->w, _el->h))
+            std::lock_guard el_locker(_el->lock);
+            if (!found && PointWithinBorders(__x, __y, _el->GetX(), _el->GetY(), _el->GetW(), _el->GetH()))
             {
                 _el->Hover(true);
             }

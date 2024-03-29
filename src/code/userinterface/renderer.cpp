@@ -5,7 +5,7 @@
 #include <ncurses.h>
 #include <stdlib.h>
 
-#include "interfaceelement.h"
+#include "visualcomponent.h"
 #include "userinterface.h"
 
 
@@ -46,6 +46,20 @@ void Renderer::RenderText(int __x, int __y, const char* __text, Color __colorF, 
     mvprintw(__y, __x, __text);
 }
 
+void Renderer::RenderText(WINDOW* __win, int __x, int __y, const char* __text, Color __colorF, Color __colorB)
+{
+    std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
+
+    // set color
+    wattron(__win, COLOR_PAIR(colornum(__colorF, __colorB)));
+    if (__colorF / 8 == 1) wattron(__win, A_BOLD);
+    else                  wattroff(__win, A_BOLD);
+
+    // print
+    mvwprintw(__win, __y, __x, __text);
+}
+
+
 
 void Renderer::Init()
 {
@@ -69,27 +83,13 @@ void Renderer::Run()
 {
     while (true)
     {
-        // clear
-        {
-            std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
-            clear();
-        }
-
         // render layers
         {
-            std::lock_guard layers_locker(InterfaceElement::layers_lock);
-            for (int _il = 0; _il < INTERFACE_ELEMENT_LAYERS_AMOUNT; _il ++)
-                for (auto &_el : InterfaceElement::layers[_il])
-                {
-                    std::lock_guard el_locker(_el->lock);
-                    for (auto &_rule : _el->visualComponent.rules)
-                        Renderer::RenderText(
-                            _el->x + _rule.x,
-                            _el->y + _rule.y,
-                            _rule.ch,
-                            _rule.colorF,
-                            _rule.colorB
-                        );
+            std::lock_guard layers_locker(VisualComponent::layers_lock);
+            for (int _il = 0; _il < VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
+                for (auto &_el : VisualComponent::layers[_il])
+                {   std::lock_guard el_locker(_el->lock);
+                    _el->Render();
                 }
         }
 

@@ -15,6 +15,7 @@ struct Map
         };
 
     public:
+        Map();
         Map(std::string path);
         ~Map();
 

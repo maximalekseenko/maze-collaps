@@ -4,37 +4,72 @@
 
 #include <vector>
 #include <string>
+#include <mutex>
+
+#include <ncurses.h>
 
 
 
 class VisualComponent
 {
     public:
-        class VisualComponentRule
-        {
-            public:
-                VisualComponentRule(int __x, int __y, const char * __ch);
-                VisualComponentRule(int __x, int __y, const char * __ch, Renderer::Color __colorF);
-                VisualComponentRule(int __x, int __y, const char * __ch, Renderer::Color __colorF, Renderer::Color __colorB);
-                ~VisualComponentRule();
-
-            public:
-                int x, y;
-                const char * ch = " ";
-                Renderer::Color colorF=Renderer::Color::WHITE;
-                Renderer::Color colorB=Renderer::Color::BLACK;
-
-            public:
-
+        enum Layer {
+            BACKGROUND  = 0,
+            STATIC      = 1,
+            DYNAMIC     = 2,
+            BUTTONS     = 3,
         };
-
+        #define VISUALCOMPONENT_LAYER_AMOUNT 4
+        static std::recursive_mutex layers_lock;
+        static std::vector<VisualComponent*> layers[VISUALCOMPONENT_LAYER_AMOUNT];
 
     public:
-        VisualComponent();
-        VisualComponent(std::vector<VisualComponentRule> __rules);
+        VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer);
+        VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer, const char* __content);
         ~VisualComponent();
-        
+
+
     public:
-        void Render(int __x, int __y);
-        std::vector<VisualComponentRule> rules;
+        void Activate(bool=true);
+
+    public:
+        std::recursive_mutex lock;
+
+
+    private:
+
+        /// @brief Layer of this component.
+        VisualComponent::Layer layer;
+
+        /// @brief Is this component is currently active and should be rendered?
+        bool is_active = false;
+
+
+    public:
+        void Clear();
+        void AddLine(int __x, int __y, const char* __content, Renderer::Color __colorF=Renderer::Color::WHITE, Renderer::Color __colorB=Renderer::Color::BLACK);
+
+        void Render();
+
+        int GetX();
+        int GetY();
+        int GetW();
+        int GetH();
+
+        void SetX(int);
+        void SetY(int);
+        void SetXY(int, int);
+
+    private:
+        WINDOW* win;
+
+
+    public: // +++ EVENTS +++
+        void Hover(bool);
+        void Click(bool);
+    private:
+        bool hovered=false;
+        virtual void OnHover(bool);
+        virtual void OnClick(bool);
+
 };

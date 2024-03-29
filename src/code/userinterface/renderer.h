@@ -1,7 +1,7 @@
 #pragma once
 
 
-// #include "rendrule.h"
+#include <ncurses.h>
 
 
 
@@ -25,5 +25,6 @@ class Renderer {
             CYAN      = 6, BRIGHT_CYAN      = 14,
             WHITE     = 7, BRIGHT_WHITE     = 15
         };
-        static void RenderText(int __x, int __y, const char* __text, Color __colorF, Color __colorB); 
+        static void RenderText(int __x, int __y, const char* __text, Color __colorF, Color __colorB);
+        static void RenderText(WINDOW* __win, int __x, int __y, const char* __text, Color __colorF, Color __colorB);
 };

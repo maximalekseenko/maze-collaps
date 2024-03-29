@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
 	std::thread t_renderer(Renderer::Run);
 	std::thread c_renderer(Controls::Run);
     
-    Game::LoadMap("data/hostilecave.png");
+    Game::LoadMap("data/theentrance.png");
     std::thread g_renderer(Game::Run);
 
 	t_renderer.join();
