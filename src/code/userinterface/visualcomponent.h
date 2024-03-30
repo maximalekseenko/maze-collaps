@@ -24,6 +24,7 @@ class VisualComponent
         static std::recursive_mutex layers_lock;
         static std::vector<VisualComponent*> layers[VISUALCOMPONENT_LAYER_AMOUNT];
         static VisualComponent::Layer lastUpdatedLayer;
+        static int lastUpdateMinX, lastUpdateMaxX, lastUpdateMinY, lastUpdateMaxY;
 
     public:
         VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer);
@@ -37,11 +38,10 @@ class VisualComponent
     public:
         std::recursive_mutex lock;
 
+    private:
+
         /// @brief Layer of this component.
         VisualComponent::Layer layer;
-
-
-    private:
 
         /// @brief Is this component is currently active and should be rendered?
         bool is_active = false;
@@ -57,6 +57,8 @@ class VisualComponent
         int GetY();
         int GetW();
         int GetH();
+        int GetMaxX();
+        int GetMaxY();
 
         void SetX(int);
         void SetY(int);

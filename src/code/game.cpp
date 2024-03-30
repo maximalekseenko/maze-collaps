@@ -62,6 +62,10 @@ int FixMapX(int __x)   { return (Game::current_map->MX * 3/2 + __x - Game::curre
 int UnFixMapX(int __x) { return (Game::current_map->MX * 3/2 + __x + Game::current_map->X(Game::entities[0]->position)) % Game::current_map->MX; }
 int FixMapY(int __y)   { return (Game::current_map->MY * 3/2 + __y - Game::current_map->Y(Game::entities[0]->position)) % Game::current_map->MY; }
 int UnFixMapY(int __y) { return (Game::current_map->MY * 3/2 + __y + Game::current_map->Y(Game::entities[0]->position)) % Game::current_map->MY; }
+
+int GetPlayerDirX(int __x, int __y) { return __x==0&&__y==0 ? 0 : round(cos(atan2(__y, __x))); }
+int GetPlayerDirY(int __x, int __y) { return __x==0&&__y==0 ? 0 : round(sin(atan2(__y, __x))); }
+
 class UIMap : public VisualComponent
 {
     public:
@@ -81,6 +85,8 @@ class UIMap : public VisualComponent
         int oldHovX=-1, oldHovY=-1;
         void OnHover(bool __on, int __x, int __y) override
         {
+            __x = GetW() / 2 + GetPlayerDirX(__x - GetW() / 2, __y - GetH() / 2);
+            __y = GetH() / 2 + GetPlayerDirY(__x - GetW() / 2, __y - GetH() / 2);
             // old
             if (wmove(this->win, oldHovY, oldHovX) == OK)
             {
@@ -150,12 +156,14 @@ class UIFoe : public VisualComponent
 {
     public:
         int action;
+        Entity* ent;
         UIFoe() : VisualComponent(0, 0, 1, 1, VisualComponent::Layer::DYNAMIC) 
         {
             std::lock_guard el_lock(lock);
         }
         void SetEnt(Entity* __ent)
         {
+            this->ent = __ent;
             std::lock_guard el_lock(lock);
             SetXY(
                 FixMapX(Game::current_map->X(__ent->position)) + MAPX,
@@ -168,6 +176,30 @@ class UIFoe : public VisualComponent
                     __ent->id == 0 ? Renderer::Color::GREEN : Renderer::Color::BRIGHT_RED
             );
         }
+        void OnHover(bool __on, int __x, int __y) override
+        {
+            // if (__on)
+            // {
+            //     // if (
+            //     //     (Game::current_map->MX + Game::current_map->X(ent->position) - Game::current_map->X(Game::entities[0]->position)) % Game::current_map->MX > 1
+            //     //     && (Game::current_map->MY + Game::current_map->Y(ent->position) - Game::current_map->Y(Game::entities[0]->position)) % Game::current_map->MY > 1
+            //     // ) return;
+            //     // this->AddLine(
+            //     //         0, 0,
+            //     //         ent->GetVisual(),
+            //     //         ent->id == 0 ? Renderer::Color::GREEN : Renderer::Color::BRIGHT_RED,
+            //     //         Renderer::Color::BLUE
+            //     // );
+            // } 
+            // else 
+            // {
+            //     this->AddLine(
+            //             0, 0,
+            //             ent->GetVisual(),
+            //             ent->id == 0 ? Renderer::Color::GREEN : Renderer::Color::BRIGHT_RED
+            //     );
+            // }
+        }
 };
 
 
@@ -177,10 +209,8 @@ void Game::Run()
     {   
         UIButton b1(1, "PLAY", 0);
         UIButton b2(6, "EXIT", 1);
-        Log::Out("BG " + std::to_string(VisualComponent::lastUpdatedLayer));
         b1.Activate();
         b2.Activate();
-        Log::Out("BG " + std::to_string(VisualComponent::lastUpdatedLayer));
         while (!game_run) {}
     }
 

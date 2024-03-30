@@ -98,14 +98,17 @@ void Renderer::Run()
             for (int _il = VisualComponent::lastUpdatedLayer; _il < VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
                 for (auto &_el : VisualComponent::layers[_il])
                 {   std::lock_guard el_locker(_el->lock);
-                    if (VisualComponent::lastUpdatedLayer <= _el->layer)
-                    {
-                        _el->Render();
-                    }
+                    if (VisualComponent::lastUpdateMinX > _el->GetMaxX() || VisualComponent::lastUpdateMaxX < _el->GetX()) continue;
+                    if (VisualComponent::lastUpdateMinY > _el->GetMaxY() || VisualComponent::lastUpdateMaxY < _el->GetY()) continue;
+                    _el->Render();
                 }
 
-            // everything is rendered
+            // everything is rendered -> reset
             VisualComponent::lastUpdatedLayer = VisualComponent::Layer::NONE;
+            VisualComponent::lastUpdateMinX = INT_MAX;
+            VisualComponent::lastUpdateMinY = INT_MAX;
+            VisualComponent::lastUpdateMaxX = 0;
+            VisualComponent::lastUpdateMaxY = 0;
         }
     }
 }

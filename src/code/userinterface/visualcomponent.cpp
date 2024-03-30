@@ -7,7 +7,26 @@
 std::recursive_mutex VisualComponent::layers_lock;
 std::vector<VisualComponent*> VisualComponent::layers[VISUALCOMPONENT_LAYER_AMOUNT];
 VisualComponent::Layer VisualComponent::lastUpdatedLayer;
+int VisualComponent::lastUpdateMinX = -1, VisualComponent::lastUpdateMaxX = INT_MAX,
+    VisualComponent::lastUpdateMinY = -1, VisualComponent::lastUpdateMaxY = INT_MAX;
+void UpdateLayer(VisualComponent::Layer __layer, int __x, int __y, int __w, int __h)
+{   std::lock_guard layers_locker(VisualComponent::layers_lock);
 
+    if (VisualComponent::lastUpdatedLayer > __layer || VisualComponent::lastUpdatedLayer == VisualComponent::Layer::NONE)
+        VisualComponent::lastUpdatedLayer = __layer;
+
+    if (VisualComponent::lastUpdateMinX > __x)
+        VisualComponent::lastUpdateMinX = __x;
+
+    if (VisualComponent::lastUpdateMinY > __y)
+        VisualComponent::lastUpdateMinY = __y;
+
+    if (VisualComponent::lastUpdateMaxX < __x + __w)
+        VisualComponent::lastUpdateMaxX = __x + __w;
+
+    if (VisualComponent::lastUpdateMaxY < __y + __h)
+        VisualComponent::lastUpdateMaxY = __y + __h;
+}
 
 
 
@@ -57,7 +76,11 @@ void VisualComponent::Activate(bool __on)
             );
         }
 
-        VisualComponent::lastUpdatedLayer = this->layer;
+        UpdateLayer(
+            this->layer, 
+            this->GetX(), this->GetY(), 
+            this->GetW(), this->GetH()
+        );
         this->is_active = __on;
     }
 }
@@ -75,12 +98,19 @@ void VisualComponent::Clear()
 
 void VisualComponent::AddLine(int __x, int __y, const char* __content, Renderer::Color __colorF, Renderer::Color __colorB)
 {
+    // add content on window
     {   std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
         Renderer::RenderText(this->win, __x, __y, __content, __colorF, __colorB);
     }
+
+    // update if active
     if (this->is_active)
-    {   std::lock_guard layers_locker(VisualComponent::layers_lock);
-        VisualComponent::lastUpdatedLayer = this->layer;
+    {
+        UpdateLayer(
+            this->layer,
+            this->GetX(), this->GetY(),
+            this->GetW(), this->GetH()
+        );
     }
 }
 
@@ -96,10 +126,12 @@ void VisualComponent::Render()
 
 
 
-int VisualComponent::GetX() { return getbegx(this->win); }
-int VisualComponent::GetY() { return getbegy(this->win); }
-int VisualComponent::GetW() { return getmaxx(this->win); }
-int VisualComponent::GetH() { return getmaxy(this->win); }
+int VisualComponent::GetX()    { std::lock_guard ncurses_locker(UserInterface::ncurses_lock); return getbegx(this->win); }
+int VisualComponent::GetY()    { std::lock_guard ncurses_locker(UserInterface::ncurses_lock); return getbegy(this->win); }
+int VisualComponent::GetW()    { std::lock_guard ncurses_locker(UserInterface::ncurses_lock); return getmaxx(this->win); }
+int VisualComponent::GetH()    { std::lock_guard ncurses_locker(UserInterface::ncurses_lock); return getmaxy(this->win); }
+int VisualComponent::GetMaxX() { std::lock_guard ncurses_locker(UserInterface::ncurses_lock); return GetX() + GetW(); }
+int VisualComponent::GetMaxY() { std::lock_guard ncurses_locker(UserInterface::ncurses_lock); return GetY() + GetH(); }
 
 void VisualComponent::SetX(int __x) { mvwin(this->win, this->GetY(), __x); }
 void VisualComponent::SetY(int __y) { mvwin(this->win, __y, this->GetX()); }
