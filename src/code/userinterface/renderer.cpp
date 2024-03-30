@@ -83,20 +83,29 @@ void Renderer::Run()
 {
     while (true)
     {
-        // render layers
-        {
-            std::lock_guard layers_locker(VisualComponent::layers_lock);
-            for (int _il = 0; _il < VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
-                for (auto &_el : VisualComponent::layers[_il])
-                {   std::lock_guard el_locker(_el->lock);
-                    _el->Render();
-                }
-        }
-
         // refresh
         {
             std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
             refresh();
+        }
+
+        // render layers
+        {   std::lock_guard layers_locker(VisualComponent::layers_lock);
+
+            // check that render is required
+            if (VisualComponent::lastUpdatedLayer == VisualComponent::Layer::NONE) continue;
+
+            for (int _il = VisualComponent::lastUpdatedLayer; _il < VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
+                for (auto &_el : VisualComponent::layers[_il])
+                {   std::lock_guard el_locker(_el->lock);
+                    if (VisualComponent::lastUpdatedLayer <= _el->layer)
+                    {
+                        _el->Render();
+                    }
+                }
+
+            // everything is rendered
+            VisualComponent::lastUpdatedLayer = VisualComponent::Layer::NONE;
         }
     }
 }

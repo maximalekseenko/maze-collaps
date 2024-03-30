@@ -40,7 +40,7 @@ void HandleMouseButton1(int __x, int __y)
             std::lock_guard<std::recursive_mutex> locker(_el->lock);
             if (PointWithinBorders(__x, __y, _el->GetX(), _el->GetY(), _el->GetW(), _el->GetH()))
             {
-                _el->Click(true);
+                _el->Click(true, __x, __y);
                 return;
             }
         }
@@ -58,10 +58,10 @@ void HandleMouseMovement(int __x, int __y)
             std::lock_guard el_locker(_el->lock);
             if (!found && PointWithinBorders(__x, __y, _el->GetX(), _el->GetY(), _el->GetW(), _el->GetH()))
             {
-                _el->Hover(true);
+                _el->Hover(true, __x, __y);
             }
             else
-                _el->Hover(false);
+                _el->Hover(false, __x, __y);
         }
 }
 

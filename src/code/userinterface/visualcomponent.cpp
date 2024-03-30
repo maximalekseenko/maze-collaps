@@ -6,6 +6,7 @@
 
 std::recursive_mutex VisualComponent::layers_lock;
 std::vector<VisualComponent*> VisualComponent::layers[VISUALCOMPONENT_LAYER_AMOUNT];
+VisualComponent::Layer VisualComponent::lastUpdatedLayer;
 
 
 
@@ -16,17 +17,17 @@ VisualComponent::VisualComponent(int __x, int __y, int __w, int __h, VisualCompo
 VisualComponent::VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer __layer, const char* __content)
 {
     this->layer = __layer;
-    {   std::lock_guard ncurses_lock(UserInterface::ncurses_lock);
+    {   std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
         this->win = newwin(__h, __w, __y, __x);
         wprintw(this->win, __content);
     }
 }
 VisualComponent::~VisualComponent()
 {
-    {   std::lock_guard layers_lock(VisualComponent::layers_lock);
+    {   std::lock_guard layers_locker(VisualComponent::layers_lock);
         this->Clear();
         this->Render();
-        {   std::lock_guard ncurses_lock(UserInterface::ncurses_lock);
+        {   std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
             delwin(this->win);
         }
         this->Activate(false);
@@ -38,13 +39,14 @@ VisualComponent::~VisualComponent()
 void VisualComponent::Activate(bool __on)
 {
     if (this->is_active != __on)
-    {
+    {   std::lock_guard layers_locker(VisualComponent::layers_lock);
+
         if (__on)
-        {   std::lock_guard layers_lock(VisualComponent::layers_lock);
+        {
             VisualComponent::layers[this->layer].push_back(this);
         }
         else 
-        {   std::lock_guard layers_lock(VisualComponent::layers_lock);
+        {
             VisualComponent::layers[this->layer].erase(
                 std::remove(
                     VisualComponent::layers[this->layer].begin(), 
@@ -54,15 +56,17 @@ void VisualComponent::Activate(bool __on)
                 VisualComponent::layers[this->layer].end()
             );
         }
+
+        VisualComponent::lastUpdatedLayer = this->layer;
+        this->is_active = __on;
     }
-    this->is_active = __on;
 }
 
 
 
 void VisualComponent::Clear()
 {
-    {   std::lock_guard ncurses_lock(UserInterface::ncurses_lock);
+    {   std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
         wclear(this->win);
     }
 }
@@ -71,8 +75,12 @@ void VisualComponent::Clear()
 
 void VisualComponent::AddLine(int __x, int __y, const char* __content, Renderer::Color __colorF, Renderer::Color __colorB)
 {
-    {   std::lock_guard ncurses_lock(UserInterface::ncurses_lock);
+    {   std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
         Renderer::RenderText(this->win, __x, __y, __content, __colorF, __colorB);
+    }
+    if (this->is_active)
+    {   std::lock_guard layers_locker(VisualComponent::layers_lock);
+        VisualComponent::lastUpdatedLayer = this->layer;
     }
 }
 
@@ -80,7 +88,8 @@ void VisualComponent::AddLine(int __x, int __y, const char* __content, Renderer:
 
 void VisualComponent::Render()
 {
-    {   std::lock_guard ncurses_lock(UserInterface::ncurses_lock);
+    {   std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
+        redrawwin(this->win);
         wrefresh(this->win);
     }
 }
@@ -98,16 +107,17 @@ void VisualComponent::SetXY(int __x, int __y) { mvwin(this->win, __y, __x); }
 
 
 
-void VisualComponent::Hover(bool __on)
+void VisualComponent::Hover(bool __on, int __x, int __y)
 {
-    if (hovered == __on) return;
-    hovered = __on;
-    OnHover(__on);
+    if (this->hovered == false && __on == false) return;
+
+    OnHover(__on, __x - this->GetX(), __y - this->GetY());
+    this->hovered = __on;
 }
-void VisualComponent::Click(bool __on)
+void VisualComponent::Click(bool __on, int __x, int __y)
 {
-    OnClick(__on);
+    OnClick(__on, __x - this->GetX(), __y - this->GetY());
 }
 
-void VisualComponent::OnHover(bool) {}
-void VisualComponent::OnClick(bool) {}
+void VisualComponent::OnHover(bool, int, int) {}
+void VisualComponent::OnClick(bool, int, int) {}

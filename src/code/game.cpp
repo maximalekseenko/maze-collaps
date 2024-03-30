@@ -17,7 +17,7 @@
 
 
 
-Map* Game::current_map = new Map("data/theentrance.png");;
+Map* Game::current_map = new Map();
 std::vector<Entity*> Game::entities;
 
 // TEMP
@@ -41,13 +41,12 @@ class UIButton : public VisualComponent
             this->AddLine(0,    2, "└"              , Renderer::Color::WHITE);
             this->AddLine(1,    2,  "─────────────┘", Renderer::Color::BRIGHT_BLACK);
         }
-        void OnHover(bool __on) override
+        void OnHover(bool __on, int, int) override
         {
             this->AddLine(2,    1, text.c_str(),        __on ? Renderer::Color::BRIGHT_YELLOW : Renderer::Color::YELLOW);
         }
-        void OnClick(bool __on) override
+        void OnClick(bool __on, int, int) override
         {
-            Log::Out("HOV");
             if (action == 0)
                 game_run = true;
             if (action == 1)
@@ -57,8 +56,12 @@ class UIButton : public VisualComponent
             }
         }
 };
-#define MAPX 1
-#define MAPY 1
+#define MAPX 10
+#define MAPY 10
+int GetMapI(int __x, int __y)
+{
+    
+}
 class UIMap : public VisualComponent
 {
     public:
@@ -76,16 +79,40 @@ class UIMap : public VisualComponent
                 );
 
         }
+
+        int oldHovX=-1, oldHovY=-1;
+        void OnHover(bool __on, int __x, int __y) override
+        {
+            // old
+            if (wmove(this->win, oldHovY, oldHovX) == OK)
+            {
+                this->AddLine(oldHovX, oldHovY, Game::current_map->Get(oldHovX, oldHovY) == Map::TILE::WALL ? "█" : ".",
+                    Game::current_map->Get(oldHovX, oldHovY) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK,
+                    Renderer::Color::BLACK
+                );
+            }
+            // new
+            if (wmove(this->win, __y, __x) == OK)
+            {
+                this->AddLine(__x, __y, Game::current_map->Get(__x, __y) == Map::TILE::WALL ? "█" : ".",
+                    Game::current_map->Get(__x, __y) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK,
+                    Renderer::Color::BLUE
+                );
+            }
+
+            // update old
+            oldHovX = __x;
+            oldHovY = __y;
+        }
 };
 class UIBack : public VisualComponent
 {
     public:
         int action;
-        UIBack() : VisualComponent(MAPX-1, MAPY-1, 34, 18, VisualComponent::Layer::BACKGROUND) 
+        UIBack() : VisualComponent(MAPX-1, MAPY-1, 34, 21, VisualComponent::Layer::BACKGROUND) 
         { std::lock_guard el_lock(lock);
 
             this->AddLine(0, 0, "┌────────────────────────────────" , Renderer::Color::WHITE);
-            // this->AddLine(33,0,               "", Renderer::Color::BRIGHT_BLACK);
             this->AddLine(0, 1, "│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n└", Renderer::Color::WHITE);
             this->AddLine(33, 0, "┐", Renderer::Color::BRIGHT_BLACK);
             this->AddLine(33, 1, "│", Renderer::Color::BRIGHT_BLACK);
@@ -111,7 +138,6 @@ class UIBack : public VisualComponent
             this->AddLine(0, 19, "│\n└" , Renderer::Color::WHITE);
             this->AddLine(33, 19, "│", Renderer::Color::BRIGHT_BLACK);
             this->AddLine(1, 20, "────────────────────────────────┘" , Renderer::Color::BRIGHT_BLACK);
-
             this->AddLine(1, 19, "♥♥♥" , Renderer::Color::BRIGHT_RED);
             this->AddLine(4, 19, "♥♥♥♥" , Renderer::Color::RED);
         }
@@ -147,8 +173,10 @@ void Game::Run()
     {   
         UIButton b1(1, "PLAY", 0);
         UIButton b2(6, "EXIT", 1);
+        Log::Out("BG " + std::to_string(VisualComponent::lastUpdatedLayer));
         b1.Activate();
         b2.Activate();
+        Log::Out("BG " + std::to_string(VisualComponent::lastUpdatedLayer));
         while (!game_run) {}
     }
 

@@ -14,6 +14,7 @@ class VisualComponent
 {
     public:
         enum Layer {
+            NONE        = -1,
             BACKGROUND  = 0,
             STATIC      = 1,
             DYNAMIC     = 2,
@@ -22,6 +23,7 @@ class VisualComponent
         #define VISUALCOMPONENT_LAYER_AMOUNT 4
         static std::recursive_mutex layers_lock;
         static std::vector<VisualComponent*> layers[VISUALCOMPONENT_LAYER_AMOUNT];
+        static VisualComponent::Layer lastUpdatedLayer;
 
     public:
         VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer);
@@ -35,11 +37,11 @@ class VisualComponent
     public:
         std::recursive_mutex lock;
 
-
-    private:
-
         /// @brief Layer of this component.
         VisualComponent::Layer layer;
+
+
+    private:
 
         /// @brief Is this component is currently active and should be rendered?
         bool is_active = false;
@@ -60,16 +62,16 @@ class VisualComponent
         void SetY(int);
         void SetXY(int, int);
 
-    private:
+    protected:
         WINDOW* win;
 
 
     public: // +++ EVENTS +++
-        void Hover(bool);
-        void Click(bool);
+        void Hover(bool, int, int);
+        void Click(bool, int, int);
     private:
         bool hovered=false;
-        virtual void OnHover(bool);
-        virtual void OnClick(bool);
+        virtual void OnHover(bool, int, int);
+        virtual void OnClick(bool, int, int);
 
 };

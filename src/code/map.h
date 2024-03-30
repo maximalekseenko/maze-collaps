@@ -34,6 +34,7 @@ struct Map
 
     public: // +++ACCESS FUNCTIONS+++
         TILE& Get(int pos);
+        TILE& Get(int x, int y);
         int Move(int* fromPos, int dX, int dY);
         int Move(int fromPos, int dX, int dY);
         int Up(int* fromPos);
