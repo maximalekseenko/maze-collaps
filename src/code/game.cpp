@@ -56,28 +56,26 @@ class UIButton : public VisualComponent
             }
         }
 };
-#define MAPX 10
+#define MAPX 34
 #define MAPY 10
-int GetMapI(int __x, int __y)
-{
-    
-}
+int FixMapX(int __x)   { return (Game::current_map->MX * 3/2 + __x - Game::current_map->X(Game::entities[0]->position)) % Game::current_map->MX; }
+int UnFixMapX(int __x) { return (Game::current_map->MX * 3/2 + __x + Game::current_map->X(Game::entities[0]->position)) % Game::current_map->MX; }
+int FixMapY(int __y)   { return (Game::current_map->MY * 3/2 + __y - Game::current_map->Y(Game::entities[0]->position)) % Game::current_map->MY; }
+int UnFixMapY(int __y) { return (Game::current_map->MY * 3/2 + __y + Game::current_map->Y(Game::entities[0]->position)) % Game::current_map->MY; }
 class UIMap : public VisualComponent
 {
     public:
         int action;
         UIMap() : VisualComponent(MAPX, MAPY, 32, 16, VisualComponent::Layer::STATIC) 
-        {
-            std::lock_guard el_lock(lock);
+        {   std::lock_guard el_lock(lock);
 
             for (int _i = 0; _i < Game::current_map->MI; _i ++)
                 this->AddLine(
-                        Game::current_map->X(_i),
-                        Game::current_map->Y(_i),
+                        FixMapX(Game::current_map->X(_i)),
+                        FixMapY(Game::current_map->Y(_i)),
                         Game::current_map->Get(_i) == Map::TILE::WALL ? "█" : ".",
                         Game::current_map->Get(_i) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK  
                 );
-
         }
 
         int oldHovX=-1, oldHovY=-1;
@@ -86,16 +84,22 @@ class UIMap : public VisualComponent
             // old
             if (wmove(this->win, oldHovY, oldHovX) == OK)
             {
-                this->AddLine(oldHovX, oldHovY, Game::current_map->Get(oldHovX, oldHovY) == Map::TILE::WALL ? "█" : ".",
-                    Game::current_map->Get(oldHovX, oldHovY) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK,
+                this->AddLine(
+                    oldHovX, 
+                    oldHovY, 
+                    Game::current_map->Get(UnFixMapX(oldHovX), UnFixMapY(oldHovY)) == Map::TILE::WALL ? "█" : ".",
+                    Game::current_map->Get(UnFixMapX(oldHovX), UnFixMapY(oldHovY)) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK,
                     Renderer::Color::BLACK
                 );
             }
             // new
             if (wmove(this->win, __y, __x) == OK)
             {
-                this->AddLine(__x, __y, Game::current_map->Get(__x, __y) == Map::TILE::WALL ? "█" : ".",
-                    Game::current_map->Get(__x, __y) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK,
+                this->AddLine(
+                    __x, 
+                    __y, 
+                    Game::current_map->Get(UnFixMapX(__x), UnFixMapY(__y)) == Map::TILE::WALL ? "█" : ".",
+                    Game::current_map->Get(UnFixMapX(__x), UnFixMapY(__y)) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK,
                     Renderer::Color::BLUE
                 );
             }
@@ -154,8 +158,8 @@ class UIFoe : public VisualComponent
         {
             std::lock_guard el_lock(lock);
             SetXY(
-                Game::current_map->X(__ent->position) + MAPX,
-                Game::current_map->Y(__ent->position) + MAPY
+                FixMapX(Game::current_map->X(__ent->position)) + MAPX,
+                FixMapY(Game::current_map->Y(__ent->position)) + MAPY
             );
 
             this->AddLine(
