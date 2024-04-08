@@ -1,7 +1,7 @@
 #include "engine.h"
 
 
-#include <ncurses.h>
+#include <curses.h>
 #include <stdlib.h>
 
 #include "visualcomponent.h"
@@ -66,3 +66,16 @@ void Engine::Renderer::Run()
         }
     }
 }
+
+/// @brief Last applied background color of main window
+Color backgroundColor;
+
+void Engine::Renderer::SetBackground(Color __colorB)
+{
+    backgroundColor = __colorB;
+    {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
+        bkgd(COLOR_PAIR(GetColorPairId(0, __colorB)));
+    }
+}
+
+Color Engine::Renderer::GetBackground() { return backgroundColor; }

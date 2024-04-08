@@ -43,14 +43,13 @@ namespace Engine
         /// @brief Starts the Renderer's loop.
         void Run();
 
-        /// @brief Renders text on window.
-        /// @param __win window to render on.
-        /// @param __x text begin position on the window on x axis.
-        /// @param __y text begin position on the window on y axis.
-        /// @param __text text to  be renderer on the window.
-        /// @param __colorF font color of the text rendered.
-        /// @param __colorB background color of the text rendered.
-        // void RenderText(WINDOW* __win, int __x, int __y, const char* __text, Color __colorF, Color __colorB);
+        /// @brief Sets background color of main window.
+        /// @param __colorB New color for background.
+        void SetBackground(Color __colorB);
+
+        /// @brief Gets background color of main window.
+        /// @return Background color of main window.
+        Color GetBackground();
     };
 };
 
