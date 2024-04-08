@@ -1,44 +1,15 @@
 #include "engine.h"
 
 
-#include "../game.h"
-#include "../lib/log.h"
 #include <ncurses.h>
 #include <stdlib.h>
 
 #include "visualcomponent.h"
+#include "color.h"
 
 
 // TEMP !
 #include "../lib/log.h"
-
-
-
-// TEMP ?
-int colornum(int fg, int bg)
-{
-    int B, bbb, ffff;
-
-    B = 1 << 7;
-    bbb = (7 & bg) << 4;
-    ffff = 7 & fg;
-
-    return (B | bbb | ffff);
-}
-
-
-
-void Engine::Renderer::RenderText(WINDOW* __win, int __x, int __y, const char* __text, Color __colorF, Color __colorB)
-{   std::lock_guard ncurses_locker(Engine::ncurses_lock);
-
-    // set color
-    wattron(__win, COLOR_PAIR(colornum(__colorF, __colorB)));
-    if (__colorF / 8 == 1) wattron(__win, A_BOLD);
-    else                  wattroff(__win, A_BOLD);
-
-    // print
-    mvwprintw(__win, __y, __x, __text);
-}
 
 
 
@@ -58,7 +29,7 @@ void Engine::Renderer::Init()
     start_color();
     for (int _iF = 0; _iF < 8; _iF ++)
         for (int _iB = 0; _iB < 8; _iB ++)
-            init_pair(colornum(_iF, _iB), _iF, _iB);
+            init_pair(GetColorPairId(_iF, _iB), _iF, _iB);
 }
 
 

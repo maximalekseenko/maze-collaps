@@ -50,7 +50,7 @@ namespace Engine
         /// @param __text text to  be renderer on the window.
         /// @param __colorF font color of the text rendered.
         /// @param __colorB background color of the text rendered.
-        void RenderText(WINDOW* __win, int __x, int __y, const char* __text, Color __colorF, Color __colorB);
+        // void RenderText(WINDOW* __win, int __x, int __y, const char* __text, Color __colorF, Color __colorB);
     };
 };
 

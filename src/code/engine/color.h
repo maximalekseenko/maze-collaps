@@ -15,4 +15,23 @@ enum Color {
     WHITE     = 7, BRIGHT_WHITE     = 15
 };
 
+
+
+/// @brief Converts combination of font color and background color into pair's id.
+/// @param __colorF Font color pair's part.
+/// @param __colorB Background color pair's part.
+/// @return Id of paired colors.
+inline int GetColorPairId(int __colorF, int __colorB)
+{
+    // color pair is "Bbbbffff" byte
+    // where B is font's boldness
+    //     bbb is font's number
+    //    ffff is background's number
+    
+    //      B          bbb                     ffff
+    return ((1 << 7) | ((7 & __colorB) << 4) | (7 & __colorF));
+}
+
+
+
 #endif // __ENGINE_COLOR_H

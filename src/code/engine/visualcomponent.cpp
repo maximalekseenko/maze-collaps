@@ -2,6 +2,7 @@
 
 
 #include "engine.h"
+#include "color.h"
 
 
 
@@ -99,7 +100,14 @@ void VisualComponent::AddLine(int __x, int __y, const char* __content, Color __c
 {
     // add content on window
     {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
-        Engine::Renderer::RenderText(this->win, __x, __y, __content, __colorF, __colorB);
+
+        // set color
+        wattron(this->win, COLOR_PAIR(GetColorPairId(__colorF, __colorB)));
+        if (__colorF / 8 == 1) wattron(this->win, A_BOLD);
+        else                  wattroff(this->win, A_BOLD);
+
+        // print
+        mvwprintw(this->win, __y, __x, __content);
     }
 
     // update if active
