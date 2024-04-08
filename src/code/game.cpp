@@ -28,11 +28,12 @@ class UIButton : public VisualComponent
     public:
         int action;
         std::string text;
-        UIButton(int __y, std::string _s, int __a)
+        UIButton(int __y, std::string __s, int __a)
         : VisualComponent(30, __y, 15, 3, VisualComponent::Layer::BUTTONS) 
         {
             std::lock_guard el_lock(lock);
-            text = _s;
+            text = __s;
+            action = __a;
 
             this->AddLine(2,    1, text.c_str(),      Color::YELLOW);
             this->AddLine(0,    0, "┌─────────────" , Color::WHITE);
@@ -207,6 +208,7 @@ class UIFoe : public VisualComponent
 
 void Game::Run()
 {
+    Engine::Renderer::SetBackground(Color::BLACK);
     {   
         UIButton b1(1, "PLAY", 0);
         UIButton b2(6, "EXIT", 1);
