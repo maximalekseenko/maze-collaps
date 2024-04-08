@@ -12,7 +12,7 @@ OBJ_DIR 	= ./bin/obj/
 OUT_PREF	?= build
 OUT_DIR		= $(BIN_DIR)/$(OUT_PREF)
 
-SOURCES 	= $(wildcard $(CODE_DIR)/*.cpp) $(wildcard $(CODE_DIR)/*/*.cpp)
+SOURCES 	= $(wildcard $(CODE_DIR)/*.cpp) $(wildcard $(CODE_DIR)/**/*.cpp)
 LIBS	    = -lncurses
 
 OBJ_PATTERN = $(OBJ_DIR)%.o
@@ -24,21 +24,23 @@ $(CC) $(CFLAGS) -c $< -o $@
 endef
 
 # ------------------------- commands -------------------------
-all: build-update
+all: build-debug-full
 
+run:
+	(cd $(OUT_DIR); ./$(EXECUTABLE))
 
 build-debug: create_directories create_executable create_data
 	(cd $(OUT_DIR); ./$(EXECUTABLE))
 
 
-build-debug-full: clean-full create_directories create_executable create_data
+build-debug-full: clean-full build-debug
 	(cd $(OUT_DIR); ./$(EXECUTABLE))
 
 
-build-prod: clean-full create_directories create_executable create_data clean
+build-prod: build-debug-full clean
 
 
-.PHONY: all build-debug build-debug-full build-prod
+.PHONY: all run build-debug build-debug-full build-prod
 
 
 # ------------------------- create directories -------------------------
