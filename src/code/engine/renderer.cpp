@@ -1,4 +1,5 @@
-#include "renderer.h"
+#include "engine.h"
+
 
 #include "../game.h"
 #include "../lib/log.h"
@@ -6,7 +7,10 @@
 #include <stdlib.h>
 
 #include "visualcomponent.h"
-#include "userinterface.h"
+
+
+// TEMP !
+#include "../lib/log.h"
 
 
 
@@ -23,32 +27,9 @@ int colornum(int fg, int bg)
 }
 
 
-int rendMinX=INT_MAX,
-    rendMaxX=0,
-    rendMinY=INT_MAX,
-    rendMaxY=0;
-void Renderer::RenderText(int __x, int __y, const char* __text, Color __colorF, Color __colorB)
-{
-    std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
 
-    // update borders
-    if (rendMinX > __x) rendMinX = __x;
-    if (rendMaxX < __x) rendMaxX = __x;
-    if (rendMinY > __y) rendMinY = __y;
-    if (rendMaxY < __y) rendMaxY = __y;
-
-    // set color
-    attron(COLOR_PAIR(colornum(__colorF, __colorB)));
-    if (__colorF / 8 == 1) attron(A_BOLD);
-    else attroff(A_BOLD);
-
-    // print
-    mvprintw(__y, __x, __text);
-}
-
-void Renderer::RenderText(WINDOW* __win, int __x, int __y, const char* __text, Color __colorF, Color __colorB)
-{
-    std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
+void Engine::Renderer::RenderText(WINDOW* __win, int __x, int __y, const char* __text, Color __colorF, Color __colorB)
+{   std::lock_guard ncurses_locker(Engine::ncurses_lock);
 
     // set color
     wattron(__win, COLOR_PAIR(colornum(__colorF, __colorB)));
@@ -61,16 +42,18 @@ void Renderer::RenderText(WINDOW* __win, int __x, int __y, const char* __text, C
 
 
 
-void Renderer::Init()
-{
-    std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
+void Engine::Renderer::Init()
+{   std::lock_guard ncurses_locker(Engine::ncurses_lock);
 
-    // init rendering
+    // --- init screen ---
+    // init core screen
     initscr();
+    // no cursor
     curs_set(0);
+    // clear screen
     clear();
 
-    // init colors
+    // --- init colors ---
     use_default_colors();
     start_color();
     for (int _iF = 0; _iF < 8; _iF ++)
@@ -79,23 +62,23 @@ void Renderer::Init()
 }
 
 
-void Renderer::Run()
+void Engine::Renderer::Run()
 {
     while (true)
     {
         // refresh
         {
-            std::lock_guard ncurses_locker(UserInterface::ncurses_lock);
+            std::lock_guard ncurses_locker(Engine::ncurses_lock);
             refresh();
         }
 
         // render layers
-        {   std::lock_guard layers_locker(VisualComponent::layers_lock);
+        {   std::shared_lock layers_locker(VisualComponent::layers_lock);
 
             // check that render is required
             if (VisualComponent::lastUpdatedLayer == VisualComponent::Layer::NONE) continue;
 
-            for (int _il = VisualComponent::lastUpdatedLayer; _il < VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
+            for (int _il = VisualComponent::lastUpdatedLayer; _il < __ENGINE_VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
                 for (auto &_el : VisualComponent::layers[_il])
                 {   std::lock_guard el_locker(_el->lock);
                     if (VisualComponent::lastUpdateMinX > _el->GetMaxX() || VisualComponent::lastUpdateMaxX < _el->GetX()) continue;

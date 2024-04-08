@@ -1,5 +1,4 @@
-#include "userinterface/renderer.h"
-#include "userinterface/controls.h"
+#include "engine/engine.h"
 
 #include "game.h"
 #include "lib/log.h"
@@ -12,11 +11,10 @@ int main(int argc, char *argv[]) {
     Log::Out("+++BEGIN+++");
     setlocale(LC_ALL, "");
 
-    Renderer::Init();
-    Controls::Init();
+    Engine::Init();
 
-	std::thread t_renderer(Renderer::Run);
-	std::thread c_renderer(Controls::Run);
+	std::thread t_renderer(Engine::Renderer::Run);
+	std::thread c_renderer(Engine::Controller::Run);
     
     Game::LoadMap("data/theentrance.png");
     std::thread g_renderer(Game::Run);

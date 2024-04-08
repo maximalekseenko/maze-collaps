@@ -13,7 +13,8 @@
 #include "entity/enemy.h"
 #include "lib/log.h"
 
-#include "userinterface/visualcomponent.h"
+#include "engine/visualcomponent.h"
+#include "engine/engine.h"
 
 
 
@@ -33,26 +34,26 @@ class UIButton : public VisualComponent
             std::lock_guard el_lock(lock);
             text = _s;
 
-            this->AddLine(2,    1, text.c_str(),      Renderer::Color::YELLOW);
-            this->AddLine(0,    0, "┌─────────────" , Renderer::Color::WHITE);
-            this->AddLine(14,   0,               "┐", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(0,    1, "│"              , Renderer::Color::WHITE);
-            this->AddLine(14,   1,               "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(0,    2, "└"              , Renderer::Color::WHITE);
-            this->AddLine(1,    2,  "─────────────┘", Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(2,    1, text.c_str(),      Color::YELLOW);
+            this->AddLine(0,    0, "┌─────────────" , Color::WHITE);
+            this->AddLine(14,   0,               "┐", Color::BRIGHT_BLACK);
+            this->AddLine(0,    1, "│"              , Color::WHITE);
+            this->AddLine(14,   1,               "│", Color::BRIGHT_BLACK);
+            this->AddLine(0,    2, "└"              , Color::WHITE);
+            this->AddLine(1,    2,  "─────────────┘", Color::BRIGHT_BLACK);
         }
         void OnHover(bool __on, int, int) override
         {
-            this->AddLine(2,    1, text.c_str(),        __on ? Renderer::Color::BRIGHT_YELLOW : Renderer::Color::YELLOW);
+            this->AddLine(2,    1, text.c_str(),        __on ? Color::BRIGHT_YELLOW : Color::YELLOW);
         }
-        void OnClick(bool __on, int, int) override
+        void OnClick(int, int) override
         {
             if (action == 0)
                 game_run = true;
             if (action == 1)
             {   
                 this->text = "USE ^C LOL";
-                this->AddLine(2,    1, text.c_str(), Renderer::Color::YELLOW);
+                this->AddLine(2,    1, text.c_str(), Color::YELLOW);
             }
         }
 };
@@ -78,7 +79,7 @@ class UIMap : public VisualComponent
                         FixMapX(Game::current_map->X(_i)),
                         FixMapY(Game::current_map->Y(_i)),
                         Game::current_map->Get(_i) == Map::TILE::WALL ? "█" : ".",
-                        Game::current_map->Get(_i) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK  
+                        Game::current_map->Get(_i) == Map::TILE::WALL ? Color::WHITE : Color::BRIGHT_BLACK  
                 );
         }
 
@@ -94,8 +95,8 @@ class UIMap : public VisualComponent
                     oldHovX, 
                     oldHovY, 
                     Game::current_map->Get(UnFixMapX(oldHovX), UnFixMapY(oldHovY)) == Map::TILE::WALL ? "█" : ".",
-                    Game::current_map->Get(UnFixMapX(oldHovX), UnFixMapY(oldHovY)) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK,
-                    Renderer::Color::BLACK
+                    Game::current_map->Get(UnFixMapX(oldHovX), UnFixMapY(oldHovY)) == Map::TILE::WALL ? Color::WHITE : Color::BRIGHT_BLACK,
+                    Color::BLACK
                 );
             }
             // new
@@ -105,8 +106,8 @@ class UIMap : public VisualComponent
                     __x, 
                     __y, 
                     Game::current_map->Get(UnFixMapX(__x), UnFixMapY(__y)) == Map::TILE::WALL ? "█" : ".",
-                    Game::current_map->Get(UnFixMapX(__x), UnFixMapY(__y)) == Map::TILE::WALL ? Renderer::Color::WHITE : Renderer::Color::BRIGHT_BLACK,
-                    Renderer::Color::BLUE
+                    Game::current_map->Get(UnFixMapX(__x), UnFixMapY(__y)) == Map::TILE::WALL ? Color::WHITE : Color::BRIGHT_BLACK,
+                    Color::BLUE
                 );
             }
 
@@ -122,34 +123,34 @@ class UIBack : public VisualComponent
         UIBack() : VisualComponent(MAPX-1, MAPY-1, 34, 21, VisualComponent::Layer::BACKGROUND) 
         { std::lock_guard el_lock(lock);
 
-            this->AddLine(0, 0, "┌────────────────────────────────" , Renderer::Color::WHITE);
-            this->AddLine(0, 1, "│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n└", Renderer::Color::WHITE);
-            this->AddLine(33, 0, "┐", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 1, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 2, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 3, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 4, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 5, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 6, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 7, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 8, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 9, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 10, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 11, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 12, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 13, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 14, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 15, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(33, 16, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(1, 17, "────────────────────────────────┘" , Renderer::Color::BRIGHT_BLACK);
+            this->AddLine(0, 0, "┌────────────────────────────────" , Color::WHITE);
+            this->AddLine(0, 1, "│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n│\n└", Color::WHITE);
+            this->AddLine(33, 0, "┐", Color::BRIGHT_BLACK);
+            this->AddLine(33, 1, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 2, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 3, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 4, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 5, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 6, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 7, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 8, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 9, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 10, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 11, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 12, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 13, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 14, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 15, "│", Color::BRIGHT_BLACK);
+            this->AddLine(33, 16, "│", Color::BRIGHT_BLACK);
+            this->AddLine(1, 17, "────────────────────────────────┘" , Color::BRIGHT_BLACK);
 
-            this->AddLine(0, 18, "┌────────────────────────────────" , Renderer::Color::WHITE);
-            this->AddLine(33, 18, "┐", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(0, 19, "│\n└" , Renderer::Color::WHITE);
-            this->AddLine(33, 19, "│", Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(1, 20, "────────────────────────────────┘" , Renderer::Color::BRIGHT_BLACK);
-            this->AddLine(1, 19, "♥♥♥" , Renderer::Color::BRIGHT_RED);
-            this->AddLine(4, 19, "♥♥♥♥" , Renderer::Color::RED);
+            this->AddLine(0, 18, "┌────────────────────────────────" , Color::WHITE);
+            this->AddLine(33, 18, "┐", Color::BRIGHT_BLACK);
+            this->AddLine(0, 19, "│\n└" , Color::WHITE);
+            this->AddLine(33, 19, "│", Color::BRIGHT_BLACK);
+            this->AddLine(1, 20, "────────────────────────────────┘" , Color::BRIGHT_BLACK);
+            this->AddLine(1, 19, "♥♥♥" , Color::BRIGHT_RED);
+            this->AddLine(4, 19, "♥♥♥♥" , Color::RED);
         }
 };
 class UIFoe : public VisualComponent
@@ -173,7 +174,7 @@ class UIFoe : public VisualComponent
             this->AddLine(
                     0, 0,
                     __ent->GetVisual(),
-                    __ent->id == 0 ? Renderer::Color::GREEN : Renderer::Color::BRIGHT_RED
+                    __ent->id == 0 ? Color::GREEN : Color::BRIGHT_RED
             );
         }
         void OnHover(bool __on, int __x, int __y) override
@@ -187,8 +188,8 @@ class UIFoe : public VisualComponent
             //     // this->AddLine(
             //     //         0, 0,
             //     //         ent->GetVisual(),
-            //     //         ent->id == 0 ? Renderer::Color::GREEN : Renderer::Color::BRIGHT_RED,
-            //     //         Renderer::Color::BLUE
+            //     //         ent->id == 0 ? Color::GREEN : Color::BRIGHT_RED,
+            //     //         Color::BLUE
             //     // );
             // } 
             // else 
@@ -196,7 +197,7 @@ class UIFoe : public VisualComponent
             //     this->AddLine(
             //             0, 0,
             //             ent->GetVisual(),
-            //             ent->id == 0 ? Renderer::Color::GREEN : Renderer::Color::BRIGHT_RED
+            //             ent->id == 0 ? Color::GREEN : Color::BRIGHT_RED
             //     );
             // }
         }
@@ -213,6 +214,9 @@ void Game::Run()
         b2.Activate();
         while (!game_run) {}
     }
+
+    if (entities.size() == 0)
+        entities.push_back(new Player(0));
 
     {
         UIBack b;
