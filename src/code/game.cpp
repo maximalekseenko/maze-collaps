@@ -68,6 +68,7 @@ int UnFixMapY(int __y) { return (Game::current_map->MY * 3/2 + __y + Game::curre
 int GetPlayerDirX(int __x, int __y) { return __x==0&&__y==0 ? 0 : round(cos(atan2(__y, __x))); }
 int GetPlayerDirY(int __x, int __y) { return __x==0&&__y==0 ? 0 : round(sin(atan2(__y, __x))); }
 
+
 class UIMap : public VisualComponent
 {
     public:
@@ -75,13 +76,54 @@ class UIMap : public VisualComponent
         UIMap() : VisualComponent(MAPX, MAPY, 32, 16, VisualComponent::Layer::STATIC) 
         {   std::lock_guard el_lock(lock);
 
-            for (int _i = 0; _i < Game::current_map->MI; _i ++)
-                this->AddLine(
-                        FixMapX(Game::current_map->X(_i)),
-                        FixMapY(Game::current_map->Y(_i)),
-                        Game::current_map->Get(_i) == Map::TILE::WALL ? "█" : ".",
-                        Game::current_map->Get(_i) == Map::TILE::WALL ? Color::WHITE : Color::BRIGHT_BLACK  
-                );
+            UpdateWindow();
+        }
+
+
+        void UpdateEntity(Entity* __ent, Color __colorB=Color::BLACK)
+        {
+            this->AddLine(
+                FixMapX(Game::current_map->X(__ent->position)), 
+                FixMapY(Game::current_map->Y(__ent->position)),
+                __ent->GetVisual(),
+                __ent->id == 0 ? Color::GREEN : Color::BRIGHT_RED,
+                __colorB
+            );
+        }
+
+
+        void UpdateTile(int __i, Color __colorB=Color::BLACK)
+        {
+            this->AddLine(
+                FixMapX(Game::current_map->X(__i)),
+                FixMapY(Game::current_map->Y(__i)),
+                Game::current_map->Get(__i) == Map::TILE::WALL ? "█" : ".",
+                Game::current_map->Get(__i) == Map::TILE::WALL ? Color::WHITE : Color::BRIGHT_BLACK,
+                __colorB
+            );
+        }
+
+
+        void UpdateCharWithBackground(int __i, Color __colorB)
+        {
+            for (auto _ent : Game::entities)
+                if (_ent->position == __i)
+                {
+                    UpdateEntity(_ent, __colorB);
+                    return;
+                }
+
+            UpdateTile(__i, __colorB);
+        }
+        
+
+        void UpdateWindow()
+        {
+            for (int _i = 0; _i < Game::current_map->MI; _i++)
+                UpdateTile(_i);
+
+            for (auto _ent : Game::entities)
+                UpdateEntity(_ent);
         }
 
         int oldHovX=-1, oldHovY=-1;
@@ -92,22 +134,22 @@ class UIMap : public VisualComponent
             // old
             if (wmove(this->win, oldHovY, oldHovX) == OK)
             {
-                this->AddLine(
-                    oldHovX, 
-                    oldHovY, 
-                    Game::current_map->Get(UnFixMapX(oldHovX), UnFixMapY(oldHovY)) == Map::TILE::WALL ? "█" : ".",
-                    Game::current_map->Get(UnFixMapX(oldHovX), UnFixMapY(oldHovY)) == Map::TILE::WALL ? Color::WHITE : Color::BRIGHT_BLACK,
+                UpdateCharWithBackground(
+                    Game::current_map->I(
+                        UnFixMapX(oldHovX), 
+                        UnFixMapY(oldHovY)
+                    ),
                     Color::BLACK
                 );
             }
             // new
             if (wmove(this->win, __y, __x) == OK)
             {
-                this->AddLine(
-                    __x, 
-                    __y, 
-                    Game::current_map->Get(UnFixMapX(__x), UnFixMapY(__y)) == Map::TILE::WALL ? "█" : ".",
-                    Game::current_map->Get(UnFixMapX(__x), UnFixMapY(__y)) == Map::TILE::WALL ? Color::WHITE : Color::BRIGHT_BLACK,
+                UpdateCharWithBackground(
+                    Game::current_map->I(
+                        UnFixMapX(__x), 
+                        UnFixMapY(__y)
+                    ),
                     Color::BLUE
                 );
             }
@@ -225,15 +267,15 @@ void Game::Run()
         UIMap m;
         m.Activate();
         b.Activate();
-        UIFoe* ents = new UIFoe[entities.size()];
-        for (int i=0; i<entities.size();i++)
-        {
-            ents[i].SetEnt(entities[i]);
-            ents[i].Activate();
-        }
+        // UIFoe* ents = new UIFoe[entities.size()];
+        // for (int i=0; i<entities.size();i++)
+        // {
+        //     ents[i].SetEnt(entities[i]);
+        //     ents[i].Activate();
+        // }
         while (game_run) {}
 
-        delete[] ents;
+        // delete[] ents;
     }
 
 }

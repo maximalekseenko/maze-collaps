@@ -183,7 +183,7 @@ void Enemy::Turn() {
 
 
 const char* Player::GetVisual() {
-    return "0";
+    return "✪";
 }
 void Player::Turn() {
 
