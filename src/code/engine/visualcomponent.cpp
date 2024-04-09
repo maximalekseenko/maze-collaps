@@ -32,22 +32,20 @@ void UpdateLayer(VisualComponent::Layer __layer, int __x, int __y, int __w, int 
 
 
 
-VisualComponent::VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer __layer)
-: VisualComponent(__x, __y, __w, __h, __layer, "")
-{}
-VisualComponent::VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer __layer, const char* __content)
+VisualComponent::VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer __layer, const char* __content, Color __colorB)
 {
+    this->colorB = __colorB;
     this->layer = __layer;
     {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
         this->win = newwin(__h, __w, __y, __x);
-        wbkgd(this->win, COLOR_PAIR(GetColorPairId(0, Engine::Renderer::GetBackground())));
+        if (this->colorB != Color::NONE) wbkgd(this->win, COLOR_PAIR(GetColorPairId(0, this->colorB)));
         wprintw(this->win, __content);
     }
 }
 VisualComponent::~VisualComponent()
 {
     this->Clear();
-    wbkgd(this->win, COLOR_PAIR(GetColorPairId(0, Engine::Renderer::GetBackground())));
+    if (this->colorB != Color::NONE) wbkgd(this->win, COLOR_PAIR(GetColorPairId(0, this->colorB)));
     this->Render();
     {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
         delwin(this->win);

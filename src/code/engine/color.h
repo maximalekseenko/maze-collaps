@@ -5,6 +5,7 @@
 
 /// @brief Numbers for colors.
 enum Color {
+    NONE      = -1,
     BLACK     = 0, BRIGHT_BLACK     = 8,
     RED       = 1, BRIGHT_RED       = 9,
     GREEN     = 2, BRIGHT_GREEN     = 10,

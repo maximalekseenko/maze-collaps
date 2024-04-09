@@ -45,8 +45,7 @@ class VisualComponent
         /// @param __w Starting width of visual component.
         /// @param __h Starting height of visual component.
         /// @param __layer Layer this visual component located in. (see VisualComponent::layers).
-        VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer __layer);
-        VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer, const char* __content);
+        VisualComponent(int __x, int __y, int __w, int __h, VisualComponent::Layer, const char* __content="", Color __colorB=Color::NONE);
         ~VisualComponent();
 
 
@@ -60,6 +59,9 @@ class VisualComponent
         std::recursive_mutex lock;
 
     private:
+
+        /// @brief Background color of this component;
+        Color colorB;
 
         /// @brief Layer of this component.
         VisualComponent::Layer layer;
