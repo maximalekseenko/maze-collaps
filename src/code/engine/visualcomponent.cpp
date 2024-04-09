@@ -40,13 +40,14 @@ VisualComponent::VisualComponent(int __x, int __y, int __w, int __h, VisualCompo
     this->layer = __layer;
     {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
         this->win = newwin(__h, __w, __y, __x);
-        wbkgd(this->win, GetColorPairId(0, Engine::Renderer::GetBackground()));
+        wbkgd(this->win, COLOR_PAIR(GetColorPairId(0, Engine::Renderer::GetBackground())));
         wprintw(this->win, __content);
     }
 }
 VisualComponent::~VisualComponent()
 {
     this->Clear();
+    wbkgd(this->win, COLOR_PAIR(GetColorPairId(0, Engine::Renderer::GetBackground())));
     this->Render();
     {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
         delwin(this->win);
