@@ -1,7 +1,7 @@
 #include "engine.h"
 
 
-#include <curses.h>
+#include <ncursesw/curses.h>
 #include <stdlib.h>
 
 #include "visualcomponent.h"

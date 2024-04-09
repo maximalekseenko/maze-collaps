@@ -1,9 +1,5 @@
 EXECUTABLE  = maze-collapse
 
-CC          = g++
-LDFLAGS     =
-CFLAGS      = -fsanitize=address -fdiagnostics-color=always -std=c++20 -Wall
-
 CODE_DIR 	= ./src/code/
 DATA_DIR 	= ./src/data/
 
@@ -13,15 +9,15 @@ OUT_PREF	?= build
 OUT_DIR		= $(BIN_DIR)/$(OUT_PREF)
 
 SOURCES 	= $(wildcard $(CODE_DIR)/*.cpp) $(wildcard $(CODE_DIR)/**/*.cpp)
-LIBS	    = -lncurses
+LIBS	    = -lncursesw
 
 OBJ_PATTERN = $(OBJ_DIR)%.o
 SRC_PATTERN = $(CODE_DIR)%.cpp
 OBJECTS		= $(SOURCES:$(SRC_PATTERN)=$(OBJ_PATTERN))
 
-define cc-command
-$(CC) $(CFLAGS) -c $< -o $@
-endef
+CC          = g++
+CFLAGS      = -std=c++20 -Wall -lncursesw -I$(CODE_DIR)
+DEBUG_CFLAGS= -fsanitize=address -fdiagnostics-color=always 
 
 # ------------------------- commands -------------------------
 all: build-debug-full
@@ -66,6 +62,7 @@ $(OBJECTS): $(OBJ_PATTERN) : $(SRC_PATTERN) # +++ compile +++
 
 
 $(EXECUTABLE): $(OBJECTS) # +++ link +++
+	# ifeq ($(UNAME), x86_64)
 	$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o $(OUT_DIR)/$(EXECUTABLE)
 
 

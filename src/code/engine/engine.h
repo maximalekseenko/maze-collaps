@@ -6,7 +6,6 @@
 // +++ INCLUDES +++
 #include "color.h"
 #include <mutex>
-#include <curses.h>
 
 
 
