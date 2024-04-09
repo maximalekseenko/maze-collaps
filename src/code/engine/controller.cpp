@@ -33,7 +33,7 @@ void HandleMouseButton1(int __x, int __y)
 {
     // find on top of what visual component mouse is located.
     {   std::shared_lock layers_locker(VisualComponent::layers_lock);
-        for (int _il = 0; _il < __ENGINE_VISUALCOMPONENT_LAYER_AMOUNT; _il ++)
+        for (int _il = __ENGINE_VISUALCOMPONENT_LAYER_AMOUNT - 1; _il >= 0; _il --)
             for (auto &_el : VisualComponent::layers[_il])
             {
                 std::lock_guard el_locker(_el->lock);
