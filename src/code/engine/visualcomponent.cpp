@@ -173,14 +173,11 @@ bool VisualComponent::Hover(int __x, int __y)
     // Or if it was under hover in previous frame, buy not this one.
     if (this->hovered == false && __on == false) return false;
 
-    // Do stuff
-    OnHover(__on, __x - this->GetX(), __y - this->GetY());
-
     // Update hovered status
     this->hovered = __on;
 
-    // Return is_hovered
-    return __on;
+    // do stuff and return ... 
+    return OnHover(__on, __x - this->GetX(), __y - this->GetY());
 }
 
 
@@ -190,12 +187,9 @@ bool VisualComponent::Click(int __x, int __y)
     // Check for mouse to be over
     if (!IsPointWithinMe(__x, __y, this)) return false;
 
-    // Do stuff
-    OnClick(__x - this->GetX(), __y - this->GetY());
-
-    // return "Yes i am hovered"
-    return true;
+    // Do stuff and return ...
+    return OnClick(__x - this->GetX(), __y - this->GetY());
 }
 
-void VisualComponent::OnHover(bool, int, int) {}
-void VisualComponent::OnClick(int, int) {}
+bool VisualComponent::OnHover(bool, int, int) {}
+bool VisualComponent::OnClick(int, int) {}

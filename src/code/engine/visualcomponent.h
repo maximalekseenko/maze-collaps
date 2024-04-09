@@ -144,8 +144,8 @@ class VisualComponent
         /// @param  fuck fuck
         /// @param  fuck fuck
         /// @param  fuck fuck
-        virtual void OnHover(bool __on, int __x, int __y);
-        virtual void OnClick(int __x, int __y);
+        virtual bool OnHover(bool __on, int __x, int __y);
+        virtual bool OnClick(int __x, int __y);
 
 };
 
