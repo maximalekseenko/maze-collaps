@@ -2,7 +2,7 @@
 #define __ENGINE_VISUALCOMPONENT_H
 
 
-#include <curses.h>
+#include "curses.h"
 #include "color.h"
 #include <vector>
 #include <string>

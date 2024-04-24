@@ -5,17 +5,12 @@
 
 // +++ INCLUDES +++
 #include "color.h"
-#include <mutex>
-#include <curses.h>
 
 
 
 /// @brief Core of the program.
 namespace Engine
 {
-    /// @brief Used to lock ncurses to solve ncurses' problems with threading.
-    extern std::recursive_mutex ncurses_lock;
-
     /// @brief Initializes Renderer and Controller.
     void Init();
 

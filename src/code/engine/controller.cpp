@@ -1,6 +1,6 @@
 #include "engine.h"
 
-
+#include "curses.h"
 #include "visualcomponent.h"
 
 
@@ -11,7 +11,7 @@ WINDOW* control_win;
 
 void Engine::Controller::Init()
 {
-    std::lock_guard ncurses_locker(Engine::ncurses_lock);
+    std::lock_guard curses_locker(Curses::curses_lock);
 
     control_win = newwin(0, 0, 0, 0);
 
@@ -65,7 +65,7 @@ void Engine::Controller::Run()
     {
         // get input
         {
-            std::lock_guard ncurses_locker(Engine::ncurses_lock);
+            std::lock_guard curses_locker(Curses::curses_lock);
             c = wgetch(control_win);
         }
 

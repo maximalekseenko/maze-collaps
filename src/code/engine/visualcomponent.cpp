@@ -1,6 +1,7 @@
 #include "visualcomponent.h"
 
 
+#include "curses.h"
 #include "engine.h"
 #include "color.h"
 
@@ -36,7 +37,7 @@ VisualComponent::VisualComponent(int __x, int __y, int __w, int __h, VisualCompo
 {
     this->colorB = __colorB;
     this->layer = __layer;
-    {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
+    {   std::lock_guard curses_locker(Curses::curses_lock);
         this->win = newwin(__h, __w, __y, __x);
         if (this->colorB != Color::NONE) wbkgd(this->win, COLOR_PAIR(GetColorPairId(0, this->colorB)));
         wprintw(this->win, __content);
@@ -47,7 +48,7 @@ VisualComponent::~VisualComponent()
     this->Clear();
     if (this->colorB != Color::NONE) wbkgd(this->win, COLOR_PAIR(GetColorPairId(0, this->colorB)));
     this->Render();
-    {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
+    {   std::lock_guard curses_locker(Curses::curses_lock);
         delwin(this->win);
     }
     this->Activate(false);
@@ -89,7 +90,7 @@ void VisualComponent::Activate(bool __on)
 
 void VisualComponent::Clear()
 {
-    {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
+    {   std::lock_guard curses_locker(Curses::curses_lock);
         wclear(this->win);
     }
 }
@@ -99,7 +100,7 @@ void VisualComponent::Clear()
 void VisualComponent::AddLine(int __x, int __y, const char* __content, Color __colorF, Color __colorB)
 {
     // add content on window
-    {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
+    {   std::lock_guard curses_locker(Curses::curses_lock);
 
         // set color
         wattron(this->win, COLOR_PAIR(GetColorPairId(__colorF, __colorB)));
@@ -125,7 +126,7 @@ void VisualComponent::AddLine(int __x, int __y, const char* __content, Color __c
 
 void VisualComponent::Render()
 {
-    {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
+    {   std::lock_guard curses_locker(Curses::curses_lock);
         redrawwin(this->win);
         wrefresh(this->win);
     }
@@ -133,12 +134,12 @@ void VisualComponent::Render()
 
 
 
-int VisualComponent::GetX()    { std::lock_guard ncurses_locker(Engine::ncurses_lock); return getbegx(this->win); }
-int VisualComponent::GetY()    { std::lock_guard ncurses_locker(Engine::ncurses_lock); return getbegy(this->win); }
-int VisualComponent::GetW()    { std::lock_guard ncurses_locker(Engine::ncurses_lock); return getmaxx(this->win); }
-int VisualComponent::GetH()    { std::lock_guard ncurses_locker(Engine::ncurses_lock); return getmaxy(this->win); }
-int VisualComponent::GetMaxX() { std::lock_guard ncurses_locker(Engine::ncurses_lock); return GetX() + GetW(); }
-int VisualComponent::GetMaxY() { std::lock_guard ncurses_locker(Engine::ncurses_lock); return GetY() + GetH(); }
+int VisualComponent::GetX()    { std::lock_guard curses_locker(Curses::curses_lock); return getbegx(this->win); }
+int VisualComponent::GetY()    { std::lock_guard curses_locker(Curses::curses_lock); return getbegy(this->win); }
+int VisualComponent::GetW()    { std::lock_guard curses_locker(Curses::curses_lock); return getmaxx(this->win); }
+int VisualComponent::GetH()    { std::lock_guard curses_locker(Curses::curses_lock); return getmaxy(this->win); }
+int VisualComponent::GetMaxX() { std::lock_guard curses_locker(Curses::curses_lock); return GetX() + GetW(); }
+int VisualComponent::GetMaxY() { std::lock_guard curses_locker(Curses::curses_lock); return GetY() + GetH(); }
 
 void VisualComponent::SetX(int __x) { mvwin(this->win, this->GetY(), __x); }
 void VisualComponent::SetY(int __y) { mvwin(this->win, __y, this->GetX()); }

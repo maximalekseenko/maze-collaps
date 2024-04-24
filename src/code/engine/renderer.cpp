@@ -4,6 +4,7 @@
 #include <curses.h>
 #include <stdlib.h>
 
+#include "curses.h"
 #include "visualcomponent.h"
 #include "color.h"
 
@@ -14,7 +15,7 @@
 
 
 void Engine::Renderer::Init()
-{   std::lock_guard ncurses_locker(Engine::ncurses_lock);
+{   std::lock_guard curses_locker(Curses::curses_lock);
 
     // --- init screen ---
     // init core screen
@@ -39,7 +40,7 @@ void Engine::Renderer::Run()
     {
         // refresh
         {
-            std::lock_guard ncurses_locker(Engine::ncurses_lock);
+            std::lock_guard curses_locker(Curses::curses_lock);
             refresh();
         }
 
@@ -73,7 +74,7 @@ Color backgroundColor;
 void Engine::Renderer::SetBackground(Color __colorB)
 {
     backgroundColor = __colorB;
-    {   std::lock_guard ncurses_locker(Engine::ncurses_lock);
+    {   std::lock_guard curses_locker(Curses::curses_lock);
         bkgd(COLOR_PAIR(GetColorPairId(0, __colorB)));
     }
 }
