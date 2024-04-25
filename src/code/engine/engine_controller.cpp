@@ -9,19 +9,21 @@
 WINDOW* control_win;
 
 
+bool engine_controller_initialized = false;
 void Engine::Controller::Init()
 {
-    std::lock_guard curses_locker(Curses::curses_lock);
+    if (engine_controller_initialized) return;
 
-    control_win = newwin(0, 0, 0, 0);
-
-    noecho();
-    nodelay(control_win, TRUE);
-    cbreak();
-    keypad(control_win, TRUE);
-    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
-    // printf("\033[?1003l\n");
-    printf("\033[?1003h\n");
+    {   std::lock_guard curses_locker(Curses::curses_lock);
+        control_win = newwin(0, 0, 0, 0);
+        noecho();
+        nodelay(control_win, TRUE);
+        cbreak();
+        keypad(control_win, TRUE);
+        mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+        // printf("\033[?1003l\n");
+        printf("\033[?1003h\n");
+    }
 }
 
 

@@ -29,7 +29,7 @@ class UIButton : public VisualComponent
         int action;
         std::string text;
         UIButton(int __y, std::string __s, int __a)
-        : VisualComponent(30, __y, 15, 3, VisualComponent::Layer::BUTTONS) 
+        : VisualComponent(30, __y, 15, 3, VisualComponent::Layer::BUTTONS, "", Color::BLACK) 
         {
             std::lock_guard el_lock(lock);
             text = __s;
@@ -43,11 +43,11 @@ class UIButton : public VisualComponent
             this->AddLine(0,    2, "└"              , Color::WHITE);
             this->AddLine(1,    2,  "─────────────┘", Color::BRIGHT_BLACK);
         }
-        void OnHover(bool __on, int, int) override
+        bool OnHover(bool __on, int, int) override
         {
             this->AddLine(2,    1, text.c_str(),        __on ? Color::BRIGHT_YELLOW : Color::YELLOW);
         }
-        void OnClick(int, int) override
+        bool OnClick(int, int) override
         {
             if (action == 0)
                 game_run = true;
@@ -73,7 +73,7 @@ class UIMap : public VisualComponent
 {
     public:
         int action;
-        UIMap() : VisualComponent(MAPX, MAPY, 32, 16, VisualComponent::Layer::STATIC) 
+        UIMap() : VisualComponent(MAPX, MAPY, 32, 16, VisualComponent::Layer::STATIC, "", Color::BLACK) 
         {   std::lock_guard el_lock(lock);
 
             UpdateWindow();
@@ -127,7 +127,7 @@ class UIMap : public VisualComponent
         }
 
         int oldHovX=-1, oldHovY=-1;
-        void OnHover(bool __on, int __x, int __y) override
+        bool OnHover(bool __on, int __x, int __y) override
         {
             __x = GetW() / 2 + GetPlayerDirX(__x - GetW() / 2, __y - GetH() / 2);
             __y = GetH() / 2 + GetPlayerDirY(__x - GetW() / 2, __y - GetH() / 2);
@@ -163,7 +163,7 @@ class UIBack : public VisualComponent
 {
     public:
         int action;
-        UIBack() : VisualComponent(MAPX-1, MAPY-1, 34, 21, VisualComponent::Layer::BACKGROUND) 
+        UIBack() : VisualComponent(MAPX-1, MAPY-1, 34, 21, VisualComponent::Layer::BACKGROUND, "", Color::BLACK) 
         { std::lock_guard el_lock(lock);
 
             this->AddLine(0, 0, "┌────────────────────────────────" , Color::WHITE);
@@ -196,55 +196,6 @@ class UIBack : public VisualComponent
             this->AddLine(4, 19, "♥♥♥♥" , Color::RED);
         }
 };
-class UIFoe : public VisualComponent
-{
-    public:
-        int action;
-        Entity* ent;
-        UIFoe() : VisualComponent(0, 0, 1, 1, VisualComponent::Layer::DYNAMIC) 
-        {
-            std::lock_guard el_lock(lock);
-        }
-        void SetEnt(Entity* __ent)
-        {
-            this->ent = __ent;
-            std::lock_guard el_lock(lock);
-            SetXY(
-                FixMapX(Game::current_map->X(__ent->position)) + MAPX,
-                FixMapY(Game::current_map->Y(__ent->position)) + MAPY
-            );
-
-            this->AddLine(
-                    0, 0,
-                    __ent->GetVisual(),
-                    __ent->id == 0 ? Color::GREEN : Color::BRIGHT_RED
-            );
-        }
-        void OnHover(bool __on, int __x, int __y) override
-        {
-            // if (__on)
-            // {
-            //     // if (
-            //     //     (Game::current_map->MX + Game::current_map->X(ent->position) - Game::current_map->X(Game::entities[0]->position)) % Game::current_map->MX > 1
-            //     //     && (Game::current_map->MY + Game::current_map->Y(ent->position) - Game::current_map->Y(Game::entities[0]->position)) % Game::current_map->MY > 1
-            //     // ) return;
-            //     // this->AddLine(
-            //     //         0, 0,
-            //     //         ent->GetVisual(),
-            //     //         ent->id == 0 ? Color::GREEN : Color::BRIGHT_RED,
-            //     //         Color::BLUE
-            //     // );
-            // } 
-            // else 
-            // {
-            //     this->AddLine(
-            //             0, 0,
-            //             ent->GetVisual(),
-            //             ent->id == 0 ? Color::GREEN : Color::BRIGHT_RED
-            //     );
-            // }
-        }
-};
 
 
 
@@ -267,15 +218,7 @@ void Game::Run()
         UIMap m;
         m.Activate();
         b.Activate();
-        // UIFoe* ents = new UIFoe[entities.size()];
-        // for (int i=0; i<entities.size();i++)
-        // {
-        //     ents[i].SetEnt(entities[i]);
-        //     ents[i].Activate();
-        // }
-        while (game_run) {}
-
-        // delete[] ents;
+        while (game_run) { }
     }
 
 }

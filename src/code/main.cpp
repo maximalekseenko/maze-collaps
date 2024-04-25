@@ -13,15 +13,16 @@ int main(int argc, char *argv[]) {
 
     Engine::Init();
 
+    Engine::Start();
 	std::thread t_renderer(Engine::Renderer::Run);
-	std::thread c_renderer(Engine::Controller::Run);
+	std::thread t_controller(Engine::Controller::Run);
     
-    Game::LoadMap("data/theentrance.png");
-    std::thread g_renderer(Game::Run);
+    Game::LoadMap("data/testmap.png");
+    std::thread t_game(Game::Run);
 
 	t_renderer.join();
-	c_renderer.join();
-	g_renderer.join();
+	t_controller.join();
+	t_game.join();
 
     // UserInterface::Exit();
     Log::Out("+++END+++");
