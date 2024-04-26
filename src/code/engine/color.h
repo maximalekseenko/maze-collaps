@@ -1,8 +1,6 @@
 #ifndef __ENGINE_COLOR_H
 #define __ENGINE_COLOR_H
 
-
-
 /// @brief Numbers for colors.
 enum Color {
     NONE      = -1,
@@ -15,8 +13,6 @@ enum Color {
     CYAN      = 6, BRIGHT_CYAN      = 14,
     WHITE     = 7, BRIGHT_WHITE     = 15
 };
-
-
 
 /// @brief Converts combination of font color and background color into pair's id.
 /// @param __colorF Font color pair's part.

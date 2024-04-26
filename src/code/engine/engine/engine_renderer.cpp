@@ -1,13 +1,13 @@
-#include "engine.h"
+#include "../engine.h"
 
 #include <stdlib.h>
 
-#include "curses.h"
-#include "visualcomponent.h"
-#include "color.h"
+#include "../curses.h"
+#include "../visualcomponent.h"
+#include "../color.h"
 
 // TEMP !
-#include "../lib/log.h"
+#include "../../lib/log.h"
 
 bool is_engine_renderer_thread_running = false;
 bool is_engine_renderer_initialized = false;

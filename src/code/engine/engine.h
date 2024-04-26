@@ -1,10 +1,10 @@
 /// @file engine.h
 /// @brief Header with engine core functions.
 /// Implementations is splitted into multiple files:
-/// @see ./engine.h for Engine implementation;
-/// @see ./engine_controller.h for Engine::Controller implementation;
-/// @see ./engine_renderer.h for Engine::Renderer implementation;
-/// @see ./engine_settings.h for Engine::Settings implementation;
+/// @see ./engine/engine.cpp for Engine implementation;
+/// @see ./engine/engine_controller.cpp for Engine::Controller implementation;
+/// @see ./engine/engine_renderer.cpp for Engine::Renderer implementation;
+/// @see ./engine/engine_settings.cpp for Engine::Settings implementation;
 /// @author https://github.com/maximalekseenko
 
 #ifndef __ENGINE_ENGINE_H

@@ -1,7 +1,8 @@
-#include "engine.h"
+#include "../engine.h"
 
-#include "curses.h"
-#include "../lib/log.h"
+#include "../curses.h"
+#include "../../lib/log.h"
+
 #include <thread>
 
 bool is_engine_initialized = false;
@@ -17,7 +18,7 @@ void Engine::Init()
         Log::Out("Attempting to initialize Engine twice.", true);
 
     // initialize
-    
+
     Engine::Renderer::Init();
     Engine::Controller::Init();
 
