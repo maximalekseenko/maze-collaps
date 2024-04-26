@@ -1,9 +1,5 @@
 #include "../visualcomponent.h"
 
-#include "../curses.h"
-// #include "../engine.h"
-#include "../color.h"
-
 std::shared_mutex VisualComponent::layers_lock;
 std::vector<VisualComponent *> VisualComponent::layers[__ENGINE_VISUALCOMPONENT_LAYER_AMOUNT];
 VisualComponent::Layer VisualComponent::lastUpdatedLayer;

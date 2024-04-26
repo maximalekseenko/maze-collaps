@@ -1,6 +1,5 @@
 #include "../engine.h"
 
-#include "../curses.h"
 #include "../../lib/log.h"
 
 #include <thread>

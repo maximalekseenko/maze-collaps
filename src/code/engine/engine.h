@@ -10,7 +10,10 @@
 #ifndef __ENGINE_ENGINE_H
 #define __ENGINE_ENGINE_H
 
-#include "color.h"
+// dependencies
+#include "./visualcomponent.h"
+#include "./color.h"
+#include "./curses.h"
 
 /// @brief Core of the program. It handles user interface.
 /// @see Engine::Controller for user input functions.

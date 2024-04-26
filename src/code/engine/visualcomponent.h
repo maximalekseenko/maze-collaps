@@ -1,8 +1,15 @@
+/// @file visualcomponent.h
+/// @brief Header with engine core functions.
+/// @author https://github.com/maximalekseenko
+
 #ifndef __ENGINE_VISUALCOMPONENT_H
 #define __ENGINE_VISUALCOMPONENT_H
 
-#include "curses.h"
-#include "color.h"
+// dependencies
+#include "./color.h"
+#include "./curses.h"
+
+// build-in libs
 #include <vector>
 #include <string>
 #include <mutex>
@@ -31,6 +38,7 @@ public: // +++ static +++
 
     // UGH.. REMOVE THIS!!!!
     static VisualComponent::Layer lastUpdatedLayer;
+
     // AND THIS | THIS IS UGLY
     static int lastUpdateMinX, lastUpdateMaxX, lastUpdateMinY, lastUpdateMaxY;
 

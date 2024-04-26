@@ -2,10 +2,6 @@
 
 #include <stdlib.h>
 
-#include "../curses.h"
-#include "../visualcomponent.h"
-#include "../color.h"
-
 // TEMP !
 #include "../../lib/log.h"
 

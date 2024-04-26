@@ -1,8 +1,5 @@
 #include "../engine.h"
 
-#include "../curses.h"
-#include "../visualcomponent.h"
-
 /// @brief Window to read input from.
 WINDOW *control_win;
 
