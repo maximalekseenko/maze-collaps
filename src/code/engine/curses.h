@@ -4,7 +4,7 @@
 
 #include <mutex>
 #ifdef __MINGW32__
-    #include <ncurses/curses.h>
+    #include <ncursesw/ncurses.h>
 #else
     #include <ncurses.h>
 #endif
