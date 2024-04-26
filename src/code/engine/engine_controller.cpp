@@ -8,11 +8,12 @@
 /// @brief Window to read input from.
 WINDOW* control_win;
 
+bool is_engine_controller_thread_running = false;
+bool is_engine_controller_initialized = false;
 
-bool engine_controller_initialized = false;
 void Engine::Controller::Init()
 {
-    if (engine_controller_initialized) return;
+    if (is_engine_controller_initialized) return;
 
     {   std::lock_guard curses_locker(Curses::curses_lock);
         control_win = newwin(0, 0, 0, 0);
@@ -58,12 +59,13 @@ void HandleMouseMovement(int __x, int __y)
 }
 
 
-void Engine::Controller::Run() 
+void Engine::Controller::ThreadFunc() 
 {
     int c;
     MEVENT event;
 
-    while (true) 
+    is_engine_controller_thread_running = true;
+    while (is_engine_controller_thread_running) 
     {
         // get input
         {
@@ -95,4 +97,10 @@ void Engine::Controller::Run()
                 break;
         }
     }
+}
+
+void Engine::Controller::Deinit() {}
+void Engine::Controller::StopThreadLoop()
+{
+    is_engine_controller_thread_running = false;
 }

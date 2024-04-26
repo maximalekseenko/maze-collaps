@@ -20,7 +20,7 @@
 namespace Engine
 {
     /// @brief Initializes Renderer and Controller.
-    /// @throws If not unsafe: throws an error if already initialized.
+    /// @throws Throws an error if already initialized.
     /// @see Engine::Renderer::Init().
     /// @see Engine::Controller::Init().
     void Init();
@@ -47,23 +47,25 @@ namespace Engine
     {
 
         /// @brief Initializes Controller.
+        /// @throws Throws an error if already initialized.
         /// @warning Dont forget to deinitialize.
         /// @see Engine::Controller::Deinit().
         void Init();
 
+        /// @brief Deinitializes controller.
+        /// @throws Throws an error if not initialized.
+        void Deinit();
+
         /// @brief function for running Controller as a thread.
-        /// Starts the logic loop that should be broken with Engine::Controller::Stop();
-        /// @note Use Engine::Controller::StopThreadLoop() to stop the thread;
+        /// @throws Throws an error if not initialized.
+        /// @throws Throws an error if already running.
+        /// @see Engine::Controller::StopThreadLoop() to stop the thread;
         /// @warning This function should be used as a thread.
         void ThreadFunc();
 
         /// @brief Breaks the loop in controller's thread.
         /// @throws Throws an error if loop is already broken.
         void StopThreadLoop();
-
-        /// @brief Deinitializes controller.
-        /// @throws Throws an error if not initialized.
-        void Deinit();
     };
 
     /// @brief Module the of engine, that handles output for user.
@@ -72,18 +74,33 @@ namespace Engine
     {
 
         /// @brief Initializes Renderer.
+        /// @throws Throws an error if already initialized.
         /// @warning Dont forget to deinitialize.
         /// @see Engine::Renderer::Deinit().
         void Init();
 
-        /// @brief Starts the Renderer's loop.
-        void Run();
+        /// @brief Deinitializes controller.
+        /// @throws Throws an error if not initialized.
+        void Deinit();
+
+        /// @brief function for running Renderer as a thread.
+        /// @throws Throws an error if not initialized.
+        /// @throws Throws an error if already running.
+        /// @see Engine::Renderer::StopThreadLoop() to stop the thread;
+        /// @warning This function should be used as a thread.
+        void ThreadFunc();
+
+        /// @brief Breaks the loop in renderer's thread.
+        /// @throws Throws an error if loop is already broken.
+        void StopThreadLoop();
 
         /// @brief Sets background color of main window.
+        /// @throws Throws an error if not initialized.
         /// @param __colorB New color for background.
         void SetBackground(Color __colorB);
 
         /// @brief Gets background color of main window.
+        /// @throws Throws an error if not initialized.
         /// @return Background color of main window.
         Color GetBackground();
     };

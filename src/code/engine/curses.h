@@ -3,7 +3,11 @@
 
 
 #include <mutex>
-#include <curses.h>
+#ifdef __MINGW32__
+    #include <ncurses/curses.h>
+#else
+    #include <curses.h>
+#endif
 
 
 namespace Curses

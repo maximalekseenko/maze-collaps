@@ -46,6 +46,7 @@ class UIButton : public VisualComponent
         bool OnHover(bool __on, int, int) override
         {
             this->AddLine(2,    1, text.c_str(),        __on ? Color::BRIGHT_YELLOW : Color::YELLOW);
+            return true;
         }
         bool OnClick(int, int) override
         {
@@ -56,6 +57,7 @@ class UIButton : public VisualComponent
                 this->text = "USE ^C LOL";
                 this->AddLine(2,    1, text.c_str(), Color::YELLOW);
             }
+            return true;
         }
 };
 #define MAPX 34
@@ -157,6 +159,8 @@ class UIMap : public VisualComponent
             // update old
             oldHovX = __x;
             oldHovY = __y;
+            
+            return true;
         }
 };
 class UIBack : public VisualComponent
