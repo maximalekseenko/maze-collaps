@@ -4,7 +4,7 @@ CC          = g++
 LDFLAGS     =
 CFLAGS      = -std=c++20
 CFLAGS_DEBUG= -Wall -fsanitize=address -fdiagnostics-color=always
-LIBS	    = -lncursesw
+LIBS	    = -lncurses
  
 CODE_DIR 	= ./src/code/
 DATA_DIR 	= ./src/data/
@@ -14,8 +14,7 @@ OBJ_DIR 	= ./bin/obj/
 OUT_PREF	?= build
 OUT_DIR		= $(BIN_DIR)/$(OUT_PREF)
 
-SOURCES 	= $(wildcard $(CODE_DIR)/*.cpp) $(wildcard $(CODE_DIR)/**/*.cpp)
-
+SOURCES 	= $(shell find $(CODE_DIR)/ -type f -name '*.cpp')
 OBJ_PATTERN = $(OBJ_DIR)%.o
 SRC_PATTERN = $(CODE_DIR)%.cpp
 OBJECTS		= $(SOURCES:$(SRC_PATTERN)=$(OBJ_PATTERN))
