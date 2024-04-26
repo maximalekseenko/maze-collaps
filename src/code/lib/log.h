@@ -8,7 +8,7 @@
 /// @brief Utility that Makes outputs.
 namespace Log
 {
-    /// @brief Make output to the oufile
+    /// @brief Make output to the outfile
     /// @param text 
     /// @param is_error 
     static void Out(std::string text, bool is_error=false) {
