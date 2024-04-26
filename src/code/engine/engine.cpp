@@ -17,8 +17,9 @@ void Engine::Init()
         Log::Out("Attempting to initialize Engine twice.", true);
 
     // initialize
-    Engine::Controller::Init();
+    
     Engine::Renderer::Init();
+    Engine::Controller::Init();
 
     // remember initialization
     is_engine_initialized = true;

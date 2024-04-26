@@ -6,7 +6,7 @@
 #ifdef __MINGW32__
     #include <ncurses/curses.h>
 #else
-    #include <curses.h>
+    #include <ncurses.h>
 #endif
 
 
