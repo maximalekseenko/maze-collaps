@@ -32,7 +32,7 @@ bool Map::Load(std::string __path)
 {
     path = __path;
     auto generator = OverlappingWave(
-        __path, 4, Map::MX, Map::MY, 
+        __path, 3, Map::MX, Map::MY, 
         true, true, 8, false, Model::Heuristic::Entropy);
         
     // generate
