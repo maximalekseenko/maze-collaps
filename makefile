@@ -1,10 +1,4 @@
 EXECUTABLE  = maze-collapse
-
-CC          = g++
-LDFLAGS     =
-CFLAGS      = -std=c++20
-CFLAGS_DEBUG= -Wall -fsanitize=address -fdiagnostics-color=always
-LIBS	    = -lncurses
  
 CODE_DIR 	= ./src/code/
 DATA_DIR 	= ./src/data/
@@ -19,10 +13,11 @@ OBJ_PATTERN = $(OBJ_DIR)%.o
 SRC_PATTERN = $(CODE_DIR)%.cpp
 OBJECTS		= $(SOURCES:$(SRC_PATTERN)=$(OBJ_PATTERN))
 
-define cc-command
-$(CC) $(CFLAGS) -c $< -o $@
-endef
-
+CC          = g++
+LDFLAGS     =
+CFLAGS      = -std=c++20 -I$(CODE_DIR)
+CFLAGS_DEBUG= -Wall -fsanitize=address -fdiagnostics-color=always
+LIBS	    = -lncurses
 
 # ------------------------- commands -------------------------
 all: build-debug-full

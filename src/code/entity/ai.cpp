@@ -3,12 +3,12 @@
 #include "enemy.h"
 
 #include "../game.h"
-#include "../lib/log.h"
+#include "utility/log.h"
 #include "../lib/random.h"
 
 
 bool IsNotObstacle(int __pos) {
-    if (Game::current_map->Get(__pos) == Map::TILE::WALL) return false;
+    if (Game::current_map->Get(__pos)->type == 0) return false;
     for (auto __ent : Game::entities) if (__pos == __ent->position && __ent->id != 0) return false;
     return true;
 }

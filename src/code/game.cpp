@@ -11,14 +11,14 @@
 #include "lib/random.h"
 #include "entity/player.h"
 #include "entity/enemy.h"
-#include "lib/log.h"
+#include "utility/log.h"
 
 #include "engine/visualcomponent.h"
 #include "engine/engine.h"
 
 
 
-Map* Game::current_map = new Map();
+Map* Game::current_map = new Map(0, 0, "");
 std::vector<Entity*> Game::entities;
 
 // TEMP
@@ -99,8 +99,8 @@ class UIMap : public VisualComponent
             this->AddLine(
                 FixMapX(Game::current_map->X(__i)),
                 FixMapY(Game::current_map->Y(__i)),
-                Game::current_map->Get(__i) == Map::TILE::WALL ? "█" : ".",
-                Game::current_map->Get(__i) == Map::TILE::WALL ? Color::WHITE : Color::BRIGHT_BLACK,
+                Game::current_map->Get(__i)->type == 0 ? "█" : ".",
+                Game::current_map->Get(__i)->type == 0 ? Color::WHITE : Color::BRIGHT_BLACK,
                 __colorB
             );
         }
@@ -231,7 +231,7 @@ void Game::Run()
 void Game::LoadMap(std::string __mapFileName) 
 {
     delete Game::current_map;
-    Game::current_map = new Map(__mapFileName);
+    Game::current_map = new Map(32, 16, __mapFileName.c_str());
     Game::InitializeMap(Game::current_map);
 }
 
@@ -244,7 +244,7 @@ void Game::InitializeMap(Map *__map)
     for (int i = 0; i < current_map->MI; i ++)
     {
         // if spawner
-        if (current_map->Get(i) == current_map->TILE::SPAWNER)
+        if (current_map->Get(i)->type == 2)
         {
             if (Game::entities.size() == 0)
                 Game::entities.push_back(new Player(i));
