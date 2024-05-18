@@ -1,9 +1,6 @@
 #include "../engine.h"
 
-#include <stdlib.h>
-
-// TEMP !
-#include "../../lib/log.h"
+#include "utility/log.h"
 
 bool is_engine_renderer_thread_running = false;
 bool is_engine_renderer_initialized = false;

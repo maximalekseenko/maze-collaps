@@ -1,6 +1,6 @@
 #include "../engine.h"
 
-#include "../../lib/log.h"
+#include "utility/log.h"
 
 #include <thread>
 
