@@ -5,17 +5,15 @@
 
 #include "utility/log.h"
 
-// Mapdata* Reader::ReadDataFromFile(const char* __mapdataFileRelPath)
+// Mapdata* GetMapdataFromFile(const char* __mapdataFilePath)
 // {
-//     Mapdata* _newMapData = new Mapdata();
-
-//     int SX, SY;
-//     int* bitmap = Image::ParseImage(name.c_str(), SX, SY);
+//     return
 // }
+
 
 int Reader::GetPixelValue(int __r, int __g, int __b)
 {
-    return __r + __g * 256 + __b * 256 * 256;
+    return __r + (__g << 8) + (__b << 16);
 }
 
 void Reader::ReadImage(const char *__imagePath, int *&__outImageData, int &__outImageWidth, int &__outImageHeight)

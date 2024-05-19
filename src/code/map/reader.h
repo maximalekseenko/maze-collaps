@@ -5,7 +5,7 @@
 
 namespace Reader
 {
-    Mapdata* ReadDataFromFile(const char* __mapdataFileRelPath);
+    Mapdata* GetMapdataFromFile(const char* __mapdataFilePath);
 
     /// @brief Reads pixel data from image.
     /// @param __image_path Path to the image.
