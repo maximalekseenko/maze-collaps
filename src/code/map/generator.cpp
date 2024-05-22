@@ -1,6 +1,9 @@
 #include "generator.h"
 
-Mapdata *ProcessTiles(Mapdata *__mapdata);
+// TEMP
+#include "utility/log.h"
+
+#include <vector>
 
 Map *GenerateMapTiles(Map *__map, Mapdata __mapdata);
 

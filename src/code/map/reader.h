@@ -5,7 +5,28 @@
 
 namespace Reader
 {
-    Mapdata* GetMapdataFromFile(const char* __mapdataFilePath);
+    /// @brief Gets mapdata by path.
+    ///        Loads it if needed.
+    /// @param __mapdataPath Relative path to mapdata file.
+    /// @return Pointer to loaded mapdata at path.
+    /// @note Loads mapdata if not loaded.
+    /// @throws Throws an error if no mapdata on path provided is found in hash or files.
+    Mapdata* GetMapdata(const char* __mapdataPath);
+
+    /// @brief Loads Mapdata by path.
+    ///        Overrides existing mapdata that already loaded with same path.
+    /// @param __mapdataPath Relative path to mapdata file.
+    /// @throws Throws an error if no mapdata on path provided is found in files.
+    /// @note It defines and processes mapdata if needed.
+    /// @return Pointer to loaded mapdata at path.
+    Mapdata* LoadMapdata(const char* __mapdataPath);
+
+    /// @brief Unloads Mapdata.
+    /// @param __mapdataPath Relative path to mapdata file.
+    /// @throws Throws an error if no mapdata on path provided is found in hash.
+    void UnloadMapdata(const char* __mapdataPath);
+
+
 
     /// @brief Reads pixel data from image.
     /// @param __image_path Path to the image.

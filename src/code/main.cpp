@@ -15,29 +15,31 @@ class PatternUI : public VisualComponent
 public:
     int action;
     std::string text;
-    PatternUI(int *data, int sizeX, int sizeY, int posX, int posY, int value=-1)
+    PatternUI(int *data, int sizeX, int sizeY, int posX, int posY, int value1=-1, int value2=-1)
         : VisualComponent( posX, posY, sizeX+1, sizeY, VisualComponent::Layer::BUTTONS, "", Color::BLACK)
     {
         std::lock_guard el_lock(lock);
+
         for (int _x = 0; _x < sizeX; _x++)
             for (int _y = 0; _y < sizeY; _y++)
                 switch (data[_y * sizeX + _x])
                 {
                 case 1052688:
-                    this->AddLine(_x, _y, "█", Color::WHITE);
+                    this->AddLine(1+_x, _y, "█", Color::BRIGHT_WHITE, Color::WHITE);
                     break;
                 case 10526880:
-                    this->AddLine(_x, _y, ".", Color::BRIGHT_BLACK);
+                    this->AddLine(1+_x, _y, ".", Color::BRIGHT_BLACK, Color::WHITE);
                     break;
                 case 1052832:
-                    this->AddLine(_x, _y, "O", Color::RED);
+                    this->AddLine(1+_x, _y, "O", Color::RED, Color::WHITE);
                     break;
                 case 1089552:
-                    this->AddLine(_x, _y, "X", Color::GREEN);
+                    this->AddLine(1+_x, _y, "X", Color::GREEN, Color::WHITE);
                     break;
                 default: break;
                 }
-        if (value!=-1) this->AddLine(sizeX, sizeY-1, std::to_string(value).c_str(), Color::CYAN);
+        this->AddLine(0, 0, std::to_string(value1).c_str(), Color::CYAN);
+        this->AddLine(0, 1, std::to_string(value2).c_str(), Color::CYAN);
     }
 };
 
@@ -61,26 +63,26 @@ int main(int argc, char *argv[])
         Log::Out(s);
     }
 
-    Mapdata md;
-    md.patternSize = 3;
-    md.ProcessRawImage(image, X, Y);
+    Mapdata *md = Reader::GetMapdata("data/testmap.png");
 
-    Log::Out(std::to_string(md.patternsAmount));
+    Log::Out(std::to_string(md->GetPatternsAmount()));
 
     Log::Out(std::to_string(Reader::GetPixelValue(255, 255, 255)));
 
     PatternUI pImageRaw = PatternUI(image, X, Y, 110, 0);
+    delete[] image;
     pImageRaw.Activate();
 
 
     std::vector<PatternUI *> AAA;
-    for (int _patternIndex = 0; _patternIndex < md.patternsAmount; _patternIndex++)
+    for (int _patternIndex = 0; _patternIndex < md->GetPatternsAmount(); _patternIndex++)
     {
-        PatternUI *_newP = new PatternUI(md.patterns[_patternIndex], 
-            md.patternSize, md.patternSize,
-            (_patternIndex % 20) * (md.patternSize + 2), 
-            (_patternIndex / 20) * (md.patternSize + 1), 
-            md.patternWeights[_patternIndex]
+        PatternUI *_newP = new PatternUI(md->GetPattern(_patternIndex), 
+            md->patternSize, md->patternSize,
+            (_patternIndex % 20) * (md->patternSize + 2), 
+            (_patternIndex / 20) * (md->patternSize + 1), 
+            md->GetPatternWeight(_patternIndex),
+            md->GetPatternAgreementsAmount(_patternIndex, 0)
         );
         AAA.push_back(_newP);
         _newP->Activate();
