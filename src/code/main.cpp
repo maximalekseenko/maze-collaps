@@ -83,10 +83,10 @@ int main(int argc, char *argv[])
     Mapdata *md = Reader::GetMapdata("data/testmap.png");
     Log::Out(std::to_string(md->GetPatternsAmount()));
 
-    Generator g(md);
-    g.Run(-1, -1);
-    Map *map;
-    g.Save(map);
+    // Generator g(md);
+    // g.Run(-1, -1);
+    Map *map = Generator::Generate(md);
+    // g.Save(map);
 
 
     Engine::Init();
