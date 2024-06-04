@@ -37,6 +37,7 @@ private:
     int ***patternsAgreements;
 
 public:
+    int GetMapSize();
     int GetPatternsAmount();
 
     /// @brief Gets the pattern at index.
@@ -54,14 +55,14 @@ public:
     double GetPatternWeight(int __patternIndex);
 
     int GetPatternAgreementsAmount(int __patternIndex, int __direction);
-    int *GetPatternAgreements(int __patternIndex, int __direction);
+    int GetPatternAgreement(int __patternIndex, int __direction, int __agreementIndex);
 
     // ---------- more or less constant members ----------
     const char *path;
 
     int patternSize = 3;
-    int mapWidth = 16;
-    int mapHeight = 32;
+    int mapWidth = 32;
+    int mapHeight = 16;
 
     // ---------- weights ----------
     double rawPatternDuplicateWeight = 1;

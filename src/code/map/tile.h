@@ -1,8 +1,12 @@
 #ifndef __MAP_TILE_H
 #define __MAP_TILE_H
 
-struct Tile
+class Tile
 {
+public:
+    Tile();
+    Tile(int __type);
+    ~Tile();
     int type;
 };
 
