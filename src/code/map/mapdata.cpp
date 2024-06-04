@@ -47,16 +47,26 @@ void Mapdata::ClearData()
 
 /// @brief Can __pattern1 exist in position from __pattern2 specified by __deltaX and __deltaY.
 /// Both patterns have size of __size
-static bool doPattensAgree(int *__pattern1, int *pattern2, int __directionI, int __size)
+static bool doPattensAgree(int *__pattern1, int *__pattern2, int __directionI, int __patternSize)
 {
-    int xmin = direction::X[__directionI] < 0 ? 0 : direction::X[__directionI],
-        xmax = direction::X[__directionI] < 0 ? direction::X[__directionI] + __size : __size,
-        ymin = direction::Y[__directionI] < 0 ? 0 : direction::Y[__directionI],
-        ymax = direction::Y[__directionI] < 0 ? direction::Y[__directionI] + __size : __size;
-    for (int y = ymin; y < ymax; y++)
-        for (int x = xmin; x < xmax; x++)
-            if (__pattern1[x + __size * y] != pattern2[(x - direction::X[__directionI]) + __size * (y - direction::Y[__directionI])])
+    int _deltaX = direction::X[__directionI],
+        _deltaY = direction::Y[__directionI];
+
+    // get points of intersection rectangle on __pattern1
+    int _compareXFrom = _deltaX < 0 ? 0 : _deltaX,
+        _compareXTo = _deltaX < 0 ? _deltaX + __patternSize : __patternSize,
+        _compareYFrom = _deltaY < 0 ? 0 : _deltaY,
+        _compareYTo = _deltaY < 0 ? _deltaY + __patternSize : __patternSize;
+
+    for (int _patternY = _compareYFrom; _patternY < _compareYTo; _patternY++)
+        for (int _patternX = _compareXFrom; _patternX < _compareXTo; _patternX++)
+        {
+            int _compareIPattern1 = _patternX + __patternSize * _patternY;
+            int _compareIPattern2 = (_patternX - _deltaX) + __patternSize * (_patternY - _deltaY);
+
+            if (__pattern1[_compareIPattern1] != __pattern2[_compareIPattern2])
                 return false;
+        }
     return true;
 }
 
@@ -73,7 +83,7 @@ void Mapdata::SetPatterns(int *__rawImageData, int __rawImageWidth, int __rawIma
                 /// @note deleted or saved at the end.
                 int *_newPattern = new int[this->patternSize * this->patternSize];
 
-                // Get a new pattern from image at a point.
+                // Extract a new pattern from image at a point.
                 for (int _patternY = 0; _patternY < this->patternSize; _patternY++)
                     for (int _patternX = 0; _patternX < this->patternSize; _patternX++)
                         _newPattern[_patternX + _patternY * this->patternSize] = __rawImageData[(_patternX + _imageX) % __rawImageWidth + ((_patternY + _imageY) % __rawImageHeight) * __rawImageWidth];
@@ -168,6 +178,8 @@ void Mapdata::SetPatterns(int *__rawImageData, int __rawImageWidth, int __rawIma
     this->arePatternsSetted = true;
 }
 
+int Mapdata::GetMapSize() { return this->mapWidth * this->mapHeight; }
+
 int Mapdata::GetPatternsAmount()
 {
     if (!this->arePatternsSetted)
@@ -212,7 +224,7 @@ int Mapdata::GetPatternAgreementsAmount(int __patternIndex, int __direction)
     return this->patternsAgreementsAmount[__patternIndex][__direction];
 }
 
-int *Mapdata::GetPatternAgreements(int __patternIndex, int __direction)
+int Mapdata::GetPatternAgreement(int __patternIndex, int __direction, int __agreementIndex)
 {
     if (!this->arePatternsSetted)
         Log::Out("Attempt at use of unfinished mapdata.", true);
@@ -223,5 +235,8 @@ int *Mapdata::GetPatternAgreements(int __patternIndex, int __direction)
     if (__direction < 0 || __direction >= 4)
         Log::Out("Use of incorrect direction in mapdata.", true);
 
-    return this->patternsAgreements[__patternIndex][__direction];
+    if (__agreementIndex < 0 || __agreementIndex >= this->GetPatternAgreementsAmount(__patternIndex, __direction))
+        Log::Out("Agreement at index is not found in mapdata.", true);
+
+    return this->patternsAgreements[__patternIndex][__direction][__agreementIndex];
 }

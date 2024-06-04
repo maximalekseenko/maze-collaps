@@ -27,6 +27,12 @@ public: // +++ constructors and destructors +++ //
 
     ~Map();
 
+public:
+    void SetTile(int __x, int __y, Tile __tile);
+    void SetTile(int __i, Tile __tile);
+    void SetTile(int __x, int __y, int __tileCode);
+    void SetTile(int __i, int __tileCode);
+
 public: // Access and Manipulate functions
     /// @brief
     /// @param __x

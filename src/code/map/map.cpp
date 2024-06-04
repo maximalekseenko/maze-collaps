@@ -4,7 +4,7 @@
 #include "utility/log.h"
 
 Map::Map(int __x, int __y, const char *__name)
-    : MX(__x), MY(__y), MI(__y), name(__name)
+    : MX(__x), MY(__y), MI(__x * __y), name(__name)
 {
     this->mapTileArray = new Tile[this->MI];
 }
@@ -13,6 +13,16 @@ Map::~Map()
 {
     delete[] this->mapTileArray;
 }
+
+void Map::SetTile(int __i, Tile __tile)
+{
+    if (!this->HasPoint(__i))
+        Log::Out("Map tile aasdasdnladfalnadfa", true);
+    this->mapTileArray[__i] = __tile;
+}
+void Map::SetTile(int __x, int __y, Tile __tile) { this->SetTile(this->I(__x, __y), __tile); }
+void Map::SetTile(int __i, int __tileCode) { this->SetTile(__i, Tile(__tileCode)); }
+void Map::SetTile(int __x, int __y, int __tileCode) { this->SetTile(this->I(__x, __y), Tile(__tileCode)); }
 
 void Map::FixPoint(int *__x, int *__y)
 {
@@ -28,7 +38,7 @@ void Map::FixPoint(int *__x, int *__y)
 
 bool Map::HasPoint(int __i)
 {
-    return __i > 0 && __i < this->MI;
+    return __i >= 0 && __i < this->MI;
 }
 
 bool Map::HasPoint(int __x, int __y)
