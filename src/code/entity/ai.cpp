@@ -2,7 +2,7 @@
 #include "player.h"
 #include "enemy.h"
 
-#include "../game.h"
+#include "application/game.h"
 #include "utility/log.h"
 #include "../lib/random.h"
 

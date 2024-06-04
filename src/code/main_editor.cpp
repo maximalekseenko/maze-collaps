@@ -1,7 +1,6 @@
 #define _XOPEN_SOURCE 700
 #include "engine/engine.h"
 
-#include "game.h"
 #include "utility/log.h"
 
 #include <locale>
