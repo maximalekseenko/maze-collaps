@@ -24,8 +24,8 @@ EDITOR_DIRS = $(CODE_DIR)/engine $(CODE_DIR)/utility $(CODE_DIR)/map $(CODE_DIR)
 
 
 
-APPLICATION_SOURCES	= $(shell find $(APPLICATION_DIRS)/ -type f -name '*.cpp') $(CODE_DIR)/main_application.cpp
-EDITOR_SOURCES 		= $(shell find $(EDITOR_DIRS)/ -type f -name '*.cpp') $(CODE_DIR)/main_editor.cpp
+APPLICATION_SOURCES	= $(shell find $(APPLICATION_DIRS)/ -type f -name '*.cpp')
+EDITOR_SOURCES 		= $(shell find $(EDITOR_DIRS)/ -type f -name '*.cpp')
 
 APPLICATION_OBJECTS	= $(APPLICATION_SOURCES:$(SRC_PATTERN)=$(OBJ_PATTERN))
 EDITOR_OBJECTS		= $(EDITOR_SOURCES:$(SRC_PATTERN)=$(OBJ_PATTERN))

@@ -1,13 +1,9 @@
 #define _XOPEN_SOURCE 700
 #include "engine/engine.h"
 
-#include "utility/log.h"
-
 #include <locale>
 #include <thread>
 
-// TEMP
-#include "map/generator.h"
 #include "map/reader.h"
 
 class PatternUI : public VisualComponent
